@@ -1,9 +1,15 @@
+/// Errors produced during tokenization of a farben markup string.
 #[derive(Debug)]
 pub enum LexError {
+    /// A `[` was found with no matching `]`.
     UnclosedTag,
+    /// The tag name is not a recognized keyword or color form.
     InvalidTag(String),
+    /// A color value function (e.g. `rgb(` or `ansi(`) was opened but never closed.
     UnclosedValue,
+    /// A color function received the wrong number of arguments.
     InvalidArgumentCount { expected: usize, got: usize },
+    /// An argument could not be parsed into the expected numeric type.
     InvalidValue(String),
 }
 
