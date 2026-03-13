@@ -15,7 +15,7 @@ homepage = "https://razkar-studio.github.io/farben"
 proc-macro = true
 
 [dependencies]
-farben-core = { path = "../farben-core" }
+farben-core = "0.1"
 syn = "2"
 quote = "1"
 proc-macro2 = "1"
