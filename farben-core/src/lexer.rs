@@ -5,7 +5,7 @@ use crate::{
 
 /// A text emphasis modifier supported by farben markup.
 #[derive(Debug, PartialEq)]
-pub(crate) enum EmphasisType {
+pub enum EmphasisType {
     Dim,
     Italic,
     Underline,
@@ -34,7 +34,7 @@ impl EmphasisType {
 
 /// The kind of styling operation a tag represents.
 #[derive(Debug, PartialEq)]
-pub(crate) enum TagType {
+pub enum TagType {
     /// Resets all active styles (`[/]`).
     Reset,
     /// Applies a text emphasis attribute.
@@ -45,7 +45,7 @@ pub(crate) enum TagType {
 
 /// A single unit produced by the tokenizer: either a styling tag or a run of plain text.
 #[derive(Debug, PartialEq)]
-pub(crate) enum Token {
+pub enum Token {
     Tag(TagType),
     Text(String),
 }
@@ -119,7 +119,7 @@ fn parse_tag(raw_tag: &str) -> Result<Vec<TagType>, LexError> {
 /// let tokens = tokenize("[red]hello")?;
 /// // => [Token::Tag(TagType::Color(Color::Named(NamedColor::Red))), Token::Text("hello".into())]
 /// ```
-pub(crate) fn tokenize(input: impl Into<String>) -> Result<Vec<Token>, LexError> {
+pub fn tokenize(input: impl Into<String>) -> Result<Vec<Token>, LexError> {
     let mut tokens: Vec<Token> = Vec::new();
     let input = input.into();
     let mut pos = 0;

@@ -1,0 +1,18 @@
+[package]
+name = "farben"
+version = "0.1.0"
+edition = "2024"
+description = "A zero-dependency terminal coloring library using markup-like syntax."
+license-file = "LICENSE.md"
+repository = "https://github.com/razkar-studio/farben"
+readme = "README.md"
+documentation = "https://docs.rs/farben"
+keywords = ["terminal", "color", "ansi", "markup", "cli"]
+categories = ["command-line-interface"]
+
+[dependencies]
+farben-core = { path = "../farben-core" }
+farben-macros = { path = "../farben-macros", optional = true }
+
+[features]
+compile = ["farben-macros"]

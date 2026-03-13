@@ -10,7 +10,7 @@ pub(crate) enum Ground {
 
 /// One of the eight standard ANSI named colors.
 #[derive(Debug, PartialEq)]
-pub(crate) enum NamedColor {
+pub enum NamedColor {
     Black,
     Red,
     Green,
@@ -23,7 +23,7 @@ pub(crate) enum NamedColor {
 
 /// A terminal color, expressed as a named color, an ANSI 256-palette index, or an RGB triple.
 #[derive(Debug, PartialEq)]
-pub(crate) enum Color {
+pub enum Color {
     Named(NamedColor),
     Ansi256(u8),
     Rgb(u8, u8, u8),

@@ -9,10 +9,9 @@
 //! let colored = color("[red]I'm red!");
 //! assert_eq!(colored, "\x1b[31mI'm red!\x1b[0m");
 //! ```
-pub(crate) mod ansi;
-pub mod errors;
-pub(crate) mod lexer;
-pub(crate) mod parser;
+use farben_core::*;
+#[cfg(feature = "compile")]
+pub use farben_macros::color;
 
 /// Parses and renders a farben markup string, appending a final SGR reset.
 ///
@@ -32,9 +31,35 @@ pub fn try_color(input: impl Into<String>) -> Result<String, errors::LexError> {
 /// # Panics
 ///
 /// Panics if the input is not valid farben markup. Use `try_color` to handle errors explicitly.
+#[cfg(not(feature = "compile"))]
 pub fn color(input: impl Into<String>) -> String {
+    color_runtime(input)
+}
+
+pub fn color_runtime(input: impl Into<String>) -> String {
     let input = input.into();
     try_color(input).expect("Failed to colorize")
+}
+
+/// Parses and renders a markup string and appends a SGR reset, with arguments supported.
+///
+/// # Panics
+///
+/// Panics if the input is not valid farben markup.
+#[cfg(not(feature = "compile"))]
+#[macro_export]
+macro_rules! color_fmt {
+    ($($arg:tt)*) => {
+        farben::color_runtime(format!($($arg)*))
+    };
+}
+
+#[cfg(feature = "compile")]
+#[macro_export]
+macro_rules! color_fmt {
+    ($fmt:literal $(, $arg:expr)*) => {
+        farben::color_runtime(format!(farben_macros::validate_color!($fmt) $(, $arg)*))
+    };
 }
 
 #[cfg(test)]
