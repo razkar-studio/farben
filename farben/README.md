@@ -42,7 +42,7 @@ use farben::color;
 
 println!("{}", color("[red]I'm red!")); // Runtime
 let color = "red";
-println!("{}", color_fmt!("[bold red]I'm bold and {color}!"));
+println!("{}", color_fmt!("[bold red]I'm bold and {color}!")); // Arguments supported
 println!("{}", color("[rgb(255,128,0)]I'm orange![/] Back to normal."));
 ```
 
@@ -52,7 +52,7 @@ use farben::color;
 
 println!("{}", color!("[red]I'm red!")); // Compile-time
 let color = "red";
-println!("{}", color_fmt!("[bold red]I'm bold and {color}!")); // Compile time validation
+println!("{}", color_fmt!("[bold red]I'm bold and {color}!")); // Compile time validation, not processing
 println!("{}", color!("[rgb(255,128,0)]I'm orange![/] Back to normal."));
 ```
 
@@ -61,6 +61,37 @@ println!("{}", color!("[rgb(255,128,0)]I'm orange![/] Back to normal."));
 * **Only 1 required runtime dependencies**: Having only 1 dependency, and that being the logic itself, farben doesn't introduce a complicated dependency tree.
 * **Opt-in Compile-time Processing**: Colorize at compile time with no runtime overhead, completely opt-in with one additional dependency: `farben-macros`.
 * **Complete Toolkit**: Supports basic named ANSI, ANSI256, and even RGB.
+
+## Installation
+
+To add `farben` as a dependency, run the following command on your Cargo project:
+
+```sh
+cargo add farben
+```
+
+Or alternatively, put directly on your `Cargo.toml`:
+
+```toml
+[dependencies]
+farben = "0.2"
+```
+
+To enable compile-time processing, use the `compile` feature, like so:
+
+```sh
+cargo add farben --features compile
+```
+
+Or in the `Cargo.toml`:
+
+```toml
+[dependencies]
+farben = { version: "0.2", features: ["compile"] }
+```
+
+> [!NOTE] 
+> If you're using the `compile` feature, `color` is a **macro**, not a function. Use as `color!` going forward.
 
 ## Syntax
 
