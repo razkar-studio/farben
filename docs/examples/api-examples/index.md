@@ -22,8 +22,6 @@ println!("{}", color("[rgb(255,128,0)]I'm orange![/] Back to normal."));
 `color()` will panic on invalid markup. If you need to handle errors gracefully, use [`try_color()`](#try-color-input) instead.
 :::
 
----
-
 ## `try_color(input)`
 
 Like `color()`, but returns a `Result` instead of panicking on invalid markup.
@@ -46,8 +44,6 @@ match try_color("[red]Hello!") {
 ::: tip
 Prefer `try_color()` in library code or anywhere you don't control the input string.
 :::
-
----
 
 ## Tag Syntax
 
@@ -128,8 +124,6 @@ Prefix a `[` with `\` to treat it as a literal bracket instead of a tag.
 color("Use \\[red] to set a red color.")
 // Output: Use [red] to set a red color.
 ```
-
----
 
 ## Error Types
 

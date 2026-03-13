@@ -14,8 +14,6 @@ fn main() {
 }
 ```
 
----
-
 ## Status Logger
 
 A tiny logger that prefixes messages with a colored status tag.
@@ -40,8 +38,6 @@ fn main() {
 }
 ```
 
----
-
 ## RGB Gradient Labels
 
 Use RGB colors to render visually distinct labels.
@@ -61,8 +57,6 @@ fn main() {
     }
 }
 ```
-
----
 
 ## CLI Argument Error Display
 
@@ -89,8 +83,6 @@ fn main() {
     }
 }
 ```
-
----
 
 ## Progress Steps
 
