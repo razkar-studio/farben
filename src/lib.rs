@@ -16,7 +16,7 @@ pub(crate) mod parser;
 
 pub fn color(input: impl Into<String>) -> String {
     let input = input.into();
-    let mut res = parser::render(lexer::tokenize(input));
+    let mut res = parser::render(lexer::tokenize(input).expect("failed to colorize"));
     res.push_str("\x1b[0m");
     res
 }
