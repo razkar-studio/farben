@@ -10,6 +10,7 @@
 //! assert_eq!(colored, "\x1b[31mI'm red!\x1b[0m");
 //! ```
 pub(crate) mod ansi;
+pub mod errors;
 pub(crate) mod lexer;
 pub(crate) mod parser;
 
