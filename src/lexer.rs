@@ -84,6 +84,14 @@ pub(crate) fn tokenize(input: impl Into<String>) -> Result<Vec<Token>, LexError>
             break;
         };
         let abs_starting = starting + pos;
+        // escape logic
+        if abs_starting > 0 && input[abs_starting - 1..abs_starting] == "\\".to_string() {
+            tokens.push(Token::Text(input[pos..abs_starting - 1].to_string()));
+            tokens.push(Token::Text(String::from('[')));
+            pos = abs_starting + 1;
+            continue;
+        }
+
         if pos != abs_starting {
             tokens.push(Token::Text(input[pos..abs_starting].to_string()));
         }

@@ -14,9 +14,14 @@ pub mod errors;
 pub(crate) mod lexer;
 pub(crate) mod parser;
 
+pub fn try_color(input: impl Into<String>) -> Result<String, errors::LexError> {
+    let input = input.into();
+    let mut res = parser::render(lexer::tokenize(input)?);
+    res.push_str("\x1b[0m");
+    Ok(res)
+}
+
 pub fn color(input: impl Into<String>) -> String {
     let input = input.into();
-    let mut res = parser::render(lexer::tokenize(input).expect("failed to colorize"));
-    res.push_str("\x1b[0m");
-    res
+    try_color(input).expect("Failed to colorize")
 }
