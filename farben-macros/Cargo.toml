@@ -2,6 +2,14 @@
 name = "farben-macros"
 version = "0.1.0"
 edition = "2024"
+description = "Procedural macros for Farben"
+license-file = "LICENSE.md"
+repository = "https://github.com/razkar-studio/farben"
+readme = "README.md"
+documentation = "https://docs.rs/farben-macros"
+keywords = ["terminal", "color", "ansi", "markup", "cli"]
+categories = ["command-line-interface"]
+homepage = "https://razkar-studio.github.io/farben"
 
 [lib]
 proc-macro = true

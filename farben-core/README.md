@@ -2,7 +2,7 @@
 
 # farben-core
 
-### The core logic for Farben
+### The internal core library for [Farben](https://github.com/razkar-studio/farben)
 
 [![Crates.io Version](https://img.shields.io/crates/v/farben)](https://crates.io/crates/farben)
 [![docs.rs](https://img.shields.io/docsrs/farben)](https://docs.rs/farben)
