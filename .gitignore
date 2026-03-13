@@ -1,2 +1,4 @@
 /target
 *.psu
+.vitepress
+node_modules/
