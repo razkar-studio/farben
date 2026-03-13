@@ -1,11 +1,14 @@
 use std::fmt::Write;
 
-enum Ground {
+use crate::lexer::EmphasisType;
+
+pub(crate) enum Ground {
     Foreground,
     Background,
 }
 
-enum NamedColor {
+#[derive(Debug, PartialEq)]
+pub(crate) enum NamedColor {
     Black,
     Red,
     Green,
@@ -16,13 +19,14 @@ enum NamedColor {
     White,
 }
 
+#[derive(Debug, PartialEq)]
 pub(crate) enum Color {
     Named(NamedColor),
     Ansi256(u8),
     Rgb(u8, u8, u8),
 }
 
-struct Style {
+pub(crate) struct Style {
     fg: Option<Color>,
     bg: Option<Color>,
     bold: bool,
@@ -31,6 +35,36 @@ struct Style {
     underline: bool,
     strikethrough: bool,
     blink: bool,
+}
+
+impl NamedColor {
+    pub(crate) fn from_str(input: &str) -> Option<Self> {
+        match input {
+            "black" => Some(Self::Black),
+            "red" => Some(Self::Red),
+            "green" => Some(Self::Green),
+            "yellow" => Some(Self::Yellow),
+            "blue" => Some(Self::Blue),
+            "magenta" => Some(Self::Magenta),
+            "cyan" => Some(Self::Cyan),
+            "white" => Some(Self::White),
+            _ => None,
+        }
+    }
+}
+
+fn vec_to_ansi_seq(vec: Vec<u8>) -> String {
+    let mut seq = String::from("\x1b[");
+
+    for (i, n) in vec.iter().enumerate() {
+        if i != 0 {
+            seq.push(';');
+        }
+        write!(seq, "{n}").unwrap();
+    }
+
+    seq.push('m');
+    seq
 }
 
 fn encode_color_sgr(ansi: &mut Vec<u8>, param: Ground, color: &Color) {
@@ -60,7 +94,26 @@ fn encode_color_sgr(ansi: &mut Vec<u8>, param: Ground, color: &Color) {
     }
 }
 
-fn style_to_ansi(style: &Style) -> String {
+pub(crate) fn color_to_ansi(color: &Color, ground: Ground) -> String {
+    let mut ansi: Vec<u8> = Vec::new();
+    encode_color_sgr(&mut ansi, ground, color);
+
+    vec_to_ansi_seq(ansi)
+}
+
+pub(crate) fn emphasis_to_ansi(emphasis: &EmphasisType) -> String {
+    let code = match emphasis {
+        EmphasisType::Bold => 1,
+        EmphasisType::Dim => 2,
+        EmphasisType::Italic => 3,
+        EmphasisType::Underline => 4,
+        EmphasisType::Blink => 5,
+        EmphasisType::Strikethrough => 9,
+    };
+    vec_to_ansi_seq(vec![code])
+}
+
+pub(crate) fn style_to_ansi(style: &Style) -> String {
     let mut ansi: Vec<u8> = Vec::new();
 
     for (enabled, code) in [
@@ -87,15 +140,5 @@ fn style_to_ansi(style: &Style) -> String {
         return String::new();
     }
 
-    let mut seq = String::from("\x1b[");
-
-    for (i, n) in ansi.iter().enumerate() {
-        if i != 0 {
-            seq.push(';');
-        }
-        write!(seq, "{n}").unwrap();
-    }
-
-    seq.push('m');
-    seq
+    vec_to_ansi_seq(ansi)
 }
