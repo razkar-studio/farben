@@ -18,7 +18,7 @@ Look at the tagline up there ^
 ## Documentation
 
 > [!NOTE]
-> The user guide right now is literally unreadable.
+> The user guide right now is a work in progress.
 
 - **User Guide**: [https://razkar-studio.github.io/farben](https://razkar-studio.github.io/farben)
 - **API Reference**: [https://docs.rs/farben](https://docs.rs/farben)
@@ -46,7 +46,7 @@ println!("{}", color!("[rgb(255,128,0)]I'm orange![/] Back to normal."));
 
 ## Features
 * **Markup-like Syntax**: Easy to parse, understand, and powerful when used.
-* **Only 1 required runtime dependencies**: Having only 1 dependency, and that being the logic itself, farben doesn't introduce a complicated dependency tree.
+* **Zero required runtime dependencies, only path dependency**: Having only 1 path dependency, and that being the logic itself `farben-core`,  farben doesn't introduce a complicated dependency tree.
 * **Opt-in Compile-time Processing**: Colorize at compile time with no runtime overhead, completely opt-in with one additional dependency: `farben-macros`.
 * **Complete Toolkit**: Supports basic named ANSI, ANSI256, and even RGB.
 

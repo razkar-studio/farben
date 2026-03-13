@@ -4,7 +4,7 @@ version = 4
 
 [[package]]
 name = "farben"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "farben-core 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "farben-macros 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
