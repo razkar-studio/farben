@@ -6,13 +6,22 @@
 
 </div>
 
-> [!FAILURE] Warning
-> Farben, in this current state, is **extremely unstable**. It only has one public interface and not a lot yet to look at.
+> [!WARNING]
+> Farben, in this current state, is **extremely unstable**. It only has one or two public interface,
+> unfinished features, and is experimetal.
 > I do not recommend using it in production, at least not yet.
 
 ## What Is Farben
 
 Look at the tagline up there ^
+
+## Documentation
+
+> [!NOTE]
+> The user guide right now is literally unreadable.
+
+- **User Guide**: [https://razkar-studio.github.io/farben](https://razkar-studio.github.io/farben)
+- **API Reference**: [https://docs.rs/farben](https://docs.rs/farben)
 
 ## Usage
 ```rust
