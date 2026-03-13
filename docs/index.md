@@ -8,11 +8,11 @@ hero:
   tagline: "Farben, a zero-dependency terminal coloring library using markup-like syntax."
   actions:
     - theme: brand
-      text: Markdown Examples
-      link: /markdown-examples
+      text: User Guide
+      link: /guide
     - theme: alt
       text: API Examples
-      link: /api-examples
+      link: /examples/api-examples
 
 features:
   - title: Zero-dependencies

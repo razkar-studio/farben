@@ -26,6 +26,13 @@ export default defineConfig({
         link: "/guide",
         items: [{}],
       },
+      {
+        text: "Examples",
+        items: [
+          { text: "API Reference", link: "/examples/api-examples" },
+          { text: "Project Examples", link: "/examples/api-examples" },
+        ],
+      },
     ],
 
     socialLinks: [
