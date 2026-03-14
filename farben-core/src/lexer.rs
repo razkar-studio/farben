@@ -6,12 +6,38 @@ use crate::{
 /// A text emphasis modifier supported by farben markup.
 #[derive(Debug, PartialEq)]
 pub enum EmphasisType {
+    /// Reduced intensity (SGR 2).
     Dim,
+    /// Italic text (SGR 3).
     Italic,
+    /// Underlined text (SGR 4).
     Underline,
+    /// Bold text (SGR 1).
     Bold,
+    /// Crossed-out text (SGR 9).
     Strikethrough,
+    /// Blinking text (SGR 5). Terminal support varies.
     Blink,
+}
+
+/// The kind of styling operation a tag represents.
+#[derive(Debug, PartialEq)]
+pub enum TagType {
+    /// Resets all active styles (`[/]`).
+    Reset,
+    /// Applies a text emphasis attribute.
+    Emphasis(EmphasisType),
+    /// Sets a foreground or background color.
+    Color { color: Color, ground: Ground },
+}
+
+/// A single unit produced by the tokenizer: either a styling tag or a run of plain text.
+#[derive(Debug, PartialEq)]
+pub enum Token {
+    /// A parsed styling tag.
+    Tag(TagType),
+    /// A run of plain text with no markup.
+    Text(String),
 }
 
 impl EmphasisType {
@@ -30,24 +56,6 @@ impl EmphasisType {
             _ => None,
         }
     }
-}
-
-/// The kind of styling operation a tag represents.
-#[derive(Debug, PartialEq)]
-pub enum TagType {
-    /// Resets all active styles (`[/]`).
-    Reset,
-    /// Applies a text emphasis attribute.
-    Emphasis(EmphasisType),
-    /// Sets the foreground color.
-    Color { color: Color, ground: Ground },
-}
-
-/// A single unit produced by the tokenizer: either a styling tag or a run of plain text.
-#[derive(Debug, PartialEq)]
-pub enum Token {
-    Tag(TagType),
-    Text(String),
 }
 
 /// Parses a single whitespace-delimited tag part into a `TagType`.

@@ -4,9 +4,32 @@ use crate::lexer::EmphasisType;
 
 /// Whether a color applies to the foreground (text) or background.
 #[derive(Debug, PartialEq)]
-pub(crate) enum Ground {
+pub enum Ground {
+    /// Applies the color to the text itself (SGR 30-series / 38).
     Foreground,
+    /// Applies the color to the cell background (SGR 40-series / 48).
     Background,
+}
+
+/// A complete set of visual attributes for a span of text.
+#[derive(Default)]
+pub struct Style {
+    /// Foreground color. `None` leaves the terminal default unchanged.
+    pub fg: Option<Color>,
+    /// Background color. `None` leaves the terminal default unchanged.
+    pub bg: Option<Color>,
+    /// Bold text (SGR 1).
+    pub bold: bool,
+    /// Reduced intensity text (SGR 2).
+    pub dim: bool,
+    /// Italic text (SGR 3).
+    pub italic: bool,
+    /// Underlined text (SGR 4).
+    pub underline: bool,
+    /// Crossed-out text (SGR 9).
+    pub strikethrough: bool,
+    /// Blinking text (SGR 5). Terminal support varies.
+    pub blink: bool,
 }
 
 /// One of the eight standard ANSI named colors.
@@ -28,19 +51,6 @@ pub enum Color {
     Named(NamedColor),
     Ansi256(u8),
     Rgb(u8, u8, u8),
-}
-
-/// A complete set of visual attributes for a span of text.
-#[derive(Default)]
-pub struct Style {
-    pub fg: Option<Color>,
-    pub bg: Option<Color>,
-    pub bold: bool,
-    pub dim: bool,
-    pub italic: bool,
-    pub underline: bool,
-    pub strikethrough: bool,
-    pub blink: bool,
 }
 
 impl NamedColor {
