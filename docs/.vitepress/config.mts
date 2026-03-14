@@ -4,7 +4,7 @@ import { defineConfig } from "vitepress";
 export default defineConfig({
   base: "/farben/",
 
-  title: "farben",
+  title: "Farben",
   description: "Terminal Coloring Library",
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config

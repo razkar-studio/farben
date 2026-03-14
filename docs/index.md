@@ -3,7 +3,7 @@
 layout: home
 
 hero:
-  name: "farben"
+  name: "Farben"
   text: "Markup-like Terminal Coloring Library"
   tagline: "Color your terminal without typing whatever the heck '\\x1b[31m' is."
   actions:
