@@ -18,7 +18,7 @@ checksum = "ad848802cf534a943d85ff47c3b89ec38dcd1dfd39210f29c5ece7c26c01ba43"
 
 [[package]]
 name = "farben-core"
-version = "0.2.1"
+version = "0.3.0"
 
 [[package]]
 name = "farben-macros"
