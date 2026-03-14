@@ -3,12 +3,20 @@
 Welcome to Farben's friendly user guide! This user guide will teach you everything you need to know about Farben
 to color your text.
 
+Farben *(as in "color" in german)* is a terminal coloring library that uses a unique (well...) markup-like syntax
+that makes your experience coloring just better. 
+
+::: details
+For your information, I am NOT german (not that it's a bad thing). I'm Indonesian! :indonesia:
+:::
+
 ::: warning
 Farben is currently **experimental** and is unstable. Expect breaking API changes and bugs. If you do find them,
 please submit an issue to the GitHub repository link below.
 :::
 
-## Links
+## Resources
+
 * **GitHub Repository**: [https://github.com/razkar-studio/farben](https://github.com/razkar-studio/farben)
 * **API Reference**: [https://docs.rs/farben](https://docs.rs/farben)
   + `farben-core`: [https://docs.rs/farben-core](https://docs.rs/farben-core)

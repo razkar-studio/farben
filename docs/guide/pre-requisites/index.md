@@ -48,6 +48,34 @@ To start, change the code inside `main.rs` to the following:
 use farben::*;
 
 fn main() {
-    println!("{}")
+    cprintln!("[bold blue]Hello, [italic cyan]world!");
 }
 ```
+
+## Opting-in to Compiling
+Farben has this neat feature called `compile`, which parses your soon-to-be colored text *in compilation*, not runtime.
+This makes for **zero runtime overhead**, and **compile-time errors** instead of unexpected runtime panics. 
+I'm not saying you *should*, but yeah, you should enable this feature, by running this command instead of `cargo add farben`:
+
+```sh
+cargo add farben --features compile
+```
+
+### What's the Catch?
+
+There HAS to be a catch, right? All these benefits and no catch? Well, there's not much.
+The only change when you enable this feature is that `color()` (a function) becomes `color!()` (a macro). 
+But that doesn't matter, since we'll be using `cprintln!()` anyway.
+
+::: info
+It also introduces a new dependency -- `farben-macros`, but you don't have to worry about it.
+:::
+
+::: details
+The thing you should note though: "Zero runtime overhead" only applies to the `color!()` macro, which takes a fixed, non-formatted string. This doesn't mean there's no benefits though, as the other functions you'll be seeing will have *compile-time validation*, which is still a worth-it feature.
+:::
+
+---
+
+Now that you got Farben all set up,
+Let's. Get. Coloring!

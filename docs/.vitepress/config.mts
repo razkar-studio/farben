@@ -24,7 +24,10 @@ export default defineConfig({
       {
         text: "User Guide",
         link: "/guide/",
-        items: [{ text: "Setting Up Farben", link: "/guide/pre-requisites/" }],
+        items: [
+          { text: "Setting Up Farben", link: "/guide/pre-requisites/" },
+          { text: "Getting Started", link: "/guide/getting-started/" },
+        ],
       },
       {
         text: "Examples",
