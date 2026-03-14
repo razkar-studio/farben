@@ -9,10 +9,13 @@ hero:
   actions:
     - theme: brand
       text: User Guide
-      link: /guide
+      link: /guide/
     - theme: alt
       text: API Examples
-      link: /examples/api-examples
+      link: /examples/api-examples/
+    - theme: alt
+      text: Project Examples
+      link: /examples/project-examples/
 
 features:
   - title: Zero-dependencies
