@@ -1,6 +1,6 @@
 [package]
 name = "farben"
-version = "0.3.0"
+version = "0.3.1"
 edition = "2024"
 description = "A zero-dependency terminal coloring library using markup-like syntax."
 license-file = "LICENSE.md"
@@ -13,7 +13,7 @@ homepage = "https://razkar-studio.github.io/farben"
 
 [dependencies]
 farben-core = "0.2"
-farben-macros = { version = "0.1", optional = true }
+farben-macros = { version = "0.2", optional = true }
 
 [features]
 compile = ["farben-macros"]
