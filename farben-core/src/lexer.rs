@@ -1,5 +1,5 @@
 use crate::{
-    ansi::{Color, NamedColor},
+    ansi::{Color, Ground, NamedColor},
     errors::LexError,
 };
 
@@ -40,7 +40,7 @@ pub enum TagType {
     /// Applies a text emphasis attribute.
     Emphasis(EmphasisType),
     /// Sets the foreground color.
-    Color(Color),
+    Color { color: Color, ground: Ground },
 }
 
 /// A single unit produced by the tokenizer: either a styling tag or a run of plain text.
@@ -65,22 +65,38 @@ pub enum Token {
 /// Returns `LexError::InvalidValue` if a numeric argument cannot be parsed.
 /// Returns `LexError::InvalidArgumentCount` if `rgb(...)` does not receive exactly three values.
 fn parse_part(part: &str) -> Result<TagType, LexError> {
+    let (ground, part) = if let Some(rest) = part.strip_prefix("bg:") {
+        (Ground::Background, rest)
+    } else if let Some(rest) = part.strip_prefix("fg:") {
+        (Ground::Foreground, rest)
+    } else {
+        (Ground::Foreground, part)
+    };
     if part == "/" {
         Ok(TagType::Reset)
     } else if let Some(color) = NamedColor::from_str(part) {
-        Ok(TagType::Color(Color::Named(color)))
+        Ok(TagType::Color {
+            color: Color::Named(color),
+            ground,
+        })
     } else if let Some(emphasis) = EmphasisType::from_str(part) {
         Ok(TagType::Emphasis(emphasis))
     } else if let Some(ansi_val) = part.strip_prefix("ansi(").and_then(|s| s.strip_suffix(")")) {
         match ansi_val.trim().parse::<u8>() {
-            Ok(code) => Ok(TagType::Color(Color::Ansi256(code))),
+            Ok(code) => Ok(TagType::Color {
+                color: Color::Ansi256(code),
+                ground,
+            }),
             Err(_) => Err(LexError::InvalidValue(ansi_val.to_string())),
         }
     } else if let Some(rgb_val) = part.strip_prefix("rgb(").and_then(|s| s.strip_suffix(")")) {
         let parts: Result<Vec<u8>, _> =
             rgb_val.split(',').map(|v| v.trim().parse::<u8>()).collect();
         match parts {
-            Ok(v) if v.len() == 3 => Ok(TagType::Color(Color::Rgb(v[0], v[1], v[2]))),
+            Ok(v) if v.len() == 3 => Ok(TagType::Color {
+                color: Color::Rgb(v[0], v[1], v[2]),
+                ground,
+            }),
             Ok(v) => Err(LexError::InvalidArgumentCount {
                 expected: 3,
                 got: v.len(),
@@ -162,7 +178,7 @@ pub fn tokenize(input: impl Into<String>) -> Result<Vec<Token>, LexError> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::ansi::{Color, NamedColor};
+    use crate::ansi::{Color, Ground, NamedColor};
 
     // --- EmphasisType::from_str ---
 
@@ -196,53 +212,119 @@ mod tests {
 
     #[test]
     fn test_parse_part_reset() {
-        let result = parse_part("/");
-        assert_eq!(result.unwrap(), TagType::Reset);
+        assert_eq!(parse_part("/").unwrap(), TagType::Reset);
     }
 
     #[test]
-    fn test_parse_part_named_color() {
-        let result = parse_part("red");
+    fn test_parse_part_named_color_foreground_default() {
         assert_eq!(
-            result.unwrap(),
-            TagType::Color(Color::Named(NamedColor::Red))
+            parse_part("red").unwrap(),
+            TagType::Color {
+                color: Color::Named(NamedColor::Red),
+                ground: Ground::Foreground,
+            }
+        );
+    }
+
+    #[test]
+    fn test_parse_part_named_color_explicit_fg() {
+        assert_eq!(
+            parse_part("fg:red").unwrap(),
+            TagType::Color {
+                color: Color::Named(NamedColor::Red),
+                ground: Ground::Foreground,
+            }
+        );
+    }
+
+    #[test]
+    fn test_parse_part_named_color_bg() {
+        assert_eq!(
+            parse_part("bg:red").unwrap(),
+            TagType::Color {
+                color: Color::Named(NamedColor::Red),
+                ground: Ground::Background,
+            }
         );
     }
 
     #[test]
     fn test_parse_part_emphasis_bold() {
-        let result = parse_part("bold");
-        assert_eq!(result.unwrap(), TagType::Emphasis(EmphasisType::Bold));
+        assert_eq!(
+            parse_part("bold").unwrap(),
+            TagType::Emphasis(EmphasisType::Bold)
+        );
     }
 
     #[test]
     fn test_parse_part_ansi256_valid() {
-        let result = parse_part("ansi(200)");
-        assert_eq!(result.unwrap(), TagType::Color(Color::Ansi256(200)));
+        assert_eq!(
+            parse_part("ansi(200)").unwrap(),
+            TagType::Color {
+                color: Color::Ansi256(200),
+                ground: Ground::Foreground,
+            }
+        );
+    }
+
+    #[test]
+    fn test_parse_part_ansi256_bg() {
+        assert_eq!(
+            parse_part("bg:ansi(200)").unwrap(),
+            TagType::Color {
+                color: Color::Ansi256(200),
+                ground: Ground::Background,
+            }
+        );
     }
 
     #[test]
     fn test_parse_part_ansi256_with_whitespace() {
-        let result = parse_part("ansi( 42 )");
-        assert_eq!(result.unwrap(), TagType::Color(Color::Ansi256(42)));
+        assert_eq!(
+            parse_part("ansi( 42 )").unwrap(),
+            TagType::Color {
+                color: Color::Ansi256(42),
+                ground: Ground::Foreground,
+            }
+        );
     }
 
     #[test]
     fn test_parse_part_ansi256_invalid_value() {
-        let result = parse_part("ansi(abc)");
-        assert!(result.is_err());
+        assert!(parse_part("ansi(abc)").is_err());
     }
 
     #[test]
     fn test_parse_part_rgb_valid() {
-        let result = parse_part("rgb(255,128,0)");
-        assert_eq!(result.unwrap(), TagType::Color(Color::Rgb(255, 128, 0)));
+        assert_eq!(
+            parse_part("rgb(255,128,0)").unwrap(),
+            TagType::Color {
+                color: Color::Rgb(255, 128, 0),
+                ground: Ground::Foreground,
+            }
+        );
+    }
+
+    #[test]
+    fn test_parse_part_rgb_bg() {
+        assert_eq!(
+            parse_part("bg:rgb(255,128,0)").unwrap(),
+            TagType::Color {
+                color: Color::Rgb(255, 128, 0),
+                ground: Ground::Background,
+            }
+        );
     }
 
     #[test]
     fn test_parse_part_rgb_with_spaces() {
-        let result = parse_part("rgb( 10 , 20 , 30 )");
-        assert_eq!(result.unwrap(), TagType::Color(Color::Rgb(10, 20, 30)));
+        assert_eq!(
+            parse_part("rgb( 10 , 20 , 30 )").unwrap(),
+            TagType::Color {
+                color: Color::Rgb(10, 20, 30),
+                ground: Ground::Foreground,
+            }
+        );
     }
 
     #[test]
@@ -257,42 +339,71 @@ mod tests {
 
     #[test]
     fn test_parse_part_rgb_invalid_value() {
-        let result = parse_part("rgb(r,g,b)");
-        assert!(result.is_err());
+        assert!(parse_part("rgb(r,g,b)").is_err());
     }
 
     #[test]
     fn test_parse_part_unknown_tag_returns_error() {
-        let result = parse_part("fuchsia");
-        assert!(result.is_err());
+        assert!(parse_part("fuchsia").is_err());
     }
 
     // --- tokenize ---
 
     #[test]
     fn test_tokenize_plain_text() {
-        let result = tokenize("hello world");
-        assert!(result.is_ok());
-        let tokens = result.unwrap();
+        let tokens = tokenize("hello world").unwrap();
         assert_eq!(tokens, vec![Token::Text("hello world".into())]);
     }
 
     #[test]
     fn test_tokenize_empty_string() {
-        let result = tokenize("");
-        assert!(result.is_ok());
-        assert!(result.unwrap().is_empty());
+        assert!(tokenize("").unwrap().is_empty());
     }
 
     #[test]
     fn test_tokenize_single_color_tag() {
-        let result = tokenize("[red]text");
-        assert!(result.is_ok());
-        let tokens = result.unwrap();
+        let tokens = tokenize("[red]text").unwrap();
         assert_eq!(
             tokens,
             vec![
-                Token::Tag(TagType::Color(Color::Named(NamedColor::Red))),
+                Token::Tag(TagType::Color {
+                    color: Color::Named(NamedColor::Red),
+                    ground: Ground::Foreground
+                }),
+                Token::Text("text".into()),
+            ]
+        );
+    }
+
+    #[test]
+    fn test_tokenize_bg_color_tag() {
+        let tokens = tokenize("[bg:red]text").unwrap();
+        assert_eq!(
+            tokens,
+            vec![
+                Token::Tag(TagType::Color {
+                    color: Color::Named(NamedColor::Red),
+                    ground: Ground::Background
+                }),
+                Token::Text("text".into()),
+            ]
+        );
+    }
+
+    #[test]
+    fn test_tokenize_fg_and_bg_in_same_bracket() {
+        let tokens = tokenize("[fg:white bg:blue]text").unwrap();
+        assert_eq!(
+            tokens,
+            vec![
+                Token::Tag(TagType::Color {
+                    color: Color::Named(NamedColor::White),
+                    ground: Ground::Foreground
+                }),
+                Token::Tag(TagType::Color {
+                    color: Color::Named(NamedColor::Blue),
+                    ground: Ground::Background
+                }),
                 Token::Text("text".into()),
             ]
         );
@@ -300,21 +411,20 @@ mod tests {
 
     #[test]
     fn test_tokenize_reset_tag() {
-        let result = tokenize("[/]");
-        assert!(result.is_ok());
-        assert_eq!(result.unwrap(), vec![Token::Tag(TagType::Reset)]);
+        assert_eq!(tokenize("[/]").unwrap(), vec![Token::Tag(TagType::Reset)]);
     }
 
     #[test]
     fn test_tokenize_compound_tag() {
-        let result = tokenize("[bold red]hi");
-        assert!(result.is_ok());
-        let tokens = result.unwrap();
+        let tokens = tokenize("[bold red]hi").unwrap();
         assert_eq!(
             tokens,
             vec![
                 Token::Tag(TagType::Emphasis(EmphasisType::Bold)),
-                Token::Tag(TagType::Color(Color::Named(NamedColor::Red))),
+                Token::Tag(TagType::Color {
+                    color: Color::Named(NamedColor::Red),
+                    ground: Ground::Foreground
+                }),
                 Token::Text("hi".into()),
             ]
         );
@@ -322,9 +432,7 @@ mod tests {
 
     #[test]
     fn test_tokenize_escaped_bracket_at_start() {
-        let result = tokenize("\\[not a tag]");
-        assert!(result.is_ok());
-        let tokens = result.unwrap();
+        let tokens = tokenize("\\[not a tag]").unwrap();
         assert_eq!(
             tokens,
             vec![Token::Text("[".into()), Token::Text("not a tag]".into()),]
@@ -333,9 +441,7 @@ mod tests {
 
     #[test]
     fn test_tokenize_escaped_bracket_with_prefix() {
-        let result = tokenize("before\\[not a tag]");
-        assert!(result.is_ok());
-        let tokens = result.unwrap();
+        let tokens = tokenize("before\\[not a tag]").unwrap();
         assert_eq!(
             tokens,
             vec![
@@ -348,26 +454,25 @@ mod tests {
 
     #[test]
     fn test_tokenize_unclosed_tag_returns_error() {
-        let result = tokenize("[red");
-        assert!(result.is_err());
+        assert!(tokenize("[red").is_err());
     }
 
     #[test]
     fn test_tokenize_invalid_tag_name_returns_error() {
-        let result = tokenize("[fuchsia]");
-        assert!(result.is_err());
+        assert!(tokenize("[fuchsia]").is_err());
     }
 
     #[test]
     fn test_tokenize_text_before_and_after_tag() {
-        let result = tokenize("before[red]after");
-        assert!(result.is_ok());
-        let tokens = result.unwrap();
+        let tokens = tokenize("before[red]after").unwrap();
         assert_eq!(
             tokens,
             vec![
                 Token::Text("before".into()),
-                Token::Tag(TagType::Color(Color::Named(NamedColor::Red))),
+                Token::Tag(TagType::Color {
+                    color: Color::Named(NamedColor::Red),
+                    ground: Ground::Foreground
+                }),
                 Token::Text("after".into()),
             ]
         );
@@ -375,22 +480,37 @@ mod tests {
 
     #[test]
     fn test_tokenize_ansi256_tag() {
-        let result = tokenize("[ansi(1)]text");
-        assert!(result.is_ok());
-        let tokens = result.unwrap();
-        assert_eq!(tokens[0], Token::Tag(TagType::Color(Color::Ansi256(1))));
+        let tokens = tokenize("[ansi(1)]text").unwrap();
+        assert_eq!(
+            tokens[0],
+            Token::Tag(TagType::Color {
+                color: Color::Ansi256(1),
+                ground: Ground::Foreground,
+            })
+        );
     }
 
     #[test]
     fn test_tokenize_rgb_tag() {
-        let result = tokenize("[rgb(255,0,128)]text");
-        assert!(result.is_ok());
-        let tokens = result.unwrap();
+        let tokens = tokenize("[rgb(255,0,128)]text").unwrap();
         assert_eq!(
             tokens[0],
-            Token::Tag(TagType::Color(Color::Rgb(255, 0, 128)))
+            Token::Tag(TagType::Color {
+                color: Color::Rgb(255, 0, 128),
+                ground: Ground::Foreground,
+            })
+        );
+    }
+
+    #[test]
+    fn test_tokenize_bg_rgb_tag() {
+        let tokens = tokenize("[bg:rgb(0,255,0)]text").unwrap();
+        assert_eq!(
+            tokens[0],
+            Token::Tag(TagType::Color {
+                color: Color::Rgb(0, 255, 0),
+                ground: Ground::Background,
+            })
         );
     }
 }
-
-// Skipped (side effects): none: all functions in lexer.rs are pure.

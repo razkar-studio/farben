@@ -4,6 +4,36 @@ Notable changes to Farben will be documented here.
 
 ---
 
+## [0.3.0] - 2026-03-14 — farben
+
+### Added
+- `color!()` — compile-time markup processing via optional `compile` feature flag
+- `color_fmt!()` — format args support with compile-time tag validation when `compile` feature is enabled
+- `validate_color!()` — proc-macro that validates farben markup at compile time
+- `color_runtime()` — internal runtime fallback used by `color_fmt!`
+- `bg:` and `fg:` prefix support in color tags — `[bg:red]`, `[fg:white bg:blue]`
+- `farben-core` and `farben-macros` as separate workspace crates
+- `compile` feature flag for opt-in compile-time processing
+
+### Changed
+- Internal logic moved to `farben-core`
+- `color()` replaced by `color!` proc-macro when `compile` feature is enabled
+
+---
+
+## [0.2.0] - 2026-03-14 — farben-core
+
+### Added
+- `bg:` and `fg:` prefix support for color tags — `[bg:red]`, `[fg:white]`, etc.
+- `Ground` field added to `TagType::Color` variant — now `TagType::Color { color, ground }`
+- Background color support in `encode_color_sgr` and `color_to_ansi`
+- New tests for background color parsing, tokenizing, and rendering
+
+### Changed
+- `TagType::Color(Color)` restructured to `TagType::Color { color: Color, ground: Ground }`
+
+---
+
 ## [0.2.0] - 2026-03-14
 
 ### Added

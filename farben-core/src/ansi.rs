@@ -3,6 +3,7 @@ use std::fmt::Write;
 use crate::lexer::EmphasisType;
 
 /// Whether a color applies to the foreground (text) or background.
+#[derive(Debug, PartialEq)]
 pub(crate) enum Ground {
     Foreground,
     Background,

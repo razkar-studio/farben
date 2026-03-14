@@ -12,8 +12,8 @@ pub fn render(tokens: Vec<Token>) -> String {
         match tok {
             Token::Text(text) => result.push_str(text.as_str()),
             Token::Tag(tag) => match tag {
-                TagType::Color(color) => {
-                    result.push_str(color_to_ansi(&color, Ground::Foreground).as_str())
+                TagType::Color { color, ground } => {
+                    result.push_str(color_to_ansi(&color, ground).as_str())
                 }
                 TagType::Emphasis(emphasis) => {
                     result.push_str(emphasis_to_ansi(&emphasis).as_str())
@@ -29,86 +29,125 @@ pub fn render(tokens: Vec<Token>) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::ansi::{Color, NamedColor};
+    use crate::ansi::{Color, Ground, NamedColor};
     use crate::lexer::{EmphasisType, TagType, Token};
 
     // --- render ---
-
     #[test]
     fn test_render_empty_token_list() {
         let result = render(vec![]);
         assert_eq!(result, "");
     }
-
     #[test]
     fn test_render_plain_text_token() {
         let result = render(vec![Token::Text("hello".into())]);
         assert_eq!(result, "hello");
     }
-
     #[test]
     fn test_render_named_color_tag() {
-        let result = render(vec![Token::Tag(TagType::Color(Color::Named(
-            NamedColor::Red,
-        )))]);
+        let result = render(vec![Token::Tag(TagType::Color {
+            color: Color::Named(NamedColor::Red),
+            ground: Ground::Foreground,
+        })]);
         assert_eq!(result, "\x1b[31m");
     }
-
     #[test]
     fn test_render_emphasis_tag_bold() {
         let result = render(vec![Token::Tag(TagType::Emphasis(EmphasisType::Bold))]);
         assert_eq!(result, "\x1b[1m");
     }
-
     #[test]
     fn test_render_reset_tag() {
         let result = render(vec![Token::Tag(TagType::Reset)]);
         assert_eq!(result, "\x1b[0m");
     }
-
     #[test]
     fn test_render_color_then_text() {
         let result = render(vec![
-            Token::Tag(TagType::Color(Color::Named(NamedColor::Red))),
+            Token::Tag(TagType::Color {
+                color: Color::Named(NamedColor::Red),
+                ground: Ground::Foreground,
+            }),
             Token::Text("hello".into()),
         ]);
         assert_eq!(result, "\x1b[31mhello");
     }
-
     #[test]
     fn test_render_color_text_reset() {
         let result = render(vec![
-            Token::Tag(TagType::Color(Color::Named(NamedColor::Green))),
+            Token::Tag(TagType::Color {
+                color: Color::Named(NamedColor::Green),
+                ground: Ground::Foreground,
+            }),
             Token::Text("go".into()),
             Token::Tag(TagType::Reset),
         ]);
         assert_eq!(result, "\x1b[32mgo\x1b[0m");
     }
-
     #[test]
     fn test_render_multiple_text_tokens() {
         let result = render(vec![Token::Text("foo".into()), Token::Text("bar".into())]);
         assert_eq!(result, "foobar");
     }
-
     #[test]
     fn test_render_ansi256_color_tag() {
-        let result = render(vec![Token::Tag(TagType::Color(Color::Ansi256(21)))]);
+        let result = render(vec![Token::Tag(TagType::Color {
+            color: Color::Ansi256(21),
+            ground: Ground::Foreground,
+        })]);
         assert_eq!(result, "\x1b[38;5;21m");
     }
-
     #[test]
     fn test_render_rgb_color_tag() {
-        let result = render(vec![Token::Tag(TagType::Color(Color::Rgb(255, 0, 0)))]);
+        let result = render(vec![Token::Tag(TagType::Color {
+            color: Color::Rgb(255, 0, 0),
+            ground: Ground::Foreground,
+        })]);
         assert_eq!(result, "\x1b[38;2;255;0;0m");
     }
-
     #[test]
     fn test_render_does_not_append_trailing_reset() {
-        // render() itself never appends a reset; that is the caller's job (try_color)
         let result = render(vec![Token::Text("plain".into())]);
         assert!(!result.ends_with("\x1b[0m"));
     }
+    #[test]
+    fn test_render_named_color_background() {
+        let result = render(vec![Token::Tag(TagType::Color {
+            color: Color::Named(NamedColor::Red),
+            ground: Ground::Background,
+        })]);
+        assert_eq!(result, "\x1b[41m");
+    }
+    #[test]
+    fn test_render_ansi256_background() {
+        let result = render(vec![Token::Tag(TagType::Color {
+            color: Color::Ansi256(21),
+            ground: Ground::Background,
+        })]);
+        assert_eq!(result, "\x1b[48;5;21m");
+    }
+    #[test]
+    fn test_render_rgb_background() {
+        let result = render(vec![Token::Tag(TagType::Color {
+            color: Color::Rgb(255, 0, 0),
+            ground: Ground::Background,
+        })]);
+        assert_eq!(result, "\x1b[48;2;255;0;0m");
+    }
+    #[test]
+    fn test_render_fg_and_bg_together() {
+        let result = render(vec![
+            Token::Tag(TagType::Color {
+                color: Color::Named(NamedColor::White),
+                ground: Ground::Foreground,
+            }),
+            Token::Tag(TagType::Color {
+                color: Color::Named(NamedColor::Blue),
+                ground: Ground::Background,
+            }),
+            Token::Text("hello".into()),
+        ]);
+        assert_eq!(result, "\x1b[37m\x1b[44mhello");
+    }
 }
-
 // Skipped (side effects): none: render() is a pure function.
