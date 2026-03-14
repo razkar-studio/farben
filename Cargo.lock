@@ -7,7 +7,7 @@ name = "farben"
 version = "0.3.2"
 dependencies = [
  "farben-core 0.2.0",
- "farben-macros 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "farben-macros 0.2.0",
 ]
 
 [[package]]
@@ -23,6 +23,8 @@ version = "0.2.1"
 [[package]]
 name = "farben-macros"
 version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "60e350afbc524a5c7a22627615d4334b15fc50da2d5f85c4261d80ee78acfc02"
 dependencies = [
  "farben-core 0.2.0",
  "proc-macro2",
@@ -32,9 +34,7 @@ dependencies = [
 
 [[package]]
 name = "farben-macros"
-version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "60e350afbc524a5c7a22627615d4334b15fc50da2d5f85c4261d80ee78acfc02"
+version = "0.2.1"
 dependencies = [
  "farben-core 0.2.0",
  "proc-macro2",
