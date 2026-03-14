@@ -13,7 +13,7 @@ pub enum Ground {
 }
 
 /// A complete set of visual attributes for a span of text.
-#[derive(Default)]
+#[derive(Default, Clone)]
 pub struct Style {
     /// Foreground color. `None` leaves the terminal default unchanged.
     pub fg: Option<Color>,
@@ -36,7 +36,7 @@ pub struct Style {
 }
 
 /// One of the eight standard ANSI named colors.
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum NamedColor {
     Black,
     Red,
@@ -49,7 +49,7 @@ pub enum NamedColor {
 }
 
 /// A terminal color, expressed as a named color, an ANSI 256-palette index, or an RGB triple.
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum Color {
     Named(NamedColor),
     Ansi256(u8),
@@ -361,6 +361,7 @@ mod tests {
             underline: false,
             strikethrough: false,
             blink: false,
+            ..Default::default()
         };
         assert_eq!(style_to_ansi(&style), "");
     }
@@ -376,6 +377,7 @@ mod tests {
             underline: false,
             strikethrough: false,
             blink: false,
+            ..Default::default()
         };
         assert_eq!(style_to_ansi(&style), "\x1b[1m");
     }
@@ -391,6 +393,7 @@ mod tests {
             underline: false,
             strikethrough: false,
             blink: false,
+            ..Default::default()
         };
         assert_eq!(style_to_ansi(&style), "\x1b[1;32m");
     }
@@ -406,6 +409,7 @@ mod tests {
             underline: false,
             strikethrough: false,
             blink: false,
+            ..Default::default()
         };
         assert_eq!(style_to_ansi(&style), "\x1b[37;44m");
     }
@@ -421,6 +425,7 @@ mod tests {
             underline: true,
             strikethrough: true,
             blink: true,
+            ..Default::default()
         };
         assert_eq!(style_to_ansi(&style), "\x1b[1;2;3;4;5;9m");
     }
