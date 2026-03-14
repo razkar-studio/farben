@@ -1,6 +1,6 @@
 <div align="center">
 
-![banner logo](images/farben.png)
+![banner logo](farben/images/farben.png)
 
 ### A minimal terminal coloring library using markup-like syntax.
 
