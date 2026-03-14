@@ -1,6 +1,7 @@
 use std::fmt::Write;
 
-use crate::lexer::EmphasisType;
+use crate::errors::LexError;
+use crate::lexer::{EmphasisType, TagType, Token, tokenize};
 
 /// Whether a color applies to the foreground (text) or background.
 #[derive(Debug, PartialEq)]
@@ -30,6 +31,8 @@ pub struct Style {
     pub strikethrough: bool,
     /// Blinking text (SGR 5). Terminal support varies.
     pub blink: bool,
+    /// Full reset. Enabling this option overrides all previous options.
+    pub reset: bool,
 }
 
 /// One of the eight standard ANSI named colors.
@@ -51,6 +54,36 @@ pub enum Color {
     Named(NamedColor),
     Ansi256(u8),
     Rgb(u8, u8, u8),
+}
+
+impl Style {
+    pub fn parse(markup: impl Into<String>) -> Result<Self, LexError> {
+        let mut res = Self {
+            ..Default::default()
+        };
+        for tok in tokenize(markup.into())? {
+            match tok {
+                Token::Text(_) => continue,
+                Token::Tag(tag) => match tag {
+                    TagType::Reset => res.reset = true,
+                    TagType::Emphasis(emphasis) => match emphasis {
+                        EmphasisType::Dim => res.dim = true,
+                        EmphasisType::Blink => res.blink = true,
+                        EmphasisType::Bold => res.bold = true,
+                        EmphasisType::Italic => res.italic = true,
+                        EmphasisType::Strikethrough => res.strikethrough = true,
+                        EmphasisType::Underline => res.underline = true,
+                    },
+                    TagType::Color { color, ground } => match ground {
+                        Ground::Background => res.bg = Some(color),
+                        Ground::Foreground => res.fg = Some(color),
+                    },
+                },
+            }
+        }
+
+        Ok(res)
+    }
 }
 
 impl NamedColor {
@@ -152,6 +185,10 @@ pub(crate) fn emphasis_to_ansi(emphasis: &EmphasisType) -> String {
 /// if the style carries no active attributes and no colors.
 pub(crate) fn style_to_ansi(style: &Style) -> String {
     let mut ansi: Vec<u8> = Vec::new();
+
+    if style.reset {
+        return String::from("\x1b[0m");
+    }
 
     for (enabled, code) in [
         (style.bold, 1),
