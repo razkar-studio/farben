@@ -100,7 +100,3 @@ match try_color("[notacolor]oops") {
 ::: tip
 In library code or anywhere you don't control the input string, prefer `try_color()` over `color()`.
 :::
-
-That's it! You now know everything you need to color your terminal with Farben. Check out the
-[API Reference](/examples/api-examples) for the full list of tags and functions, or browse the
-[Project Examples](/examples/project-examples) for real-world usage.

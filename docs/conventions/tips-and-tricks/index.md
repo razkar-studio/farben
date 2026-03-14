@@ -95,7 +95,7 @@ placing furniture.
 ---
 
 That's it! You now know everything you need to color your terminal with Farben. Check out the
-[API Reference](/examples/api-examples) for the full list of tags and functions, or browse the
-[Project Examples](/examples/project-examples) for real-world usage.
+[API Reference](../../examples/api-examples/) for the full list of tags and functions, or browse the
+[Project Examples](../../examples/project-examples/) for real-world usage.
 
 Thank you for reading this documentation!
