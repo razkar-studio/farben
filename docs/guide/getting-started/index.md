@@ -1,9 +1,5 @@
 # Getting Started
 
-::: warning
-This page is a work in progress or under construction. Turn back, check again in a moment.
-:::
-
 Okay, now you have Farben set up, quick, clean, and hopefully safe. If not, submit an issue to the GitHub repository.
 
 ::: tip
