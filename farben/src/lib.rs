@@ -37,6 +37,11 @@ pub fn color(input: impl Into<String>) -> String {
     color_runtime(input, false)
 }
 
+#[cfg(not(feature = "compile"))]
+pub fn colorb(input: impl Into<String>) -> String {
+    color_runtime(input, true)
+}
+
 /// Parses and renders a farben markup string, appending a final SGR reset.
 ///
 /// The runtime fallback used internally by [`color_fmt!`], [`cprint!`], and [`cprintln!`].
@@ -154,7 +159,7 @@ macro_rules! cprintln {
 #[macro_export]
 macro_rules! cprintln {
     ($fmt:literal) => {
-        print!("{}", farben::color!($fmt))
+        println!("{}", farben::color!($fmt))
     };
     ($fmt:literal $(, $arg:expr)*) => {
         println!("{}", farben::color_runtime(format!(farben_macros::validate_color!($fmt) $(, $arg)*), false))
@@ -226,7 +231,7 @@ macro_rules! cprintbln {
 #[macro_export]
 macro_rules! cprintb {
     ($fmt:literal) => {
-        print!("{}", farben::color!($fmt))
+        print!("{}", farben::colorb!($fmt))
     };
     ($fmt:literal $(, $arg:expr)*) => {
         print!("{}", farben::color_runtime(format!(farben_macros::validate_color!($fmt) $(, $arg)*), true))
@@ -243,6 +248,9 @@ macro_rules! cprintb {
 #[cfg(feature = "compile")]
 #[macro_export]
 macro_rules! cprintbln {
+    ($fmt:literal) => {
+        println!("{}", farben::colorb!($fmt))
+    };
     ($fmt:literal $(, $arg:expr)*) => {
         println!("{}", farben::color_runtime(format!(farben_macros::validate_color!($fmt) $(, $arg)*), true))
     };

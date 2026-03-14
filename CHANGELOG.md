@@ -6,7 +6,7 @@ All notable changes to Farben will be documented here.
 
 ## [0.4.0] - 2026-03-15
 
-Public Farben Update. Changes to `farben-core`, `farben` is displayed here.
+Public Farben Update. Changes to `farben-core`, `farben`, and `farben-macros` is displayed here.
 
 ### Added
 - `Style::parse()` — builds a `Style` from farben markup string
@@ -18,9 +18,12 @@ Public Farben Update. Changes to `farben-core`, `farben` is displayed here.
 - `style_to_tags()` — converts a `Style` into a `Vec<TagType>` for lexer expansion
 - Custom tag resolution in `parse_part()` — unknown tags now check the registry before returning `InvalidTag`
 - `parse_part()` return type changed from `Result<TagType, LexError>` to `Result<Vec<TagType>, LexError>` to support style expansion
+- `colorb!()` bleeds at compile-time with the `colorb()` runtime counterpart
 
 ### Changed
 - `parse_tag()` updated to flatten nested `Vec<TagType>` results from `parse_part()`
+- `color!()` now auto-resets
+- All functions, when using `compile` can now benefit from compile-time processing instead of just validation
 
 ---
 
@@ -28,6 +31,10 @@ Public Farben Update. Changes to `farben-core`, `farben` is displayed here.
 
 ### Added
 - Dependency update to `farben_core`
+- `colorb!()` macro that bleeds
+
+### Fixed
+- `color!()` now auto-resets
 
 ---
 
