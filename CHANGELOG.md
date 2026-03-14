@@ -1,6 +1,6 @@
 # Changelog
 
-Notable changes to Farben will be documented here.
+All notable changes to Farben will be documented here.
 
 ---
 

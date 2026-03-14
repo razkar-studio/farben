@@ -27,6 +27,15 @@ export default defineConfig({
         items: [
           { text: "Setting Up Farben", link: "/guide/pre-requisites/" },
           { text: "Getting Started", link: "/guide/getting-started/" },
+          { text: "Colors In Depth", link: "/guide/colors-in-depth/" },
+        ],
+      },
+      {
+        text: "Conventions",
+        items: [
+          { text: "Colors and Printers", link: "/conventions/colors-and-printing/" },
+          { text: "Errors and Compilers", link: "/conventions/errors-and-compiling/" },
+          { text: "Tips and Tricks", link: "/conventions/tips-and-tricks/" },
         ],
       },
       {
