@@ -19,9 +19,9 @@ hero:
 
 features:
   - title: Zero-dependencies
-    details: Farben has absolutely zero dependencies, forever.
+    details: Farben has absolutely zero runtime required dependencies, only path ones, and it'll be like that, forever.
   - title: Markup-like Syntax
-    details: Color your terminal output using intuitive tags like [red], [bold], and [rgb(255,0,0)].
-  - title: Flexible Error Handling
-    details: Use color() for simplicity or try_color() for full control over parse errors.
+    details: Color your terminal output using intuitive tags like [red], [bold], [rgb(255,0,0)], and chain them like [bold red] or [italic ansi(1)]
+  - title: Opt-in Compile-time Processing
+    details: Zero runtime overhead, completely opt-in using the library's "compile" feature. Changes nothing but color being a macro.
 ---
