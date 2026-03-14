@@ -50,9 +50,9 @@ cprintln!("[yellow]Warning: [/]Something looks off.");
 ## Features
 
 - **Markup-like Syntax**: Easy to read, write, and powerful when used.
-- **Zero required runtime dependencies**: Only `farben-core` as a path dependency — no complicated dependency tree.
+- **Zero required runtime dependencies**: Only `farben-core` as a path dependency, Farben introduces no complicated dependency tree.
 - **Opt-in Compile-time Processing**: Validate and process markup at compile time with no runtime overhead, via the `compile` feature flag.
-- **Complete Toolkit**: Named colors, ANSI256, RGB, emphasis styles, foreground and background support.
+- **Complete Toolkit**: Named colors, ANSI256, RGB, emphasis styles, style chaining, foreground and background support.
 - **Drop-in Print Macros**: `cprint!` and `cprintln!` work just like `print!` and `println!` but with markup support.
 
 ## Syntax

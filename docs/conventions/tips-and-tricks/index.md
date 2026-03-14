@@ -49,7 +49,7 @@ cprintln!("To make red text, use \\[red] before your text.");
 // Output: To make red text, use [red] before your text.
 ```
 
-## Prefer cprintln!() Over println!(color(...))
+## Prefer `cprintln!()` Over `println!(color(...))`
 
 Both work, but `cprintln!()` is shorter and handles the format args pattern cleanly.
 ```rust
@@ -91,6 +91,10 @@ Unlike emphasis and color, background comes before foreground because you're des
 the environment first, then the text inside it. Think of it like painting a wall before
 placing furniture.
 :::
+
+---
+
+Idiomatic ways to bleed are on [Colors And Printing](../colors-and-printing/#idiomatic-ways-to-bleed).
 
 ---
 

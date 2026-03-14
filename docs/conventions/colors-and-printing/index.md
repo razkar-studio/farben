@@ -27,7 +27,7 @@ When in doubt, named colors first. They're the most readable at a glance and wor
 everywhere.
 :::
 
-## color() vs color_fmt!() vs cprintln!()
+## `color()` vs `color_fmt!()` vs `cprintln!()`
 
 A confusing amount of choices that all do different things.
 
@@ -52,4 +52,28 @@ cprintln!("[green]Done in {}ms.", elapsed);
 ::: tip
 `cprint!()` works the same as `cprintln!()` but without the trailing newline, useful when
 you're building output incrementally.
+:::
+
+## Idiomatic Ways to Bleed
+
+Idioms, idioms. There's a ton of things that have their own idioms, even bleeding!
+
+The main use case for bleeding is to separate printed text into multiple lines that share the same style. 
+If that's not your use case for bleeding, I don't know *what* is.
+
+To *elegantly* bleed appropriately, we *declare the style first*, and then let the text below use that style.
+Like the following:
+
+```rust
+cprintb!("[italic blue]"); // Declare the style.
+cprintb!("I'm blue and I'm italian. This is a description text yadda yadda, "); // Leading space for printing in-line
+cprintb!("Lorem ipsum dolor sit amet. Consectur adipiscing elit. What does that mean? ");
+cprintln!("Final description text uses `cprintln!` to finally reset the style.");
+
+cprintln!("\nGuys, what did I miss?");
+```
+
+::: info
+This is the idiomatic way to use bleeds. It doesn't matter if you use newlines or not,
+but declaring the style and then using an in-line print is the correct way.
 :::

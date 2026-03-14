@@ -1,6 +1,6 @@
 # Errors and Compiling
 
-## Panicking vs try_color()
+## Panicking vs `try_color()`
 
 `color()`, `cprintln!()`, and friends all panic on invalid markup. That's fine for most cases
 where you wrote the markup yourself and you know it's valid.
@@ -21,7 +21,7 @@ match try_color(&user_input) {
 Never use `color()` on unvalidated external input. A bad tag will panic your whole program.
 :::
 
-## The compile Feature
+## The `compile` Feature
 
 Enable it when your markup is all fixed string literals and you want two things: zero runtime
 parsing overhead, and compile-time errors instead of runtime panics.
