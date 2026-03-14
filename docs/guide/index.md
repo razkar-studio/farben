@@ -18,4 +18,4 @@ please submit an issue to the GitHub repository link below.
 * **Deps.rs**: [https://deps.rs/crate/farben](https://deps.rs/crate/farben)
 
 ## Status
-This user guide is under construction. See the API reference for now.
+This user guide is a work in progress. See the API reference if you hit a dead end.

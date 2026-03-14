@@ -36,6 +36,14 @@ pub fn color(input: impl Into<String>) -> String {
     color_runtime(input)
 }
 
+/// Parses and renders a farben markup string, appending a final SGR reset.
+///
+/// The runtime fallback used internally by [`color_fmt!`], [`cprint!`], and [`cprintln!`].
+/// Always a function regardless of active feature flags.
+///
+/// # Panics
+///
+/// Panics if the input contains invalid farben markup. Use [`try_color`] for error handling.
 pub fn color_runtime(input: impl Into<String>) -> String {
     let input = input.into();
     try_color(input).expect("Failed to colorize")
@@ -51,6 +59,94 @@ pub fn color_runtime(input: impl Into<String>) -> String {
 macro_rules! color_fmt {
     ($($arg:tt)*) => {
         farben::color_runtime(format!($($arg)*))
+    };
+}
+
+/// Prints farben-colored markup to stdout without a newline.
+///
+/// Behaves like [`print!`] but processes farben markup tags before output.
+/// The format string is validated at compile time when the `compile` feature is enabled.
+///
+/// # Panics
+///
+/// Panics if the markup is invalid. Use [`try_color`] directly for error handling.
+///
+/// # Examples
+///
+/// ```rust
+/// cprint!("[red]Error: [/]{}", message);
+/// ```
+#[cfg(not(feature = "compile"))]
+#[macro_export]
+macro_rules! cprint {
+    ($fmt:literal $(, $arg:expr)*) => {
+        print!("{}", farben::color_runtime(format!($fmt $(, $arg)*)))
+    };
+}
+
+/// Prints farben-colored markup to stdout without a newline.
+///
+/// Behaves like [`print!`] but processes farben markup tags before output.
+/// The format string is validated at compile time.
+///
+/// # Panics
+///
+/// Panics if the markup is invalid. Use [`try_color`] directly for error handling.
+///
+/// # Examples
+///
+/// ```rust
+/// cprint!("[red]Error: [/]{}", message);
+/// ```
+#[cfg(feature = "compile")]
+#[macro_export]
+macro_rules! cprint {
+    ($fmt:literal $(, $arg:expr)*) => {
+        print!("{}", farben::color_runtime(format!(farben_macros::validate_color!($fmt) $(, $arg)*)))
+    };
+}
+
+/// Prints farben-colored markup to stdout with a trailing newline.
+///
+/// Behaves like [`println!`] but processes farben markup tags before output.
+/// The format string is validated at compile time when the `compile` feature is enabled.
+///
+/// # Panics
+///
+/// Panics if the markup is invalid. Use [`try_color`] directly for error handling.
+///
+/// # Examples
+///
+/// ```rust
+/// cprintln!("[green]Success: [/]{}", result);
+/// ```
+#[cfg(not(feature = "compile"))]
+#[macro_export]
+macro_rules! cprintln {
+    ($fmt:literal $(, $arg:expr)*) => {
+        println!("{}", farben::color_runtime(format!($fmt $(, $arg)*)))
+    };
+}
+
+/// Prints farben-colored markup to stdout with a trailing newline.
+///
+/// Behaves like [`println!`] but processes farben markup tags before output.
+/// The format string is validated at compile time.
+///
+/// # Panics
+///
+/// Panics if the markup is invalid. Use [`try_color`] directly for error handling.
+///
+/// # Examples
+///
+/// ```rust
+/// cprintln!("[green]Success: [/]{}", result);
+/// ```
+#[cfg(feature = "compile")]
+#[macro_export]
+macro_rules! cprintln {
+    ($fmt:literal $(, $arg:expr)*) => {
+        println!("{}", farben::color_runtime(format!(farben_macros::validate_color!($fmt) $(, $arg)*)))
     };
 }
 

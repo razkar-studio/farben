@@ -5,7 +5,7 @@ export default defineConfig({
   base: "/farben/",
 
   title: "farben",
-  description: "The Official User Guide for Farben",
+  description: "Terminal Coloring Library",
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [
@@ -24,7 +24,7 @@ export default defineConfig({
       {
         text: "User Guide",
         link: "/guide/",
-        items: [{}],
+        items: [{ text: "Setting Up Farben", link: "/guide/pre-requisites/" }],
       },
       {
         text: "Examples",

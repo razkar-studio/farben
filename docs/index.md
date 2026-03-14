@@ -4,8 +4,8 @@ layout: home
 
 hero:
   name: "farben"
-  text: "The Official User Guide for Farben"
-  tagline: "Farben, a zero-dependency terminal coloring library using markup-like syntax."
+  text: "Markup-like Terminal Coloring Library"
+  tagline: "Color your terminal without typing whatever the heck '\\x1b[31m' is."
   actions:
     - theme: brand
       text: User Guide

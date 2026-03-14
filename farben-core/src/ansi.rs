@@ -31,15 +31,16 @@ pub enum Color {
 }
 
 /// A complete set of visual attributes for a span of text.
-pub(crate) struct Style {
-    fg: Option<Color>,
-    bg: Option<Color>,
-    bold: bool,
-    dim: bool,
-    italic: bool,
-    underline: bool,
-    strikethrough: bool,
-    blink: bool,
+#[derive(Default)]
+pub struct Style {
+    pub fg: Option<Color>,
+    pub bg: Option<Color>,
+    pub bold: bool,
+    pub dim: bool,
+    pub italic: bool,
+    pub underline: bool,
+    pub strikethrough: bool,
+    pub blink: bool,
 }
 
 impl NamedColor {
