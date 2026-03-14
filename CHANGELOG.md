@@ -4,6 +4,15 @@ Notable changes to Farben will be documented here.
 
 ---
 
+## [0.3.2] - 2026-03-14 — farben
+
+### Added
+- `cprint!()` — prints farben-colored markup to stdout without a newline, behaves like `print!`
+- `cprintln!()` — prints farben-colored markup to stdout with a trailing newline, behaves like `println!`
+- Both macros support format args and compile-time validation when the `compile` feature is enabled
+
+---
+
 ## [0.3.0] - 2026-03-14 — farben
 
 ### Added
