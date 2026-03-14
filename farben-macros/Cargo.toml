@@ -1,6 +1,6 @@
 [package]
 name = "farben-macros"
-version = "0.2.1"
+version = "0.2.2"
 edition = "2024"
 description = "Procedural macros for Farben"
 license-file = "LICENSE.md"
@@ -15,7 +15,7 @@ homepage = "https://razkar-studio.github.io/farben"
 proc-macro = true
 
 [dependencies]
-farben-core = "0.2"
+farben-core = "0.3"
 syn = "2"
 quote = "1"
 proc-macro2 = "1"

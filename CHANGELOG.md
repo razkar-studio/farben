@@ -4,6 +4,33 @@ All notable changes to Farben will be documented here.
 
 ---
 
+## [0.4.0] - 2026-03-15
+
+Public Farben Update. Changes to `farben-core`, `farben` is displayed here.
+
+### Added
+- `Style::parse()` — builds a `Style` from farben markup string
+- `Style::reset` field — when `true`, overrides all other style attributes with a full SGR reset
+- `registry` module — global style registry backed by `OnceLock<Mutex<HashMap<String, Style>>>`
+- `insert_style()` — inserts a named style into the global registry
+- `search_registry()` — looks up a named style from the global registry
+- `style!()` macro — user-facing API for defining custom named styles
+- `style_to_tags()` — converts a `Style` into a `Vec<TagType>` for lexer expansion
+- Custom tag resolution in `parse_part()` — unknown tags now check the registry before returning `InvalidTag`
+- `parse_part()` return type changed from `Result<TagType, LexError>` to `Result<Vec<TagType>, LexError>` to support style expansion
+
+### Changed
+- `parse_tag()` updated to flatten nested `Vec<TagType>` results from `parse_part()`
+
+---
+
+## [0.2.2] - 2026-03-15 - farben-macros
+
+### Added
+- Dependency update to `farben_core`
+
+---
+
 ## [0.3.0] - 2026-03-15 — farben-core
 
 ### Added

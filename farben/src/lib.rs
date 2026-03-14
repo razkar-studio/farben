@@ -9,6 +9,7 @@
 //! let colored = color("[red]I'm red!");
 //! assert_eq!(colored, "\x1b[31mI'm red!\x1b[0m");
 //! ```
+pub use farben_core::style;
 use farben_core::*;
 #[cfg(feature = "compile")]
 pub use farben_macros::color;
@@ -105,6 +106,9 @@ macro_rules! cprint {
 #[cfg(feature = "compile")]
 #[macro_export]
 macro_rules! cprint {
+    ($fmt:literal) => {
+        print!("{}", farben::color!($fmt))
+    };
     ($fmt:literal $(, $arg:expr)*) => {
         print!("{}", farben::color_runtime(format!(farben_macros::validate_color!($fmt) $(, $arg)*), false))
     };
@@ -149,6 +153,9 @@ macro_rules! cprintln {
 #[cfg(feature = "compile")]
 #[macro_export]
 macro_rules! cprintln {
+    ($fmt:literal) => {
+        print!("{}", farben::color!($fmt))
+    };
     ($fmt:literal $(, $arg:expr)*) => {
         println!("{}", farben::color_runtime(format!(farben_macros::validate_color!($fmt) $(, $arg)*), false))
     };
@@ -218,6 +225,9 @@ macro_rules! cprintbln {
 #[cfg(feature = "compile")]
 #[macro_export]
 macro_rules! cprintb {
+    ($fmt:literal) => {
+        print!("{}", farben::color!($fmt))
+    };
     ($fmt:literal $(, $arg:expr)*) => {
         print!("{}", farben::color_runtime(format!(farben_macros::validate_color!($fmt) $(, $arg)*), true))
     };

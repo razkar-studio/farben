@@ -1,6 +1,10 @@
-use farben::{color, color_fmt, try_color};
+use farben::{color, color_fmt, cprintln, style, try_color};
 
 fn main() {
+    style!("error", "[bold red]");
+
+    cprintln!("[error]\\[ERROR] Error! Figure it out yourself");
+
     println!("{}", color("[red]I'm red!"));
     println!("Gee, I'm not red. Don't have anything to do with that guy.");
     println!();

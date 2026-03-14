@@ -18,7 +18,6 @@ use syn::{LitStr, parse_macro_input};
 pub fn color(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as LitStr);
     let value = input.value();
-
     let tokens = match farben_core::lexer::tokenize(&value) {
         Ok(t) => t,
         Err(e) => {
@@ -28,7 +27,24 @@ pub fn color(input: TokenStream) -> TokenStream {
                 .into();
         }
     };
+    let result = format!("{}\x1b[0m", farben_core::parser::render(tokens));
+    quote! { #result }.into()
+}
 
+/// Same as [`color!`], but bleeds.
+#[proc_macro]
+pub fn colorb(input: TokenStream) -> TokenStream {
+    let input = parse_macro_input!(input as LitStr);
+    let value = input.value();
+    let tokens = match farben_core::lexer::tokenize(&value) {
+        Ok(t) => t,
+        Err(e) => {
+            let msg = e.to_string();
+            return syn::Error::new_spanned(&input, msg)
+                .to_compile_error()
+                .into();
+        }
+    };
     let result = farben_core::parser::render(tokens);
     quote! { #result }.into()
 }
