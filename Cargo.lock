@@ -4,7 +4,7 @@ version = 4
 
 [[package]]
 name = "farben"
-version = "0.3.2"
+version = "0.3.3"
 dependencies = [
  "farben-core 0.2.0",
  "farben-macros 0.2.0",

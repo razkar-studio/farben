@@ -4,6 +4,13 @@ All notable changes to Farben will be documented here.
 
 ---
 
+## [0.3.3] - 2026-03-14b - farben
+
+### Added
+- `cprintb!` and `cprintbln!` for color bleeding printing.
+
+---
+
 ## [0.2.1] - 2026-03-14 - farben-macros
 
 ### Added
