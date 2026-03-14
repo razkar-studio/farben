@@ -16,10 +16,6 @@
 Look at the tagline up there ^
 
 ## Documentation
-
-> [!NOTE]
-> The user guide is a work in progress.
-
 - **User Guide**: [https://razkar-studio.github.io/farben](https://razkar-studio.github.io/farben)
 - **API Reference**: [https://docs.rs/farben](https://docs.rs/farben)
 
