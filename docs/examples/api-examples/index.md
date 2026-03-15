@@ -249,6 +249,14 @@ color("[red]red [green]green [blue]blue")
 | `[magenta]` | Magenta |
 | `[cyan]` | Cyan |
 | `[white]` | White |
+| `[bright-black]` | Bright Black |
+| `[bright-red]` | Bright Red |
+| `[bright-green]` | Bright Green |
+| `[bright-yellow]` | Bright Yellow |
+| `[bright-blue]` | Bright Blue |
+| `[bright-magenta]` | Bright Magenta |
+| `[bright-cyan]` | Bright Cyan |
+| `[bright-white]` | Bright White |
 
 ### Background Colors
 

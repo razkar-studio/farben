@@ -58,6 +58,14 @@ pub enum NamedColor {
     Magenta,
     Cyan,
     White,
+    BrightBlack,
+    BrightRed,
+    BrightGreen,
+    BrightYellow,
+    BrightBlue,
+    BrightMagenta,
+    BrightCyan,
+    BrightWhite,
 }
 
 /// A terminal color, expressed as a named color, an ANSI 256-palette index, or an RGB triple.
@@ -131,6 +139,14 @@ impl NamedColor {
             "magenta" => Some(Self::Magenta),
             "cyan" => Some(Self::Cyan),
             "white" => Some(Self::White),
+            "bright-black" => Some(Self::BrightBlack),
+            "bright-red" => Some(Self::BrightRed),
+            "bright-green" => Some(Self::BrightGreen),
+            "bright-yellow" => Some(Self::BrightYellow),
+            "bright-blue" => Some(Self::BrightBlue),
+            "bright-magenta" => Some(Self::BrightMagenta),
+            "bright-cyan" => Some(Self::BrightCyan),
+            "bright-white" => Some(Self::BrightWhite),
             _ => None,
         }
     }
@@ -171,6 +187,14 @@ fn encode_color_sgr(ansi: &mut Vec<u8>, param: Ground, color: &Color) {
                 NamedColor::Magenta => 35 + addend,
                 NamedColor::Cyan => 36 + addend,
                 NamedColor::White => 37 + addend,
+                NamedColor::BrightBlack => 90 + addend,
+                NamedColor::BrightRed => 91 + addend,
+                NamedColor::BrightGreen => 92 + addend,
+                NamedColor::BrightYellow => 93 + addend,
+                NamedColor::BrightBlue => 94 + addend,
+                NamedColor::BrightMagenta => 95 + addend,
+                NamedColor::BrightCyan => 96 + addend,
+                NamedColor::BrightWhite => 97 + addend,
             });
         }
         Color::Ansi256(v) => {
@@ -215,6 +239,7 @@ pub(crate) fn emphasis_to_ansi(emphasis: &EmphasisType) -> String {
 /// if the style carries no active attributes and no colors.
 ///
 /// A `reset` style short-circuits to `\x1b[0m` regardless of any other fields.
+#[allow(unused)]
 pub(crate) fn style_to_ansi(style: &Style) -> String {
     let mut ansi: Vec<u8> = Vec::new();
 

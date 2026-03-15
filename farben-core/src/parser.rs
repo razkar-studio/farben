@@ -5,7 +5,7 @@
 //! in the farben pipeline: tokenize with [`crate::lexer::tokenize`], then render
 //! with [`render`].
 
-use crate::ansi::{Ground, color_to_ansi, emphasis_to_ansi};
+use crate::ansi::{color_to_ansi, emphasis_to_ansi};
 use crate::lexer::{TagType, Token};
 
 /// Renders a token stream into a raw ANSI-escaped string.
