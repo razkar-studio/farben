@@ -22,8 +22,10 @@ Public Farben Update. Changes to `farben-core`, `farben`, and `farben-macros` is
 
 ### Changed
 - `parse_tag()` updated to flatten nested `Vec<TagType>` results from `parse_part()`
-- `color!()` now auto-resets
 - All functions, when using `compile` can now benefit from compile-time processing instead of just validation
+
+### Fixed
+- `color!()` now auto-resets.
 
 ---
 
