@@ -75,6 +75,10 @@ It also introduces a new dependency -- `farben-macros`, but you don't have to wo
 The thing you should note though: "Zero runtime overhead" only applies to the `color!()` macro, which takes a fixed, non-formatted string. This doesn't mean there's no benefits though, as the other functions you'll be seeing will have *compile-time validation*, which is still a worth-it feature.
 :::
 
+::: info
+In the newest version of Farben, version 0.4; `cprintln!()`, `cprint!()`, `cprintbln!()`, and `cprintb!()` supports compile-time parsing, that is if you pass in a static string. Huge win for the Rustaceans!
+:::
+
 ---
 
 Now that you got Farben all set up,

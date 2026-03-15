@@ -54,6 +54,7 @@ cprintln!("[yellow]Warning: [/]Something looks off.");
 - **Opt-in Compile-time Processing**: Validate and process markup at compile time with no runtime overhead, via the `compile` feature flag.
 - **Complete Toolkit**: Named colors, ANSI256, RGB, emphasis styles, style chaining, foreground and background support.
 - **Drop-in Print Macros**: `cprint!` and `cprintln!` work just like `print!` and `println!` but with markup support.
+- **Custom, user-defined styles**: Define your own tags that unwrap to supported tags. Chainable, too!
 
 ## Syntax
 

@@ -29,6 +29,7 @@ export default defineConfig({
           { text: "Getting Started", link: "/guide/getting-started/" },
           { text: "Colors In Depth", link: "/guide/colors-in-depth/" },
           { text: "Purposefully Bleeding", link: "/guide/bleeding/" },
+          { text: "Define Your Own Tags", link: "/guide/custom-tags/" },
         ],
       },
       {
