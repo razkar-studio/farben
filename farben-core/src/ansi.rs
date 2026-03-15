@@ -102,7 +102,7 @@ impl Style {
             match tok {
                 Token::Text(_) => continue,
                 Token::Tag(tag) => match tag {
-                    TagType::Reset => res.reset = true,
+                    TagType::Reset(_) => res.reset = true,
                     TagType::Emphasis(emphasis) => match emphasis {
                         EmphasisType::Dim => res.dim = true,
                         EmphasisType::Blink => res.blink = true,

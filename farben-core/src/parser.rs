@@ -33,7 +33,9 @@ pub fn render(tokens: Vec<Token>) -> String {
                 TagType::Emphasis(emphasis) => {
                     result.push_str(emphasis_to_ansi(&emphasis).as_str())
                 }
-                TagType::Reset => result.push_str("\x1b[0m"),
+                /* Edit */
+                TagType::Reset(None) => result.push_str("\x1b[0m"),
+                TagType::Reset(Some(_)) => todo!(),
                 TagType::Prefix(prefix) => result.push_str(prefix.as_str()),
             },
         }
@@ -74,7 +76,7 @@ mod tests {
     }
     #[test]
     fn test_render_reset_tag() {
-        let result = render(vec![Token::Tag(TagType::Reset)]);
+        let result = render(vec![Token::Tag(TagType::Reset(None))]);
         assert_eq!(result, "\x1b[0m");
     }
     #[test]
@@ -96,7 +98,7 @@ mod tests {
                 ground: Ground::Foreground,
             }),
             Token::Text("go".into()),
-            Token::Tag(TagType::Reset),
+            Token::Tag(TagType::Reset(None)),
         ]);
         assert_eq!(result, "\x1b[32mgo\x1b[0m");
     }

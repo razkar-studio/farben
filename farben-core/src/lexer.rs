@@ -31,10 +31,10 @@ pub enum EmphasisType {
 }
 
 /// The kind of styling operation a tag represents.
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum TagType {
     /// Resets all active styles (`[/]`).
-    Reset,
+    Reset(Option<Box<TagType>>),
     /// Applies a text emphasis attribute.
     Emphasis(EmphasisType),
     /// Sets a foreground or background color.
@@ -82,7 +82,7 @@ fn style_to_tags(style: Style) -> Vec<TagType> {
         if let Some(p) = prefix {
             res.push(TagType::Prefix(p));
         }
-        res.push(TagType::Reset);
+        res.push(TagType::Reset(None));
         return res;
     }
 
@@ -148,8 +148,22 @@ fn parse_part(part: &str) -> Result<Vec<TagType>, LexError> {
     } else {
         (Ground::Foreground, part)
     };
-    if part == "/" {
-        Ok(vec![TagType::Reset])
+    if part.starts_with("/") {
+        let remainder = &part[1..];
+        if remainder.is_empty() {
+            Ok(vec![TagType::Reset(None)])
+        } else {
+            let inner = parse_part(remainder)?;
+            match inner.as_slice() {
+                [tag] => match tag {
+                    TagType::Reset(_) | TagType::Prefix(_) => {
+                        panic!("invalid reset target: cannot reset a reset or prefix")
+                    }
+                    _ => Ok(vec![TagType::Reset(Some(Box::new(tag.clone())))]),
+                },
+                _ => Err(LexError::InvalidTag(part.to_string())),
+            }
+        }
     } else if let Some(color) = NamedColor::from_str(part) {
         Ok(vec![TagType::Color {
             color: Color::Named(color),
@@ -296,7 +310,7 @@ mod tests {
 
     #[test]
     fn test_parse_part_reset() {
-        assert_eq!(parse_part("/").unwrap(), vec![TagType::Reset]);
+        assert_eq!(parse_part("/").unwrap(), vec![TagType::Reset(None)]);
     }
 
     #[test]
@@ -495,7 +509,10 @@ mod tests {
 
     #[test]
     fn test_tokenize_reset_tag() {
-        assert_eq!(tokenize("[/]").unwrap(), vec![Token::Tag(TagType::Reset)]);
+        assert_eq!(
+            tokenize("[/]").unwrap(),
+            vec![Token::Tag(TagType::Reset(None))]
+        );
     }
 
     #[test]
