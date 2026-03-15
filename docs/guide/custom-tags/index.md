@@ -29,3 +29,43 @@ User-defined tags can only be built from built-in farben tags. You cannot define
 ::: tip
 Call `style!()` once at the start of your program, before any `color()` or `cprintln!()` calls that use your custom tags.
 :::
+
+## Pre-fix
+
+Sometimes I wonder why it's called a prefix. What do you fix beforehand? I may never know...
+
+Talking about prefixes, Farben has this neat feature where your user-defined styles can also be bound an optional prefix!
+Not sure what that means? Just look:
+
+```rust
+style!("error", "[underline red]");
+prefix!("error", "[ERROR]");
+cprintln!("[error] Something bad happened..");
+// Output -> [ERROR] Something bad happened (in underline red)
+```
+
+That's right! Goodbye to those helpers, because setting prefixes using `prefix!("style-name", "prefix-string")` would
+output the prefix-string *alongside* the colored style when it's called! This is one of the my personal favorite features.
+
+::: details
+Bit of a party trick, but you can bind `style!()` to a `[reset]` and set a prefix for that.
+That makes the style reset, and then output the prefix.
+
+```rust
+style!("my-reset", "[/]");
+prefix!("my-reset", "reset:");
+cprintln!("[my-reset] Reset all progress");
+// Output -> reset: Reset all progress
+```
+:::
+
+::: tip
+User-defined styles, other than being used as an alias, could also be used like design tokens or something!
+It's completely up to you on how you use this feature.
+
+```rust
+style!("header", "[bold green]");
+prefix!("header", "#");
+cprintln!("[header] Cool Header");
+```
+:::
