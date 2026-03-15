@@ -4,7 +4,7 @@ All notable changes to Farben will be documented here.
 
 ---
 
-## [0.4.1] - 2026-03-16 - farben-core
+## [0.4.2] - 2026-03-16 - farben-core
 
 ### Added
 - Bright ansi variants now exist, I guess.
