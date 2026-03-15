@@ -12,8 +12,10 @@ categories = ["command-line-interface"]
 homepage = "https://razkar-studio.github.io/farben"
 
 [dependencies]
-farben-core = "0.3"
+farben-core = "0.4"
 farben-macros = { version = "0.2", optional = true }
 
 [features]
+default = ["format"]
+format = []
 compile = ["farben-macros"]

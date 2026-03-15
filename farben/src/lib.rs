@@ -9,10 +9,15 @@
 //! let colored = color("[red]I'm red!");
 //! assert_eq!(colored, "\x1b[31mI'm red!\x1b[0m");
 //! ```
-pub use farben_core::style;
 use farben_core::*;
+
 #[cfg(feature = "compile")]
 pub use farben_macros::color;
+
+#[cfg(feature = "format")]
+pub use farben_core::prefix;
+#[cfg(feature = "format")]
+pub use farben_core::style;
 
 /// Parses and renders a farben markup string, appending a final SGR reset.
 ///

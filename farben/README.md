@@ -65,6 +65,8 @@ cprintln!("into this.");
 - **Drop-in Print Macros**: `cprint!`, `cprintln!`, `cprintb!`, and `cprintbln!` work just like `print!` and `println!` but with markup support.
 - **Bleed Variants**: `cprintb!`, `cprintbln!`, `colorb()`, and `colorb!()` skip the trailing reset, letting styles carry forward across multiple calls.
 - **User-defined styles**: Define your own tags with `style!()` that expand to any combination of supported tags.
+  + **Features shouldn't be forced upon you**: Opt-out from user-defined styles at anytime, making Farben lighter and easier to work with.
+  + **Format using `prefix!()`**: Your styles, your rules. Make a prefix to go along with it, calling your custom style will resolve to the prefix you define.
 
 ## Syntax
 

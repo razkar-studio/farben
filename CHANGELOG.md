@@ -16,9 +16,25 @@ Global Farben update due to changes to `farben-core`.
 - `prefix!()` macro, user-facing API for binding a text prefix to a named style
 - `style_to_tags()` now emits `TagType::Prefix` as the first tag when a prefix is present
 - `parser::render()` now handles `TagType::Prefix` by appending the text directly to output
+- `format` default feature, gates logic for `style!()` and `prefix!()`
 
 ### Changed
 - `style_to_tags()` no longer returns early on `reset` when a prefix is present, prefix is always emitted first
+- `style!()` is now gated to the `format` feature
+
+---
+
+## [0.4.1] - 2026-03-15 - farben-core
+
+### Fixed
+- Bug where `prefix!()` interferes with actual color styling
+
+---
+
+## [0.2.3] - 2026-03-15 - farben-macros
+
+### Added
+- Minor dependency update to `farben-core`
 
 ---
 

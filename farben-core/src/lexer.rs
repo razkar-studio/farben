@@ -76,13 +76,12 @@ impl EmphasisType {
 /// after the prefix: no emphasis or color tags are emitted.
 fn style_to_tags(style: Style) -> Vec<TagType> {
     let mut res: Vec<TagType> = Vec::new();
-
-    if let Some(prefix) = style.prefix {
-        res.push(TagType::Prefix(prefix));
-    }
+    let prefix = style.prefix;
 
     if style.reset {
-        // We don't directly return Reset because someone might put Prefix.
+        if let Some(p) = prefix {
+            res.push(TagType::Prefix(p));
+        }
         res.push(TagType::Reset);
         return res;
     }
@@ -114,6 +113,10 @@ fn style_to_tags(style: Style) -> Vec<TagType> {
             color: bg,
             ground: Ground::Background,
         })
+    }
+
+    if let Some(p) = prefix {
+        res.push(TagType::Prefix(p));
     }
 
     res
