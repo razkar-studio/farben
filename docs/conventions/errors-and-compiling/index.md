@@ -41,6 +41,11 @@ The `compile` feature only eliminates overhead for `color!()` with fixed strings
 at compile time.
 :::
 
+::: info
+As of 0.4.0, every interface other than `color_fmt!()` and `try_color()` now has full compile-time parsing for
+static strings, eliminating runtime overhead. Long live compilers!
+:::
+
 Skip the `compile` feature if most of your markup is dynamic or comes from runtime values.
 The validation benefit is still there for format strings, but the binary size tradeoff may
 not be worth it for smaller projects.
