@@ -4,6 +4,20 @@ All notable changes to Farben will be documented here.
 
 ---
 
+## [0.5.1] - 2026-03-16 - farben
+
+### Added
+- Minor dependency update to `farben-core`
+
+---
+
+## [0.2.5] - 2026-03-16 - farben-macros
+
+### Added
+- Minor dependency update to `farben-core`
+
+---
+
 ## [0.4.2] - 2026-03-16 - farben-core
 
 ### Added
