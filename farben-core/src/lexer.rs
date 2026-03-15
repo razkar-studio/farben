@@ -1,3 +1,12 @@
+//! Tokenizer for farben markup strings.
+//!
+//! Parses bracket-delimited tag syntax (`[bold red]text[/]`) into a flat sequence of
+//! [`Token`] values. Each token is either a [`Token::Tag`] carrying styling information
+//! or a [`Token::Text`] carrying a run of literal characters.
+//!
+//! The main entry point is [`tokenize`]. The lower-level [`parse_tag`] and [`parse_part`]
+//! functions handle individual tag strings and are not part of the public API.
+
 use crate::{
     ansi::{Color, Ground, NamedColor, Style},
     errors::LexError,
@@ -30,6 +39,8 @@ pub enum TagType {
     Emphasis(EmphasisType),
     /// Sets a foreground or background color.
     Color { color: Color, ground: Ground },
+    /// A literal prefix string injected before the style sequence by the registry.
+    Prefix(String),
 }
 
 /// A single unit produced by the tokenizer: either a styling tag or a run of plain text.
@@ -59,10 +70,21 @@ impl EmphasisType {
     }
 }
 
+/// Expands a [`Style`] from the registry into its equivalent sequence of [`TagType`] values.
+///
+/// A `Prefix` tag is always prepended first, if one is set. A `reset` style short-circuits
+/// after the prefix: no emphasis or color tags are emitted.
 fn style_to_tags(style: Style) -> Vec<TagType> {
     let mut res: Vec<TagType> = Vec::new();
+
+    if let Some(prefix) = style.prefix {
+        res.push(TagType::Prefix(prefix));
+    }
+
     if style.reset {
-        return vec![TagType::Reset];
+        // We don't directly return Reset because someone might put Prefix.
+        res.push(TagType::Reset);
+        return res;
     }
 
     for (enabled, tag) in [
@@ -105,6 +127,10 @@ fn style_to_tags(style: Style) -> Vec<TagType> {
 /// - Emphasis keywords (`bold`, `italic`, etc.)
 /// - `ansi(N)` for ANSI 256-palette colors
 /// - `rgb(R,G,B)` for true-color values
+/// - A named style from the registry as a fallback
+///
+/// Parts may be prefixed with `bg:` to target the background ground, or `fg:` to
+/// explicitly target the foreground. Unprefixed color parts default to foreground.
 ///
 /// # Errors
 ///
@@ -160,7 +186,8 @@ fn parse_part(part: &str) -> Result<Vec<TagType>, LexError> {
 
 /// Splits a raw tag string on whitespace and parses each part into a `TagType`.
 ///
-/// A tag like `"bold red"` produces two `TagType` values.
+/// A tag like `"bold red"` produces two `TagType` values. Whitespace between parts
+/// is consumed and does not appear in the output.
 ///
 /// # Errors
 ///
@@ -174,7 +201,8 @@ fn parse_tag(raw_tag: &str) -> Result<Vec<TagType>, LexError> {
 /// Tokenizes a farben markup string into a sequence of `Token`s.
 ///
 /// Tags are delimited by `[` and `]`. A `[` preceded by `\` is treated as a literal
-/// bracket rather than the start of a tag.
+/// bracket rather than the start of a tag. Text between tags is emitted as
+/// [`Token::Text`]; tags are parsed and emitted as [`Token::Tag`].
 ///
 /// # Errors
 ///
@@ -185,7 +213,8 @@ fn parse_tag(raw_tag: &str) -> Result<Vec<TagType>, LexError> {
 ///
 /// ```ignore
 /// let tokens = tokenize("[red]hello")?;
-/// // => [Token::Tag(TagType::Color(Color::Named(NamedColor::Red))), Token::Text("hello".into())]
+/// // => [Token::Tag(TagType::Color { color: Color::Named(NamedColor::Red), ground: Ground::Foreground }),
+/// //     Token::Text("hello".into())]
 /// ```
 pub fn tokenize(input: impl Into<String>) -> Result<Vec<Token>, LexError> {
     let mut tokens: Vec<Token> = Vec::new();

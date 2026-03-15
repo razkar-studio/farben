@@ -82,8 +82,9 @@ macro_rules! color_fmt {
 /// Panics if the markup is invalid. Use [`try_color`] directly for error handling.
 ///
 /// # Examples
-///
-/// ```rust
+/// ```
+/// use farben::*;
+/// let message = "I don't know";
 /// cprint!("[red]Error: [/]{}", message);
 /// ```
 #[cfg(not(feature = "compile"))]
@@ -129,8 +130,9 @@ macro_rules! cprint {
 /// Panics if the markup is invalid. Use [`try_color`] directly for error handling.
 ///
 /// # Examples
-///
-/// ```rust
+/// ```
+/// use farben::*;
+/// let result = "We did it!";
 /// cprintln!("[green]Success: [/]{}", result);
 /// ```
 #[cfg(not(feature = "compile"))]
@@ -151,8 +153,8 @@ macro_rules! cprintln {
 /// Panics if the markup is invalid. Use [`try_color`] directly for error handling.
 ///
 /// # Examples
-///
-/// ```rust
+/// ```
+/// use farben::*;
 /// cprintln!("[green]Success: [/]{}", result);
 /// ```
 #[cfg(feature = "compile")]
@@ -185,7 +187,9 @@ macro_rules! color_fmt {
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```
+/// use farben::*;
+///
 /// cprintb!("[red]Error: ");
 /// cprintln!("something went wrong"); // inherits red
 /// ```
@@ -208,7 +212,9 @@ macro_rules! cprintb {
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```
+/// use farben::*;
+///
 /// cprintbln!("[bold red]Section header");
 /// cprintln!("still bold and red here"); // inherits style
 /// ```

@@ -1,3 +1,5 @@
+//! Error types produced during farben markup tokenization.
+
 /// Errors produced during tokenization of a farben markup string.
 #[derive(Debug)]
 pub enum LexError {

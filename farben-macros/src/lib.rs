@@ -11,7 +11,7 @@ use syn::{LitStr, parse_macro_input};
 /// # Examples
 ///
 /// ```rust
-/// use farben::color;
+/// use farben_macros::color;
 /// println!("{}", color!("[bold red]Hello!"));
 /// ```
 #[proc_macro]

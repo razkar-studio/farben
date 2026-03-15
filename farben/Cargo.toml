@@ -2,7 +2,7 @@
 name = "farben"
 version = "0.4.0"
 edition = "2024"
-description = "A zero-dependency terminal coloring library using markup-like syntax."
+description = "Markup for the Terminal, but safer and faster."
 license-file = "LICENSE.md"
 repository = "https://github.com/razkar-studio/farben"
 readme = "README.md"

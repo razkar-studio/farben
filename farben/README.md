@@ -1,6 +1,6 @@
 <div align="center">
 
-![banner logo](farben/images/farben.png)
+![banner logo](images/farben.png)
 
 ### Color your terminal without typing whatever the heck '\x1b[31m' is.
 
@@ -16,6 +16,7 @@
 Look at the tagline up there ^
 
 ## Documentation
+
 - **User Guide**: [https://razkar-studio.github.io/farben](https://razkar-studio.github.io/farben)
 - **API Reference**: [https://docs.rs/farben](https://docs.rs/farben)
 
@@ -23,37 +24,47 @@ Look at the tagline up there ^
 
 ```rust
 // Using no features
-use farben::{color, color_fmt, cprintln};
+use farben::*;
 
-println!("{}", color("[red]I'm red!"));
-println!("{}", color("[bg:blue fg:white]White on blue!"));
+style!("error", "[bold underline red]");
+style!("warn",  "[bold yellow]");
+
+cprintln!("[error]error: [/]Something bad happened.");
+cprintln!("[warn]warn: [/]This looks suspicious.");
+cprintln!("[bg:blue fg:white]White on blue!");
 
 let name = "Razkar";
-println!("{}", color_fmt!("[bold green]Hello, {}!", name));
+cprintln!("[bold green]Hello, {}!", name);
 
-cprintln!("[yellow]Warning: [/]Something looks off.");
+cprintb!("[red]This bleeds ");
+cprintln!("into this.");
 ```
 
 ```rust
 // Using the "compile" feature
-use farben::{color, color_fmt, cprintln};
+use farben::*;
 
-println!("{}", color!("[red]I'm red!"));          // compile-time
-println!("{}", color!("[bg:blue fg:white]White on blue!"));
+style!("error", "[bold underline red]");
+
+cprintln!("[error]error: [/]Something bad happened."); // compile-time validation
+cprintln!("[bg:blue fg:white]White on blue!");
 
 let name = "Razkar";
-println!("{}", color_fmt!("[bold green]Hello, {}!", name)); // compile-time validation
+cprintln!("[bold green]Hello, {}!", name);
 
-cprintln!("[yellow]Warning: [/]Something looks off.");
+cprintb!("[red]This bleeds ");
+cprintln!("into this.");
 ```
 
 ## Features
 
 - **Markup-like Syntax**: Easy to read, write, and powerful when used.
-- **Zero required runtime dependencies**: Only `farben-core` as a path dependency — no complicated dependency tree.
+- **Zero required runtime dependencies**: Only `farben-core` as a path dependency, Farben introduces no complicated dependency tree.
 - **Opt-in Compile-time Processing**: Validate and process markup at compile time with no runtime overhead, via the `compile` feature flag.
-- **Complete Toolkit**: Named colors, ANSI256, RGB, emphasis styles, foreground and background support.
-- **Drop-in Print Macros**: `cprint!` and `cprintln!` work just like `print!` and `println!` but with markup support.
+- **Complete Toolkit**: Named colors, ANSI256, RGB, emphasis styles, style chaining, foreground and background support.
+- **Drop-in Print Macros**: `cprint!`, `cprintln!`, `cprintb!`, and `cprintbln!` work just like `print!` and `println!` but with markup support.
+- **Bleed Variants**: `cprintb!`, `cprintbln!`, `colorb()`, and `colorb!()` skip the trailing reset, letting styles carry forward across multiple calls.
+- **User-defined styles**: Define your own tags with `style!()` that expand to any combination of supported tags.
 
 ## Syntax
 
@@ -71,6 +82,7 @@ Tags are written as `[tag]` and apply from that point forward. Multiple tags can
 | `[bold]`, `[italic]`, `[dim]`, `[underline]`, `[blink]`, `[strikethrough]` | Emphasis styles |
 | `[/]` | Reset all styles |
 | `\\[` | Escaped bracket, treated as literal `[` |
+| `[yourname]` | User-defined style via `style!()` |
 
 ## Error Handling
 

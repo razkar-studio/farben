@@ -5,7 +5,7 @@ export default defineConfig({
   base: "/farben/",
 
   title: "Farben",
-  description: "Terminal Coloring Library",
+  description: "Markup for the Terminal",
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [

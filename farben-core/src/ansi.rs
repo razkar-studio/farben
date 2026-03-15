@@ -1,3 +1,13 @@
+//! ANSI SGR escape sequence encoding for farben styles.
+//!
+//! Converts the typed color and style representations ([`Color`], [`Style`], [`NamedColor`])
+//! into raw terminal escape sequences. All functions in this module are pure: they take
+//! values and return strings with no side effects.
+//!
+//! Entry points for callers outside this module are [`color_to_ansi`], [`emphasis_to_ansi`],
+//! and [`style_to_ansi`]. [`Style::parse`] constructs a `Style` directly from a farben
+//! markup string.
+
 use std::fmt::Write;
 
 use crate::errors::LexError;
@@ -33,6 +43,8 @@ pub struct Style {
     pub blink: bool,
     /// Full reset. Enabling this option overrides all previous options.
     pub reset: bool,
+    /// Optional prefix string prepended before the style's escape sequence.
+    pub prefix: Option<String>,
 }
 
 /// One of the eight standard ANSI named colors.
@@ -57,6 +69,23 @@ pub enum Color {
 }
 
 impl Style {
+    /// Parses a farben markup string into a `Style`.
+    ///
+    /// Tokenizes `markup` and folds the resulting tags into a single `Style` value.
+    /// Text tokens are ignored; only tag tokens affect the output.
+    ///
+    /// # Errors
+    ///
+    /// Returns a [`LexError`] if `markup` contains an unclosed tag, an unrecognized tag
+    /// name, or an invalid color argument.
+    ///
+    /// # Example
+    ///
+    /// ```ignore
+    /// let style = Style::parse("[bold red]")?;
+    /// assert!(style.bold);
+    /// assert_eq!(style.fg, Some(Color::Named(NamedColor::Red)));
+    /// ```
     pub fn parse(markup: impl Into<String>) -> Result<Self, LexError> {
         let mut res = Self {
             ..Default::default()
@@ -78,6 +107,7 @@ impl Style {
                         Ground::Background => res.bg = Some(color),
                         Ground::Foreground => res.fg = Some(color),
                     },
+                    TagType::Prefix(_) => continue,
                 },
             }
         }
@@ -108,7 +138,7 @@ impl NamedColor {
 
 /// Joins a slice of SGR parameter bytes into a complete ANSI escape sequence.
 ///
-/// Produces a string of the form `\x1b[n;n;...m`.
+/// Produces a string of the form `\x1b[n;n;...m`. An empty `vec` produces `\x1b[m`.
 fn vec_to_ansi_seq(vec: Vec<u8>) -> String {
     let mut seq = String::from("\x1b[");
 
@@ -183,6 +213,8 @@ pub(crate) fn emphasis_to_ansi(emphasis: &EmphasisType) -> String {
 ///
 /// All active attributes and colors are merged into one sequence. Returns an empty string
 /// if the style carries no active attributes and no colors.
+///
+/// A `reset` style short-circuits to `\x1b[0m` regardless of any other fields.
 pub(crate) fn style_to_ansi(style: &Style) -> String {
     let mut ansi: Vec<u8> = Vec::new();
 

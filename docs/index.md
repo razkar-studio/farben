@@ -4,7 +4,7 @@ layout: home
 
 hero:
   name: "Farben"
-  text: "Markup-like Terminal Coloring Library"
+  text: "Markup for the Terminal"
   tagline: "Color your terminal without typing whatever the heck '\\x1b[31m' is."
   actions:
     - theme: brand
@@ -23,5 +23,7 @@ features:
   - title: Markup-like Syntax
     details: Color your terminal output using intuitive tags like [red], [bold], [rgb(255,0,0)], and chain them like [bold red] or [italic ansi(1)]
   - title: Opt-in Compile-time Processing
-    details: Zero runtime overhead, completely opt-in using the library's "compile" feature. Changes nothing but color being a macro.
+    details: Zero runtime overhead, completely opt-in using the library's "compile" feature. Changes nothing but function color being a macro.
+  - title: Define Your Own Styles
+    details: Define your own styles, either as an alias or as a design token-like behavior. Change [error] to be [bold red], and add a prefix when calling them.
 ---

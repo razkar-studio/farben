@@ -4,6 +4,24 @@ All notable changes to Farben will be documented here.
 
 ---
 
+## [0.5.0] - 2026-03-15
+
+Global Farben update due to changes to `farben-core`.
+
+### Added
+- Added bugs
+- `Style::prefix` field, optional text prepended before the style's ANSI codes when the style is applied
+- `TagType::Prefix(String)` variant, carries prefix text through the token pipeline to the renderer
+- `set_prefix()`, sets the prefix on an existing registry entry, panics if the style is not found
+- `prefix!()` macro, user-facing API for binding a text prefix to a named style
+- `style_to_tags()` now emits `TagType::Prefix` as the first tag when a prefix is present
+- `parser::render()` now handles `TagType::Prefix` by appending the text directly to output
+
+### Changed
+- `style_to_tags()` no longer returns early on `reset` when a prefix is present, prefix is always emitted first
+
+---
+
 ## [0.4.0] - 2026-03-15
 
 Public Farben Update. Changes to `farben-core`, `farben`, and `farben-macros` is displayed here.

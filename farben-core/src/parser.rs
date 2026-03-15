@@ -1,3 +1,10 @@
+//! Token stream renderer.
+//!
+//! Converts a sequence of [`Token`] values produced by the lexer into a final
+//! ANSI-escaped string ready for terminal output. This module is the last stage
+//! in the farben pipeline: tokenize with [`crate::lexer::tokenize`], then render
+//! with [`render`].
+
 use crate::ansi::{Ground, color_to_ansi, emphasis_to_ansi};
 use crate::lexer::{TagType, Token};
 
@@ -6,6 +13,14 @@ use crate::lexer::{TagType, Token};
 /// Text tokens are appended as-is. Tag tokens are converted to their corresponding
 /// ANSI escape sequences. Does not append a trailing reset; callers are responsible
 /// for that if needed.
+///
+/// # Example
+///
+/// ```ignore
+/// let tokens = tokenize("[red]hello[/]")?;
+/// let output = render(tokens);
+/// assert_eq!(output, "\x1b[31mhello\x1b[0m");
+/// ```
 pub fn render(tokens: Vec<Token>) -> String {
     let mut result = String::new();
     for tok in tokens {
@@ -19,6 +34,7 @@ pub fn render(tokens: Vec<Token>) -> String {
                     result.push_str(emphasis_to_ansi(&emphasis).as_str())
                 }
                 TagType::Reset => result.push_str("\x1b[0m"),
+                TagType::Prefix(prefix) => result.push_str(prefix.as_str()),
             },
         }
     }
