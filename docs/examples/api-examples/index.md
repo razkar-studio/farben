@@ -24,7 +24,7 @@ println!("{}", color("[rgb(255,128,0)]I'm orange![/] Back to normal."));
 `color()` panics on invalid markup. Use [`try_color()`](#try-color-input) to handle errors explicitly.
 :::
 
----
+
 
 ## `colorb(input)`
 
@@ -40,7 +40,7 @@ Not available when the `compile` feature is enabled.
 Use `colorb()` when chaining colored segments and you want the style to carry forward into the next print call.
 :::
 
----
+
 
 ## `color!(input)`, `compile` feature
 
@@ -62,7 +62,7 @@ println!("{}", color!("[bold green]I'm bold and green!"));
 `color!` only accepts string literals. For runtime format args, use [`color_fmt!`](#color-fmt).
 :::
 
----
+
 
 ## `try_color(input)`
 
@@ -87,8 +87,6 @@ match try_color("[red]Hello!") {
 Prefer `try_color()` in library code or anywhere you don't fully control the input string.
 :::
 
----
-
 ## `color_runtime(input, bleed)`
 
 The runtime fallback used internally by `color_fmt!`, `cprint!`, and `cprintln!`. Always a function regardless of active feature flags.
@@ -103,8 +101,6 @@ When `bleed` is `false`, a trailing reset is appended. When `true`, it is not.
 This is an internal function. Prefer `color()`, `colorb()`, or the `cprint` macros in your own code.
 :::
 
----
-
 ## `color_fmt!(...)`
 
 Behaves like `format!` but processes farben markup on the result. Panics on invalid markup.
@@ -117,8 +113,6 @@ use farben::*;
 let name = "Razkar";
 println!("{}", color_fmt!("[green]Hello, {}!", name));
 ```
-
----
 
 ## `cprint!(...)`
 
@@ -133,8 +127,6 @@ let message = "I don't know";
 cprint!("[red]Error: [/]{}", message);
 ```
 
----
-
 ## `cprintln!(...)`
 
 Prints farben-colored markup to stdout with a trailing newline. Behaves like `println!`.
@@ -148,8 +140,6 @@ let result = "We did it!";
 cprintln!("[green]Success: [/]{}", result);
 ```
 
----
-
 ## `cprintb!(...)`
 
 Like `cprint!`, but does not append a trailing reset. Styles bleed into subsequent output.
@@ -160,8 +150,6 @@ use farben::*;
 cprintb!("[red]Error: ");
 cprintln!("something went wrong"); // inherits red
 ```
-
----
 
 ## `cprintbln!(...)`
 
@@ -174,9 +162,7 @@ cprintbln!("[bold red]Section header");
 cprintln!("still bold and red here"); // inherits style
 ```
 
----
-
-## `style!(name, markup)`, `format` feature
+## `style!(name, markup)`: `format` feature
 
 Registers a named style in the global style registry. Requires the `format` feature.
 
@@ -209,9 +195,7 @@ cprintln!("[err]Build failed.");
 Panics if `$markup` is not valid farben markup.
 :::
 
----
-
-## `prefix!(name, prefix)`, `format` feature
+## `prefix!(name, prefix)`: `format` feature
 
 Attaches a literal string prefix to an already-registered named style. Requires the `format` feature.
 
@@ -244,8 +228,6 @@ cprintln!("[err]Connection refused.");
 ::: warning
 Panics if `$name` has not been registered with `style!` first.
 :::
-
----
 
 ## Tag Syntax
 
@@ -334,8 +316,6 @@ color("Use \\[red] to set a red color.")
 // Output: Use [red] to set a red color.
 ```
 
----
-
 ## Error Types
 
 `try_color()` returns a `LexError` on failure. The variants are:
@@ -360,5 +340,7 @@ match try_color("[rgb(255,0)]oops") {
     _ => {}
 }
 ```
+
+---
 
 The API covered in this page only covers Farben's public-facing API. For internals, look for the [docs.rs](https://docs.rs/farben) link for [farben-core](https://docs.rs/farben-core) or [farben-macros](https://docs.rs/farben-macros).

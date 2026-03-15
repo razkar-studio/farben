@@ -14,7 +14,7 @@ fn main() {
 }
 ```
 
----
+
 
 ## Status Logger
 
@@ -39,7 +39,7 @@ fn main() {
 }
 ```
 
----
+
 
 ## Named Styles with `style!` and `prefix!`
 
@@ -71,7 +71,7 @@ fn main() {
 }
 ```
 
----
+
 
 ## RGB Gradient Labels
 
@@ -93,7 +93,7 @@ fn main() {
 }
 ```
 
----
+
 
 ## CLI Argument Error Display
 
@@ -121,7 +121,7 @@ fn main() {
 }
 ```
 
----
+
 
 ## Progress Steps
 
@@ -148,7 +148,7 @@ fn main() {
 }
 ```
 
----
+
 
 ## Style Bleed
 
@@ -166,7 +166,7 @@ fn main() {
 }
 ```
 
----
+
 
 ## Error Handling with `try_color`
 
@@ -196,7 +196,7 @@ fn main() {
 }
 ```
 
----
+
 
 ## Formatted Table Output
 
@@ -230,7 +230,7 @@ fn main() {
 }
 ```
 
----
+
 
 ## Interactive Prompt
 
@@ -256,7 +256,7 @@ fn main() {
 }
 ```
 
----
+
 
 ## Diff-Style Output
 
@@ -291,7 +291,7 @@ fn main() {
 }
 ```
 
----
+
 
 ## Spinner / Loading Indicator
 
@@ -315,7 +315,7 @@ fn main() {
 }
 ```
 
----
+
 
 ## Boxed Section Headers
 
@@ -342,7 +342,7 @@ fn main() {
 }
 ```
 
----
+
 
 ## Conditional Coloring Based on Value
 
@@ -373,7 +373,7 @@ fn main() {
 }
 ```
 
----
+
 
 ## Test Result Summary
 
@@ -419,7 +419,7 @@ fn main() {
 }
 ```
 
----
+
 
 ## File Tree Display
 
@@ -455,7 +455,7 @@ fn main() {
 }
 ```
 
----
+
 
 ## Paged Output Header
 
