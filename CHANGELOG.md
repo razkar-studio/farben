@@ -31,6 +31,12 @@ Global Farben update due to changes to `farben-core`.
 
 ---
 
+## [0.2.4] - 2026-03-15 - farben-macros
+
+### Added
+- Minor dependency update to `farben-core`
+
+---
 ## [0.2.3] - 2026-03-15 - farben-macros
 
 ### Added

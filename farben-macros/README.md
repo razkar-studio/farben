@@ -6,10 +6,6 @@
 
 </div>
 
-# farben-macros
-
-Procedural macros for [farben](https://github.com/razkar-studio/farben).
-
 > [!WARNING]
 > This crate is not intended for direct use. Enable the `compile` feature on `farben` instead.
 
