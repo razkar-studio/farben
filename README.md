@@ -6,11 +6,6 @@
 
 </div>
 
-> [!WARNING]
-> Farben, in this current state, is **unstable**. It only has a few public interfaces,
-> unfinished features, and is experimental.
-> I do not recommend using it in production, at least not yet.
-
 ## What Is Farben
 
 Look at the tagline up there ^

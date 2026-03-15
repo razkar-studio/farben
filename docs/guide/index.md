@@ -10,11 +10,6 @@ that makes your experience coloring just better.
 For your information, I am NOT german (not that it's a bad thing). I'm Indonesian! :indonesia:
 :::
 
-::: warning
-Farben is currently **experimental** and is unstable. Expect breaking API changes and bugs. If you do find them,
-please submit an issue to the GitHub repository link below.
-:::
-
 ## Resources
 
 * **GitHub Repository**: [https://github.com/razkar-studio/farben](https://github.com/razkar-studio/farben)
