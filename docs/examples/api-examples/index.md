@@ -2,15 +2,13 @@
 
 ## `color(input)`
 
-Colorizes a string using farben's markup syntax. Panics if the markup is invalid.
+Parses and renders a farben markup string, appending a final SGR reset.
 
 ```rust
 pub fn color(input: impl Into<String>) -> String
 ```
 
-::: warning
-When the `compile` feature is enabled, `color` becomes a proc-macro instead of a function. See [`color!(input)`](#color-input-compile-feature) below.
-:::
+Not available when the `compile` feature is enabled: `color` becomes a proc-macro instead. See [`color!(input)`](#color-input-compile-feature) below.
 
 **Example**
 
@@ -23,27 +21,35 @@ println!("{}", color("[rgb(255,128,0)]I'm orange![/] Back to normal."));
 ```
 
 ::: warning
-`color()` will panic on invalid markup. If you need to handle errors gracefully, use [`try_color()`](#try-color-input) instead.
+`color()` panics on invalid markup. Use [`try_color()`](#try-color-input) to handle errors explicitly.
 :::
 
 ---
 
-## `color!(input)` — `compile` feature
+## `colorb(input)`
+
+Like `color()`, but does not append a trailing reset. Styles bleed into subsequent output.
+
+```rust
+pub fn colorb(input: impl Into<String>) -> String
+```
+
+Not available when the `compile` feature is enabled.
+
+::: tip
+Use `colorb()` when chaining colored segments and you want the style to carry forward into the next print call.
+:::
+
+---
+
+## `color!(input)`, `compile` feature
 
 Compile-time version of `color()`. Parses and validates markup at compile time, emitting the final ANSI string as a string literal baked into the binary. Requires the `compile` feature.
 
-```rust
-// Cargo.toml
-// farben = { version = "0.2", features = ["compile"] }
-
-color!("[red]I'm red!")
+```toml
+# Cargo.toml
+farben = { version = "...", features = ["compile"] }
 ```
-
-::: tip
-`color!` and `color()` share the same name — when `compile` is enabled, `color!` replaces `color()` entirely. Your call sites don't need to change.
-:::
-
-**Example**
 
 ```rust
 use farben::color;
@@ -53,14 +59,14 @@ println!("{}", color!("[bold green]I'm bold and green!"));
 ```
 
 ::: warning
-`color!` only accepts string literals. For runtime format args, use [`color_fmt!`](#color-fmt-compile-feature).
+`color!` only accepts string literals. For runtime format args, use [`color_fmt!`](#color-fmt).
 :::
 
 ---
 
 ## `try_color(input)`
 
-Like `color()`, but returns a `Result` instead of panicking on invalid markup.
+Like `color()`, but returns a `Result` instead of panicking on invalid markup. Always available regardless of feature flags.
 
 ```rust
 pub fn try_color(input: impl Into<String>) -> Result<String, LexError>
@@ -78,38 +84,165 @@ match try_color("[red]Hello!") {
 ```
 
 ::: tip
-Prefer `try_color()` in library code or anywhere you don't control the input string.
+Prefer `try_color()` in library code or anywhere you don't fully control the input string.
+:::
+
+---
+
+## `color_runtime(input, bleed)`
+
+The runtime fallback used internally by `color_fmt!`, `cprint!`, and `cprintln!`. Always a function regardless of active feature flags.
+
+```rust
+pub fn color_runtime(input: impl Into<String>, bleed: bool) -> String
+```
+
+When `bleed` is `false`, a trailing reset is appended. When `true`, it is not.
+
+::: warning
+This is an internal function. Prefer `color()`, `colorb()`, or the `cprint` macros in your own code.
 :::
 
 ---
 
 ## `color_fmt!(...)`
 
-Format args version of `color()`. Behaves like `format!` but processes farben markup on the result.
+Behaves like `format!` but processes farben markup on the result. Panics on invalid markup.
 
 When the `compile` feature is enabled, the format string is validated at compile time via `validate_color!`.
 
 ```rust
+use farben::*;
+
 let name = "Razkar";
 println!("{}", color_fmt!("[green]Hello, {}!", name));
 ```
 
+---
+
+## `cprint!(...)`
+
+Prints farben-colored markup to stdout without a trailing newline. Behaves like `print!`.
+
+When the `compile` feature is enabled, the format string is validated at compile time.
+
+```rust
+use farben::*;
+
+let message = "I don't know";
+cprint!("[red]Error: [/]{}", message);
+```
+
+---
+
+## `cprintln!(...)`
+
+Prints farben-colored markup to stdout with a trailing newline. Behaves like `println!`.
+
+When the `compile` feature is enabled, the format string is validated at compile time.
+
+```rust
+use farben::*;
+
+let result = "We did it!";
+cprintln!("[green]Success: [/]{}", result);
+```
+
+---
+
+## `cprintb!(...)`
+
+Like `cprint!`, but does not append a trailing reset. Styles bleed into subsequent output.
+
+```rust
+use farben::*;
+
+cprintb!("[red]Error: ");
+cprintln!("something went wrong"); // inherits red
+```
+
+---
+
+## `cprintbln!(...)`
+
+Like `cprintln!`, but does not append a trailing reset. Styles bleed into subsequent output.
+
+```rust
+use farben::*;
+
+cprintbln!("[bold red]Section header");
+cprintln!("still bold and red here"); // inherits style
+```
+
+---
+
+## `style!(name, markup)`, `format` feature
+
+Registers a named style in the global style registry. Requires the `format` feature.
+
+```toml
+# Cargo.toml
+farben = { version = "...", features = ["format"] }
+```
+
+```rust
+macro_rules! style {
+    ($name:expr, $markup:expr) => { ... }
+}
+```
+
+`$name` is a string key used to reference the style in markup. `$markup` is a farben markup string defining the style's colors and emphasis. If a style with that name already exists, it is replaced.
+
+**Example**
+
+```rust
+use farben::*;
+
+style!("ok",  "[bold green]");
+style!("err", "[bold red]");
+
+cprintln!("[ok]Build passed.");
+cprintln!("[err]Build failed.");
+```
+
 ::: warning
-Spaces inside `ansi()` and `rgb()` are not supported in the format string. This will cause a compile-time error when the `compile` feature is enabled, and a panic at runtime otherwise.
+Panics if `$markup` is not valid farben markup.
 :::
 
 ---
 
-## `color_runtime(input)`
+## `prefix!(name, prefix)`, `format` feature
 
-Internal runtime fallback used by `color_fmt!`. Behaves identically to `color()` but is always a function regardless of feature flags.
+Attaches a literal string prefix to an already-registered named style. Requires the `format` feature.
 
 ```rust
-pub fn color_runtime(input: impl Into<String>) -> String
+macro_rules! prefix {
+    ($name:expr, $prefix:expr) => { ... }
+}
+```
+
+The prefix is prepended as plain text before the style's ANSI escape sequence at render time. It can be any string: an icon, a label, whitespace, or a log-level tag.
+
+**Example**
+
+```rust
+use farben::*;
+
+style!("ok",   "[bold green]");
+style!("warn", "[bold yellow]");
+style!("err",  "[bold red]");
+
+prefix!("ok",   "✔ ");
+prefix!("warn", "⚠ ");
+prefix!("err",  "✖ ");
+
+cprintln!("[ok]All checks passed.");
+cprintln!("[warn]Disk usage is high.");
+cprintln!("[err]Connection refused.");
 ```
 
 ::: warning
-This is an internal function. Prefer `color()` or `color_fmt!` in your own code.
+Panics if `$name` has not been registered with `style!` first.
 :::
 
 ---
@@ -135,6 +268,15 @@ color("[red]red [green]green [blue]blue")
 | `[cyan]` | Cyan |
 | `[white]` | White |
 
+### Background Colors
+
+Prefix any color tag with `bg:` to apply it to the background instead.
+
+```rust
+color("[bg:red]red background")
+color("[fg:white bg:blue]white on blue")
+```
+
 ### RGB Colors
 
 ```rust
@@ -142,7 +284,7 @@ color("[rgb(255,128,0)]This is orange!")
 ```
 
 ::: warning
-Spaces inside `rgb()` are not supported. Use `rgb(255,128,0)`, not `rgb(255, 128, 0)`.
+Spaces inside `rgb()` are not supported in format strings when the `compile` feature is enabled. Use `rgb(255,128,0)`, not `rgb(255, 128, 0)`.
 :::
 
 ### 256-Color Palette
@@ -177,15 +319,11 @@ color("[italic rgb(0,200,100)]I'm italic and green!")
 
 ### Reset
 
-`[/]` resets all active styles and colors.
+`[/]` resets all active styles and colors. `color()` and most macros also append a reset automatically at the end of every string.
 
 ```rust
 color("[red]I'm red[/] but I'm not.")
 ```
-
-::: important
-`color()` automatically appends a reset at the end of every string, so styles don't bleed into subsequent output.
-:::
 
 ### Escape Sequence
 
@@ -208,6 +346,7 @@ color("Use \\[red] to set a red color.")
 | `LexError::InvalidTag(String)` | An unrecognized tag name was used |
 | `LexError::InvalidValue(String)` | A value inside `ansi()` or `rgb()` could not be parsed |
 | `LexError::InvalidArgumentCount { expected, got }` | Wrong number of arguments passed to `rgb()` |
+| `LexError::UnclosedValue` | A color function like `rgb(` or `ansi(` was opened but never closed |
 
 **Example**
 
@@ -221,3 +360,5 @@ match try_color("[rgb(255,0)]oops") {
     _ => {}
 }
 ```
+
+The API covered in this page only covers Farben's public-facing API. For internals, look for the [docs.rs](https://docs.rs/farben) link for [farben-core](https://docs.rs/farben-core) or [farben-macros](https://docs.rs/farben-macros).
