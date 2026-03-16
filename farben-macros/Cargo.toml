@@ -1,6 +1,6 @@
 [package]
 name = "farben-macros"
-version = "0.3.2"
+version = "0.4.0"
 edition = "2024"
 description = "Procedural macros for Farben"
 license-file = "LICENSE.md"
@@ -16,6 +16,10 @@ proc-macro = true
 
 [dependencies]
 farben-core = "0.6.2"
+farben-md = { version = "0.1.0", optional = true }
 syn = "2"
 quote = "1"
 proc-macro2 = "1"
+
+[features]
+markdown = ["farben-md"]

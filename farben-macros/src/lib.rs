@@ -88,3 +88,24 @@ pub fn validate_color(input: TokenStream) -> TokenStream {
         }
     }
 }
+
+/// Parses and renders an inline markdown string at compile time.
+///
+/// Tokenizes and renders the input at compile time, emitting the final
+/// ANSI-escaped string as a string literal baked into the binary.
+/// Supports `**bold**`, `*italic*`, `_italic_`, `__underline__`,
+/// `~~strikethrough~~`, and `` `inline code` ``.
+///
+/// # Examples
+///
+/// ```rust
+/// use farben_macros::markdown;
+/// println!("{}", markdown!("**bold** and *italic*"));
+/// ```
+#[cfg(feature = "markdown")]
+#[proc_macro]
+pub fn markdown(input: TokenStream) -> TokenStream {
+    let input = parse_macro_input!(input as LitStr);
+    let result = farben_md::renderer::render(&farben_md::lexer::tokenize(&input.value()));
+    quote! { #result }.into()
+}

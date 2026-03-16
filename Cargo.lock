@@ -4,11 +4,11 @@ version = 4
 
 [[package]]
 name = "farben"
-version = "0.7.2"
+version = "0.8.0"
 dependencies = [
  "farben-core 0.6.2 (registry+https://github.com/rust-lang/crates.io-index)",
- "farben-macros 0.3.2 (registry+https://github.com/rust-lang/crates.io-index)",
- "farben-md",
+ "farben-macros",
+ "farben-md 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -23,21 +23,10 @@ checksum = "40fe9c85e471f28edae3283a964d20b30a666770567a9930f566ae24be0ef04c"
 
 [[package]]
 name = "farben-macros"
-version = "0.3.2"
+version = "0.4.0"
 dependencies = [
  "farben-core 0.6.2 (registry+https://github.com/rust-lang/crates.io-index)",
- "proc-macro2",
- "quote",
- "syn",
-]
-
-[[package]]
-name = "farben-macros"
-version = "0.3.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "27650a5af11141c4c058e5e07c3f870cb165ca95bbb39b54a908393069abcb89"
-dependencies = [
- "farben-core 0.6.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "farben-md 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "proc-macro2",
  "quote",
  "syn",
@@ -46,6 +35,15 @@ dependencies = [
 [[package]]
 name = "farben-md"
 version = "0.1.0"
+dependencies = [
+ "farben-core 0.6.2 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "farben-md"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b41e322f03cc793b2e74211cb5890bb85dfe80240aea8ed178fcd9af92b963a5"
 dependencies = [
  "farben-core 0.6.2 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
