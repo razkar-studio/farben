@@ -30,7 +30,6 @@ fn render_inner(tokens: &[MdToken], active: &mut Vec<EmphasisType>, out: &mut St
         match token {
             MdToken::Text(text) => out.push_str(text),
             MdToken::Code(text) => {
-                // flush active styles, apply code style, restore after
                 out.push_str("\x1b[0m");
                 out.push_str(&emphasis_to_ansi(&EmphasisType::Bold));
                 out.push_str(&color_to_ansi(

@@ -1,5 +1,3 @@
-use std::{iter::Peekable, str::Chars};
-
 /// A parsed inline markdown token.
 ///
 /// Each variant carries its own content as an owned `String`, allowing the
