@@ -13,6 +13,8 @@ use farben_core::*;
 
 #[cfg(feature = "compile")]
 pub use farben_macros::color;
+#[cfg(feature = "compile")]
+pub use farben_macros::colorb;
 
 #[cfg(feature = "format")]
 pub use farben_core::prefix;
