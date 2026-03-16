@@ -13,6 +13,10 @@ pub enum LexError {
     InvalidArgumentCount { expected: usize, got: usize },
     /// An argument could not be parsed into the expected numeric type.
     InvalidValue(String),
+    /// A reset tag was given a target that cannot be reset (e.g. `[/reset]` or `[/prefix]`).
+    InvalidResetTarget,
+    /// The `prefix!` macro was called with a style name that has not been registered.
+    UnknownStyle(String),
 }
 
 impl std::fmt::Display for LexError {
@@ -20,11 +24,17 @@ impl std::fmt::Display for LexError {
         match self {
             LexError::UnclosedTag => write!(f, "unclosed tag"),
             LexError::InvalidTag(tag) => write!(f, "invalid tag: {tag}"),
-            LexError::UnclosedValue => write!(f, "unclosed parantheses for color value"),
+            LexError::UnclosedValue => write!(f, "unclosed parentheses for color value"),
             LexError::InvalidArgumentCount { expected, got } => {
-                write!(f, "expected {}, got {}", expected, got)
+                write!(f, "expected {expected} arguments, got {got}")
             }
-            LexError::InvalidValue(s) => write!(f, "invalid value '{}'", s),
+            LexError::InvalidValue(s) => write!(f, "invalid value '{s}'"),
+            LexError::InvalidResetTarget => {
+                write!(f, "reset target must be a color or emphasis tag")
+            }
+            LexError::UnknownStyle(name) => {
+                write!(f, "no style named '{name}' in the registry")
+            }
         }
     }
 }

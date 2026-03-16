@@ -148,7 +148,7 @@ fn parse_part(part: &str) -> Result<Vec<TagType>, LexError> {
     } else {
         (Ground::Foreground, part)
     };
-    if part.starts_with("/") {
+    if part.starts_with('/') {
         let remainder = &part[1..];
         if remainder.is_empty() {
             Ok(vec![TagType::Reset(None)])
@@ -156,9 +156,7 @@ fn parse_part(part: &str) -> Result<Vec<TagType>, LexError> {
             let inner = parse_part(remainder)?;
             match inner.as_slice() {
                 [tag] => match tag {
-                    TagType::Reset(_) | TagType::Prefix(_) => {
-                        panic!("invalid reset target: cannot reset a reset or prefix")
-                    }
+                    TagType::Reset(_) | TagType::Prefix(_) => Err(LexError::InvalidResetTarget),
                     _ => Ok(vec![TagType::Reset(Some(Box::new(tag.clone())))]),
                 },
                 _ => Err(LexError::InvalidTag(part.to_string())),
@@ -245,8 +243,8 @@ pub fn tokenize(input: impl Into<String>) -> Result<Vec<Token>, LexError> {
             break;
         };
         let abs_starting = starting + pos;
-        // escape logic
-        if abs_starting > 0 && input[abs_starting - 1..abs_starting] == "\\".to_string() {
+        // wtf does this mean
+        if abs_starting > 0 && input.as_bytes().get(abs_starting.wrapping_sub(1)) == Some(&b'\\') {
             let before = &input[pos..abs_starting - 1];
             if !before.is_empty() {
                 tokens.push(Token::Text(before.to_string()));

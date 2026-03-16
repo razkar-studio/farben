@@ -1,6 +1,6 @@
 //! # Introduction
-//! Farben (as in "color" in german) is a zero-dependency terminal coloring library.
-//! Farben uses a markup-language-like syntax to your string and outputs them colored. For example:
+//! Farben (as in "color" in German) is a zero-dependency terminal coloring library.
+//! Farben applies a markup-like syntax to your strings and outputs them colored. For example:
 //!
 //! # Example
 //! ```
@@ -44,6 +44,16 @@ pub fn color(input: impl Into<String>) -> String {
     color_runtime(input, false)
 }
 
+/// Parses and renders a farben markup string, appending a final SGR reset, without
+/// appending a trailing reset sequence.
+///
+/// Styles applied by this call bleed into subsequent terminal output. Use when chaining
+/// multiple colored segments where you want the style to carry forward. For the
+/// reset-appending variant, see [`color`].
+///
+/// # Panics
+///
+/// Panics if the input is not valid farben markup. Use [`try_color`] for error handling.
 #[cfg(not(feature = "compile"))]
 pub fn colorb(input: impl Into<String>) -> String {
     color_runtime(input, true)
@@ -66,7 +76,9 @@ pub fn color_runtime(input: impl Into<String>, bleed: bool) -> String {
     res
 }
 
-/// Parses and renders a markup string and appends a SGR reset, with arguments supported.
+/// Parses and renders a farben markup string with format arguments, appending a final SGR reset.
+///
+/// Behaves like [`format!`] but processes farben markup tags in the resulting string.
 ///
 /// # Panics
 ///
@@ -113,7 +125,9 @@ macro_rules! cprint {
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```
+/// use farben::*;
+/// let message = "I don't know";
 /// cprint!("[red]Error: [/]{}", message);
 /// ```
 #[cfg(feature = "compile")]
@@ -162,6 +176,7 @@ macro_rules! cprintln {
 /// # Examples
 /// ```
 /// use farben::*;
+/// let result = "We did it!";
 /// cprintln!("[green]Success: [/]{}", result);
 /// ```
 #[cfg(feature = "compile")]
@@ -175,6 +190,14 @@ macro_rules! cprintln {
     };
 }
 
+/// Parses and renders a farben markup string with format arguments, appending a final SGR reset.
+///
+/// Behaves like [`format!`] but processes farben markup tags in the resulting string.
+/// The format string is validated at compile time.
+///
+/// # Panics
+///
+/// Panics if the input is not valid farben markup.
 #[cfg(feature = "compile")]
 #[macro_export]
 macro_rules! color_fmt {
@@ -340,8 +363,7 @@ mod tests {
     fn test_try_color_inline_reset() {
         let result = try_color("[red]before[/]after");
         assert!(result.is_ok());
-        let s = result.unwrap();
-        assert!(s.contains("\x1b[0m"));
+        assert_eq!(result.unwrap(), "\x1b[31mbefore\x1b[0mafter\x1b[0m");
     }
 
     // --- color ---

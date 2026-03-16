@@ -35,10 +35,11 @@ pub fn insert_style(name: impl Into<String>, style: Style) {
 /// The prefix is prepended to the style's escape sequence at render time,
 /// allowing a named style to inject arbitrary text before its ANSI codes.
 ///
-/// # Panics
+/// # Errors
 ///
-/// Panics if `name` has not been registered via [`insert_style`] (or the `style!` macro).
-pub fn set_prefix(name: impl Into<String>, prefix: impl Into<String>) {
+/// Returns [`LexError::UnknownStyle`] if `name` has not been registered via
+/// [`insert_style`] (or the [`style!`] macro).
+pub fn set_prefix(name: impl Into<String>, prefix: impl Into<String>) -> Result<(), LexError> {
     let name = name.into();
     let prefix = prefix.into();
 
@@ -46,10 +47,12 @@ pub fn set_prefix(name: impl Into<String>, prefix: impl Into<String>) {
         .get_or_init(|| Mutex::new(HashMap::new()))
         .lock()
         .unwrap();
+
     if let Some(style) = map.get_mut(&name) {
         style.prefix = Some(prefix);
+        Ok(())
     } else {
-        panic!("prefix!() called with unknown style '{name}', define it with style!() first");
+        Err(LexError::UnknownStyle(name))
     }
 }
 
@@ -99,7 +102,8 @@ macro_rules! style {
 ///
 /// # Panics
 ///
-/// Panics if `$name` has not been registered.
+/// Panics if `$name` has not been registered. Use [`set_prefix`] directly to handle
+/// this case without panicking.
 ///
 /// # Example
 ///
@@ -111,6 +115,7 @@ macro_rules! style {
 #[macro_export]
 macro_rules! prefix {
     ($name:expr, $prefix:expr) => {
-        farben_core::registry::set_prefix($name, $prefix);
+        farben_core::registry::set_prefix($name, $prefix)
+            .expect("prefix!() called with unregistered style name");
     };
 }

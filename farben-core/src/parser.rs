@@ -26,14 +26,14 @@ pub fn render(tokens: Vec<Token>) -> String {
     let mut active: Vec<TagType> = Vec::new();
     for tok in tokens {
         match tok {
-            Token::Text(text) => result.push_str(text.as_str()),
+            Token::Text(text) => result.push_str(&text),
             Token::Tag(tag) => match tag {
                 TagType::Color { color, ground } => {
-                    result.push_str(color_to_ansi(&color, ground.clone()).as_str());
+                    result.push_str(&color_to_ansi(&color, ground.clone()));
                     active.push(TagType::Color { color, ground })
                 }
                 TagType::Emphasis(emphasis) => {
-                    result.push_str(emphasis_to_ansi(&emphasis).as_str());
+                    result.push_str(&emphasis_to_ansi(&emphasis));
                     active.push(TagType::Emphasis(emphasis))
                 }
                 TagType::Reset(None) => result.push_str("\x1b[0m"),
@@ -52,7 +52,7 @@ pub fn render(tokens: Vec<Token>) -> String {
                         }
                     }
                 }
-                TagType::Prefix(prefix) => result.push_str(prefix.as_str()),
+                TagType::Prefix(prefix) => result.push_str(&prefix),
             },
         }
     }

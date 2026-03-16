@@ -239,8 +239,20 @@ pub(crate) fn emphasis_to_ansi(emphasis: &EmphasisType) -> String {
 /// if the style carries no active attributes and no colors.
 ///
 /// A `reset` style short-circuits to `\x1b[0m` regardless of any other fields.
-#[allow(unused)]
-pub(crate) fn style_to_ansi(style: &Style) -> String {
+///
+/// # Example
+///
+/// ```
+/// use farben_core::ansi::{Style, Color, NamedColor, style_to_ansi};
+///
+/// let style = Style {
+///     bold: true,
+///     fg: Some(Color::Named(NamedColor::Red)),
+///     ..Default::default()
+/// };
+/// assert_eq!(style_to_ansi(&style), "\x1b[1;31m");
+/// ```
+pub fn style_to_ansi(style: &Style) -> String {
     let mut ansi: Vec<u8> = Vec::new();
 
     if style.reset {

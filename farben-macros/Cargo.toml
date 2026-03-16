@@ -1,6 +1,6 @@
 [package]
 name = "farben-macros"
-version = "0.2.6"
+version = "0.3.0"
 edition = "2024"
 description = "Procedural macros for Farben"
 license-file = "LICENSE.md"

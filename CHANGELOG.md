@@ -4,6 +4,87 @@ All notable changes to Farben will be documented here.
 
 ---
 
+## [0.3.0] - 2026-03-16
+
+### Changed
+
+- `colorb!` — replaced one-line stub doc ("Same as `color!`, but bleeds.") with a full
+  doc comment explaining what bleed means, when to use it, and how it differs from
+  `color!`. Includes a working example.
+- `validate_color!` — removed misleading user-facing example. The macro is internal
+  infrastructure used by `color_fmt!`, `cprint!`, and `cprintln!`; the example implied
+  direct use was intended. Doc comment now explicitly marks it as internal and directs
+  users toward `color!` and `color_fmt!` instead.
+
+---
+
+## [0.7.0] - 2026-03-16 - farben
+
+### Added
+
+- `colorb` — added missing doc comment explaining bleed behavior and when to use it
+  over `color`.
+- `color_fmt!` (compile-time variant) — added missing doc comment. Previously the
+  runtime variant was documented but the `compile`-feature counterpart had none.
+
+### Changed
+
+- Crate-level doc comment revised: fixed grammar ("uses a markup-language-like syntax
+  to your string" → "applies a markup-like syntax to your strings") and capitalized
+  "German".
+
+### Fixed
+
+- `cprint!` (compile-time variant) — example referenced unbound variable `message`.
+  Added `let message = "I don't know";` to the example so it compiles as a doctest.
+- `cprintln!` (compile-time variant) — example referenced unbound variable `result`.
+  Added `let result = "We did it!";` to the example so it compiles as a doctest.
+- `test_try_color_inline_reset` — strengthened assertion from
+  `s.contains("\x1b[0m")` (always true due to trailing reset) to a full equality check
+  against the expected output `"\x1b[31mbefore\x1b[0mafter\x1b[0m"`.
+
+---
+
+## [0.6.0] - 2026-03-16 - farben-core
+
+### Added
+
+- `LexError::InvalidResetTarget` — new error variant returned when a reset tag targets
+  something that cannot be reset (e.g. `[//]` or `[/prefix]`). Previously caused a panic.
+- `LexError::UnknownStyle` — new error variant returned by `registry::set_prefix` when
+  the given style name has not been registered.
+- `registry::set_prefix` now returns `Result<(), LexError>` instead of `()`, allowing
+  callers to handle unknown style names without panicking.
+
+### Changed
+
+- `ansi::style_to_ansi` promoted from `pub(crate)` to `pub`. Users building on top of
+  `farben-core` can now call it directly to convert a `Style` into a combined SGR sequence.
+- `ansi::style_to_ansi` — removed `#[allow(unused)]` attribute now that the function is
+  part of the public API.
+- `registry::prefix!` macro updated to call `.expect()` on the `Result` returned by
+  `set_prefix`, preserving the existing panic-on-misuse behavior at the macro callsite
+  while keeping the underlying function non-panicking.
+- `LexError::InvalidArgumentCount` display message improved from
+  `"expected N, got M"` to `"expected N arguments, got M"` for clarity.
+
+### Fixed
+
+- `lexer::parse_part` — replaced `panic!` with `Err(LexError::InvalidResetTarget)` when
+  a reset tag targets a `Reset` or `Prefix` node. User-supplied markup can no longer crash
+  the process through the `try_color` path.
+- `registry::set_prefix` — replaced `panic!` with `Err(LexError::UnknownStyle)` when the
+  style name is not found in the registry.
+- `errors.rs` — corrected typo in `UnclosedValue` display message:
+  "parantheses" → "parentheses".
+- `ansi::NamedColor` doc comment — corrected "eight standard ANSI named colors" to
+  "sixteen ANSI named colors" (eight standard + eight bright variants).
+- `ansi::style_to_ansi` — added a working doctest demonstrating bold + named color output.
+- `parser::render` — removed unnecessary `.as_str()` calls on `String` return values from
+  `color_to_ansi` and `emphasis_to_ansi`; `push_str` accepts `&str` via `Deref` directly.
+
+---
+
 ## [0.6.0] - 2026-03-16
 
 Global Farben Update
