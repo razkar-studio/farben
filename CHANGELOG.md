@@ -23,14 +23,14 @@ Global Farben Update
 
 ---
 
-## [0.2.6] - 2026-03-15 - farben/farben-macros
+## [0.2.6] - 2026-03-16 - farben/farben-macros
 
 ### Added
 - Minor dependency update to `farben-core`
 
 ---
 
-## [0.5.1] - 2026-03-15 - farben
+## [0.5.1] - 2026-03-16 - farben
 
 ### Added
 - Minor dependency update to `farben-core`
