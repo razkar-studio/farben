@@ -1,7 +1,6 @@
 [workspace]
 members = [
-    "farben",
-    "farben-core",
-    "farben-macros",
+    "farben", "farben-core",
+    "farben-macros", "farben-md",
 ]
 resolver = "3"

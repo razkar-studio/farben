@@ -14,8 +14,10 @@ homepage = "https://razkar-studio.github.io/farben"
 [dependencies]
 farben-core = "0.6.1"
 farben-macros = { version = "0.3.1", optional = true }
+farben-md = { path = "../farben-md", optional = true }
 
 [features]
 default = ["format"]
 format = []
 compile = ["farben-macros"]
+markdown = ["farben-md"]
