@@ -18,6 +18,9 @@ Global Farben Update
 - `TagType::Reset` changed from a unit variant to `Reset(Option<Box<TagType>>)`
 - All existing `[/]` full reset behavior is preserved via `Reset(None)`
 
+### Fixed
+- Fixed a bug where `colorb!()` did not exist when using the `compile` feature
+
 ---
 
 ## [0.2.6] - 2026-03-15 - farben/farben-macros
