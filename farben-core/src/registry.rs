@@ -2,8 +2,6 @@
 //!
 //! Stores user-defined [`Style`] values under string keys, allowing markup like
 //! `[danger]` to expand into a pre-configured combination of colors and emphasis.
-//! Styles are registered at startup via the [`style!`] macro and optionally given
-//! a prefix string via the [`prefix!`] macro.
 //!
 //! The registry is process-global and backed by a [`Mutex`]-protected [`HashMap`].
 //! All operations are safe to call from multiple threads, though the typical usage
@@ -72,50 +70,4 @@ pub(crate) fn search_registry(query: impl Into<String>) -> Result<Style, LexErro
         Some(style) => Ok(style.clone()),
         None => Err(LexError::InvalidTag(query)),
     }
-}
-
-/// Defines a named style in the global registry.
-///
-/// Parses `$markup` as a farben markup string and stores the resulting [`Style`]
-/// under `$name`. Panics if the markup is invalid.
-///
-/// # Example
-///
-/// ```ignore
-/// style!("danger", "[bold red]");
-/// // [danger] in markup now expands to bold red text
-/// ```
-#[macro_export]
-macro_rules! style {
-    ($name:expr, $markup:expr) => {
-        farben_core::registry::insert_style(
-            $name,
-            farben_core::ansi::Style::parse($markup).unwrap(),
-        );
-    };
-}
-
-/// Sets a prefix string on a previously defined named style.
-///
-/// The prefix is injected as a literal string before the style's ANSI escape sequence
-/// when rendered. The style must already exist in the registry; call [`style!`] first.
-///
-/// # Panics
-///
-/// Panics if `$name` has not been registered. Use [`set_prefix`] directly to handle
-/// this case without panicking.
-///
-/// # Example
-///
-/// ```ignore
-/// style!("warn", "[yellow]");
-/// prefix!("warn", "⚠ ");
-/// // [warn] now renders "⚠ " followed by the yellow escape sequence
-/// ```
-#[macro_export]
-macro_rules! prefix {
-    ($name:expr, $prefix:expr) => {
-        farben_core::registry::set_prefix($name, $prefix)
-            .expect("prefix!() called with unregistered style name");
-    };
 }

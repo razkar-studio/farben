@@ -2,7 +2,7 @@
 
 All notable changes to Farben will be documented here.
 
----
+
 
 ## [0.3.0] - 2026-03-16 - farben-macros
 
@@ -16,7 +16,7 @@ All notable changes to Farben will be documented here.
   direct use was intended. Doc comment now explicitly marks it as internal and directs
   users toward `color!` and `color_fmt!` instead.
 
----
+
 
 ## [0.7.0] - 2026-03-16 - farben
 
@@ -43,7 +43,7 @@ All notable changes to Farben will be documented here.
   `s.contains("\x1b[0m")` (always true due to trailing reset) to a full equality check
   against the expected output `"\x1b[31mbefore\x1b[0mafter\x1b[0m"`.
 
----
+
 
 ## [0.6.0] - 2026-03-16 - farben-core
 
@@ -83,7 +83,7 @@ All notable changes to Farben will be documented here.
 - `parser::render` — removed unnecessary `.as_str()` calls on `String` return values from
   `color_to_ansi` and `emphasis_to_ansi`; `push_str` accepts `&str` via `Deref` directly.
 
----
+
 
 ## [0.6.0] - 2026-03-16
 
@@ -102,35 +102,35 @@ Global Farben Update
 ### Fixed
 - Fixed a bug where `colorb!()` did not exist when using the `compile` feature
 
----
+
 
 ## [0.2.6] - 2026-03-16 - farben/farben-macros
 
 ### Added
 - Minor dependency update to `farben-core`
 
----
+
 
 ## [0.5.1] - 2026-03-16 - farben
 
 ### Added
 - Minor dependency update to `farben-core`
 
----
+
 
 ## [0.2.5] - 2026-03-15 - farben-macros
 
 ### Added
 - Minor dependency update to `farben-core`
 
----
+
 
 ## [0.4.2] - 2026-03-15 - farben-core
 
 ### Added
 - Bright ansi variants now exist, I guess.
 
----
+
 
 ## [0.5.0] - 2026-03-15
 
@@ -150,27 +150,27 @@ Global Farben update due to changes to `farben-core`.
 - `style_to_tags()` no longer returns early on `reset` when a prefix is present, prefix is always emitted first
 - `style!()` is now gated to the `format` feature
 
----
+
 
 ## [0.4.1] - 2026-03-15 - farben-core
 
 ### Fixed
 - Bug where `prefix!()` interferes with actual color styling
 
----
+
 
 ## [0.2.4] - 2026-03-15 - farben-macros
 
 ### Added
 - Minor dependency update to `farben-core`
 
----
+
 ## [0.2.3] - 2026-03-15 - farben-macros
 
 ### Added
 - Minor dependency update to `farben-core`
 
----
+
 
 ## [0.4.0] - 2026-03-15
 
@@ -195,7 +195,7 @@ Public Farben Update. Changes to `farben-core`, `farben`, and `farben-macros` is
 ### Fixed
 - `color!()` now auto-resets.
 
----
+
 
 ## [0.2.2] - 2026-03-15 - farben-macros
 
@@ -206,7 +206,7 @@ Public Farben Update. Changes to `farben-core`, `farben`, and `farben-macros` is
 ### Fixed
 - `color!()` now auto-resets
 
----
+
 
 ## [0.3.0] - 2026-03-15 — farben-core
 
@@ -224,28 +224,28 @@ Public Farben Update. Changes to `farben-core`, `farben`, and `farben-macros` is
 ### Changed
 - `parse_tag()` updated to flatten nested `Vec<TagType>` results from `parse_part()`
 
----
+
 
 ## [0.3.3] - 2026-03-14b - farben
 
 ### Added
 - `cprintb!` and `cprintbln!` for color bleeding printing.
 
----
+
 
 ## [0.2.1] - 2026-03-14 - farben-macros
 
 ### Added
 - 100% documentation coverage
 
----
+
 
 ## [0.2.1] - 2026-03-14 - farben-core
 
 ### Added
 - 100% documentation coverage
 
----
+
 
 ## [0.3.2] - 2026-03-14 — farben
 
@@ -254,7 +254,7 @@ Public Farben Update. Changes to `farben-core`, `farben`, and `farben-macros` is
 - `cprintln!()` — prints farben-colored markup to stdout with a trailing newline, behaves like `println!`
 - Both macros support format args and compile-time validation when the `compile` feature is enabled
 
----
+
 
 ## [0.3.0] - 2026-03-14 — farben
 
@@ -271,7 +271,7 @@ Public Farben Update. Changes to `farben-core`, `farben`, and `farben-macros` is
 - Internal logic moved to `farben-core`
 - `color()` replaced by `color!` proc-macro when `compile` feature is enabled
 
----
+
 
 ## [0.2.0] - 2026-03-14 — farben-core
 
@@ -284,7 +284,7 @@ Public Farben Update. Changes to `farben-core`, `farben`, and `farben-macros` is
 ### Changed
 - `TagType::Color(Color)` restructured to `TagType::Color { color: Color, ground: Ground }`
 
----
+
 
 ## [0.2.0] - 2026-03-14
 
@@ -302,7 +302,7 @@ Public Farben Update. Changes to `farben-core`, `farben`, and `farben-macros` is
 - `color()` is now replaced by the `color!` proc-macro when the `compile` feature is enabled
 - Internal logic extracted from `farben` into `farben-core` for shared use across crates
 
----
+
 
 ## [0.1.0] - 2026-03-14
 
