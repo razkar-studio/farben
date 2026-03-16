@@ -53,6 +53,45 @@ function crateClass(crate) {
 
 const releases = [
     {
+        version: "0.8.0",
+        crate: "farben",
+        date: "2026-03-16",
+        sections: [
+            {
+                type: "Added",
+                items: [
+                    "<code>style!()</code> — moved from <code>farben-core</code>. Defines a named style in the global registry. Gated behind the <code>format</code> feature.",
+                    "<code>prefix!()</code> — moved from <code>farben-core</code>. Sets a prefix string on a previously defined named style. Gated behind the <code>format</code> feature.",
+                ],
+            },
+        ],
+    },
+    {
+        version: "0.7.0",
+        crate: "farben-core",
+        date: "2026-03-16",
+        sections: [
+            {
+                type: "Changed",
+                items: [
+                    "<code>style!()</code> — moved to <code>farben</code>. Users importing directly from <code>farben-core</code> should update to <code>farben::style!()</code>.",
+                    "<code>prefix!()</code> — moved to <code>farben</code>. Users importing directly from <code>farben-core</code> should update to <code>farben::prefix!()</code>.",
+                ],
+            },
+        ],
+    },
+    {
+        version: "0.3.1",
+        crate: "farben-macros",
+        date: "2026-03-16",
+        sections: [
+            {
+                type: "Changed",
+                items: ["Minor dependency update to <code>farben-core</code>."],
+            },
+        ],
+    },
+    {
         version: "0.3.0",
         crate: "farben-macros",
         date: "2026-03-16",

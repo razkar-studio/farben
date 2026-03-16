@@ -2,7 +2,26 @@
 
 All notable changes to Farben will be documented here.
 
+## [0.7.1] - 2026-03-16 - farben
 
+### Added
+- `style!()` macro — moved from `farben-core` to `farben`. Defines a named style in the
+  global registry. Gated behind the `format` feature.
+- `prefix!()` macro — moved from `farben-core` to `farben`. Sets a prefix string on a
+  previously defined named style. Gated behind the `format` feature.
+
+## [0.6.1] - 2026-03-16 - farben-core
+
+### Removed
+- `style!()` macro — moved to `farben`. Users importing from `farben-core` directly
+  should update to use `farben::style!()` instead.
+- `prefix!()` macro — moved to `farben`. Users importing from `farben-core` directly
+  should update to use `farben::prefix!()` instead.
+
+## [0.3.1] - 2026-03-16 - farben-maros
+
+### Added
+- Minor dependency update to `farben-core`
 
 ## [0.3.0] - 2026-03-16 - farben-macros
 
