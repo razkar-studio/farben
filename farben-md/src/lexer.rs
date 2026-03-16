@@ -1,3 +1,9 @@
+//! Tokenizer for inline markdown strings.
+//!
+//! Parses delimiter-based markdown syntax (`**`, `*`, `_`, `__`, `~~`, `` ` ``)
+//! into a recursive [`MdToken`] tree. Unclosed delimiters are treated as plain
+//! text, this module never errors.
+
 /// A parsed inline markdown token.
 ///
 /// Each variant carries its own content as an owned `String`, allowing the

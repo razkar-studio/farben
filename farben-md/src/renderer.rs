@@ -1,3 +1,9 @@
+//! Token tree renderer.
+//!
+//! Converts a [`MdToken`] tree produced by [`crate::lexer::tokenize`] into a
+//! final ANSI-escaped string. Nested spans are handled via an active style stack
+//! that re-emits surviving styles after each reset.
+
 use crate::lexer::MdToken;
 use farben_core::ansi::{Color, Ground, NamedColor, color_to_ansi, emphasis_to_ansi};
 use farben_core::lexer::EmphasisType;
