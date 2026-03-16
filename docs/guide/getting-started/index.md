@@ -14,7 +14,7 @@ In Farben, basic colors use direct names for the tags, like for basic red using 
 This isn't a random decision, it actually comes from the basic ANSI colors itself.
 
 ::: info
-Bright color variants coming soon!
+Bright color variants is here too!
 :::
 
 ```rust
