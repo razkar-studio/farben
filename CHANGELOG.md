@@ -2,6 +2,11 @@
 
 All notable changes to Farben will be documented here.
 
+## [0.6.2] - 2026-03-17 - farben-core
+
+### Changed
+- Made `style_to_ansi()` and `emphasis_to_ansi()` public functions
+
 ## [0.7.1] - 2026-03-16 - farben
 
 ### Added

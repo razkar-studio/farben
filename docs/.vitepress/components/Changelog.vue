@@ -53,6 +53,19 @@ function crateClass(crate) {
 
 const releases = [
     {
+        version: "0.6.2",
+        crate: "farben-core",
+        date: "2026-03-17",
+        sections: [
+            {
+                type: "Changed",
+                items: [
+                    "Made <code>style_to_ansi()</code> and <code>emphasis_to_ansi()</code> public functions.",
+                ],
+            },
+        ],
+    },
+    {
         version: "0.7.1",
         crate: "farben",
         date: "2026-03-16",

@@ -213,7 +213,7 @@ fn encode_color_sgr(ansi: &mut Vec<u8>, param: Ground, color: &Color) {
 /// let seq = color_to_ansi(&Color::Named(NamedColor::Red), Ground::Foreground);
 /// assert_eq!(seq, "\x1b[31m");
 /// ```
-pub(crate) fn color_to_ansi(color: &Color, ground: Ground) -> String {
+pub fn color_to_ansi(color: &Color, ground: Ground) -> String {
     let mut ansi: Vec<u8> = Vec::new();
     encode_color_sgr(&mut ansi, ground, color);
 
@@ -221,7 +221,7 @@ pub(crate) fn color_to_ansi(color: &Color, ground: Ground) -> String {
 }
 
 /// Converts an `EmphasisType` into the corresponding SGR escape sequence.
-pub(crate) fn emphasis_to_ansi(emphasis: &EmphasisType) -> String {
+pub fn emphasis_to_ansi(emphasis: &EmphasisType) -> String {
     let code = match emphasis {
         EmphasisType::Bold => 1,
         EmphasisType::Dim => 2,
