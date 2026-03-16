@@ -53,7 +53,7 @@ function crateClass(crate) {
 
 const releases = [
     {
-        version: "0.8.0",
+        version: "0.7.1",
         crate: "farben",
         date: "2026-03-16",
         sections: [
@@ -67,7 +67,7 @@ const releases = [
         ],
     },
     {
-        version: "0.7.0",
+        version: "0.6.1",
         crate: "farben-core",
         date: "2026-03-16",
         sections: [
