@@ -14,6 +14,7 @@ Farben is a color library that uses markup-like syntax. Color your terminal with
 
 - **User Guide**: [https://razkar-studio.github.io/farben](https://razkar-studio.github.io/farben)
 - **API Reference**: [https://docs.rs/farben](https://docs.rs/farben)
+- **Changelog**: [CHANGELOG.md](./CHANGELOG.md)
 
 ## Usage
 

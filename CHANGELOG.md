@@ -4,7 +4,7 @@ All notable changes to Farben will be documented here.
 
 ---
 
-## [0.3.0] - 2026-03-16
+## [0.3.0] - 2026-03-16 - farben-macros
 
 ### Changed
 
