@@ -12,7 +12,7 @@ categories = ["command-line-interface"]
 homepage = "https://razkar-studio.github.io/farben"
 
 [dependencies]
-farben-core = "0.4.2"
+farben-core = "0.5"
 farben-macros = { version = "0.2", optional = true }
 
 [features]
