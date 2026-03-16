@@ -4,7 +4,7 @@ version = 4
 
 [[package]]
 name = "farben"
-version = "0.5.1"
+version = "0.6.0"
 dependencies = [
  "farben-core 0.4.2",
  "farben-macros 0.2.0",
@@ -40,7 +40,7 @@ dependencies = [
 
 [[package]]
 name = "farben-macros"
-version = "0.2.5"
+version = "0.2.6"
 dependencies = [
  "farben-core 0.4.2",
  "proc-macro2",

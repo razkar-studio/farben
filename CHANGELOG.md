@@ -4,21 +4,44 @@ All notable changes to Farben will be documented here.
 
 ---
 
-## [0.5.1] - 2026-03-16 - farben
+## [0.6.0] - 2026-03-16
+
+Global Farben Update
+
+### Added
+- Specified resets — `[/bold]`, `[/red]`, `[/italic]` etc. reset only the named style, leaving all other active styles intact
+- `TagType::Reset` now takes `Option<Box<TagType>>` — `None` for full reset `[/]`, `Some(tag)` for partial reset
+- `parser::render` now maintains an active tag stack, re-emitting surviving styles after a partial reset
+- Panics if a partial reset targets `TagType::Reset` or `TagType::Prefix` — both are invalid reset targets
+
+### Changed
+- `TagType::Reset` changed from a unit variant to `Reset(Option<Box<TagType>>)`
+- All existing `[/]` full reset behavior is preserved via `Reset(None)`
+
+---
+
+## [0.2.6] - 2026-03-15 - farben/farben-macros
 
 ### Added
 - Minor dependency update to `farben-core`
 
 ---
 
-## [0.2.5] - 2026-03-16 - farben-macros
+## [0.5.1] - 2026-03-15 - farben
 
 ### Added
 - Minor dependency update to `farben-core`
 
 ---
 
-## [0.4.2] - 2026-03-16 - farben-core
+## [0.2.5] - 2026-03-15 - farben-macros
+
+### Added
+- Minor dependency update to `farben-core`
+
+---
+
+## [0.4.2] - 2026-03-15 - farben-core
 
 ### Added
 - Bright ansi variants now exist, I guess.
