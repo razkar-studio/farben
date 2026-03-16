@@ -148,8 +148,7 @@ fn parse_part(part: &str) -> Result<Vec<TagType>, LexError> {
     } else {
         (Ground::Foreground, part)
     };
-    if part.starts_with('/') {
-        let remainder = &part[1..];
+    if let Some(remainder) = part.strip_prefix('/') {
         if remainder.is_empty() {
             Ok(vec![TagType::Reset(None)])
         } else {
