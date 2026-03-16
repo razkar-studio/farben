@@ -30,6 +30,10 @@ export default defineConfig({
           { text: "Colors In Depth", link: "/guide/colors-in-depth/" },
           { text: "Purposefully Bleeding", link: "/guide/bleeding/" },
           { text: "Define Your Own Tags", link: "/guide/custom-tags/" },
+          {
+            text: "Exclusive Resetting",
+            link: "/guide/specifically-resetting/",
+          },
         ],
       },
       {

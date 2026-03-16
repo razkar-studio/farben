@@ -28,6 +28,23 @@ As of the newest version, you can now specifically reset a style/color.
 ```rust
 cprintln!("[underline red]error:[/underline] I'm still red.")
 ```
+This style section has an exception:
+:::
+
+### Exception: Specific Resets
+
+An exception of the trailing space rule is when *specifically resetting*, it's better **not** to use trailing spaces.
+
+```rust
+// Good
+cprintln!("[bold red]I'm red and bold![/bold] Now I'm just red!");
+
+// Bad
+cprintln!("[bold red]I'm red and bold! [/bold]Now I'm just red!");
+```
+
+::: tip
+The space before `[/bold]` would be printed while bold is still active, making it bold too. Putting the space after the reset tag ensures it's printed in the already-reduced style, which is almost always what you want.
 :::
 
 ## No Spaces After Opening Tags
@@ -40,6 +57,8 @@ cprintln!("[red]Hello!");
 // Unnecessary space, will be printed as part of the output
 cprintln!("[red] Hello!");
 ```
+
+For the exception of the rule above.
 
 ## Reset Early, Not Late
 
