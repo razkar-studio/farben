@@ -14,7 +14,7 @@ use crate::errors::LexError;
 use crate::lexer::{EmphasisType, TagType, Token, tokenize};
 
 /// Whether a color applies to the foreground (text) or background.
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum Ground {
     /// Applies the color to the text itself (SGR 30-series / 38).
     Foreground,

@@ -23,19 +23,35 @@ use crate::lexer::{TagType, Token};
 /// ```
 pub fn render(tokens: Vec<Token>) -> String {
     let mut result = String::new();
+    let mut active: Vec<TagType> = Vec::new();
     for tok in tokens {
         match tok {
             Token::Text(text) => result.push_str(text.as_str()),
             Token::Tag(tag) => match tag {
                 TagType::Color { color, ground } => {
-                    result.push_str(color_to_ansi(&color, ground).as_str())
+                    result.push_str(color_to_ansi(&color, ground.clone()).as_str());
+                    active.push(TagType::Color { color, ground })
                 }
                 TagType::Emphasis(emphasis) => {
-                    result.push_str(emphasis_to_ansi(&emphasis).as_str())
+                    result.push_str(emphasis_to_ansi(&emphasis).as_str());
+                    active.push(TagType::Emphasis(emphasis))
                 }
-                /* Edit */
                 TagType::Reset(None) => result.push_str("\x1b[0m"),
-                TagType::Reset(Some(_)) => todo!(),
+                TagType::Reset(Some(tag)) => {
+                    active.retain(|item| item != tag.as_ref());
+                    result.push_str("\x1b[0m");
+                    for item in &active {
+                        match item {
+                            TagType::Color { color, ground } => {
+                                result.push_str(&color_to_ansi(color, ground.clone()))
+                            }
+                            TagType::Emphasis(emphasis) => {
+                                result.push_str(&emphasis_to_ansi(emphasis))
+                            }
+                            _ => unreachable!(),
+                        }
+                    }
+                }
                 TagType::Prefix(prefix) => result.push_str(prefix.as_str()),
             },
         }

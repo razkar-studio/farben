@@ -30,5 +30,9 @@ fn main() {
     println!(
         "{}",
         color_fmt!("[bold]I'm formatted! Here's the text: [bg:white fg:black]{msg}")
-    )
+    );
+    println!();
+    cprintln!(
+        "[bold red]I'm bold and red! [underline]I'm underlined! [/underline][/bold]I'm just red now! [/red]Now I'm not!"
+    );
 }

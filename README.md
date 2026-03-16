@@ -2,13 +2,13 @@
 
 ![banner logo](farben/images/farben.png)
 
-### Color your terminal without typing whatever the heck '\x1b[31m' is.
+### Markup for the Terminal
 
 </div>
 
 ## What Is Farben
 
-Look at the tagline up there ^
+Farben is a color library that uses markup-like syntax. Color your terminal without typing whatever the heck '\x1b[31m' is.
 
 ## Documentation
 

@@ -8,14 +8,26 @@ When you switch from one style to another, put the trailing space inside the col
 not outside it. Otherwise the gap between words might inherit the wrong style.
 ```rust
 // Good
-cprintln!("[red]Error: [/]something went wrong.");
+cprintln!("[red]Error: [yellow]something went wrong.");
 
 // Bad
-cprintln!("[red]Error:[/] something went wrong.");
+cprintln!("[red]Error:[yellow] something went wrong.");
 ```
 
 ::: tip
-There are cases for when you want the latter instead of the former, like backgrounds. In that case there is no conventions.
+There are cases for when you want the latter instead of the former, like backgrounds. In that case there is no conventions,
+like underlines. For cases where leaving any space would make it look ugly, simply immediately put `[/]` right after.
+
+```rust
+cprintln!("[underline red]error:[/] [yellow]Without the immediate reset, that underline would partly bleed towards me! Scary...");
+```
+:::
+
+::: info
+As of the newest version, you can now specifically reset a style/color.
+```rust
+cprintln!("[underline red]error:[/underline] I'm still red.")
+```
 :::
 
 ## No Spaces After Opening Tags

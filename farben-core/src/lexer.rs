@@ -14,7 +14,7 @@ use crate::{
 };
 
 /// A text emphasis modifier supported by farben markup.
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum EmphasisType {
     /// Reduced intensity (SGR 2).
     Dim,
