@@ -1,6 +1,12 @@
 # Changelog
 
 All notable changes to Farben will be documented here.
+farben / farben-core / farben-macros / farben-md
+
+## [0.8.1 / 0.6.3 / 0.4.1 / 0.1.1] - 2026-03-17 - Global
+
+### Changed
+- Changed LICENSE to MIT/Apache-2.0
 
 ## [0.1.0] - 2026-03-17 - farben-md
 

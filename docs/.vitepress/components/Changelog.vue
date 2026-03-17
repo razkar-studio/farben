@@ -54,6 +54,15 @@ function crateClass(crate) {
 
 const releases = [
     {
+        version: "0.8.1 / 0.6.3 / 0.4.1 / 0.1.1",
+        crate: "Global",
+        subtitle: "License Update",
+        date: "2026-03-17",
+        sections: [
+          {type: "Changed", items: [{"Changed LICENSE to MIT/Apache-2.0"}]},
+        ],
+    },
+    {
         version: "0.1.0",
         crate: "farben-md",
         date: "2026-03-17",
