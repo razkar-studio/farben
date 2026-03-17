@@ -95,3 +95,99 @@ fn render_inner(tokens: &[MdToken], active: &mut Vec<EmphasisType>, out: &mut St
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::lexer::MdToken;
+
+    // --- render ---
+
+    #[test]
+    fn test_render_empty_tokens_returns_reset() {
+        assert_eq!(render(&[]), "\x1b[0m");
+    }
+
+    #[test]
+    fn test_render_plain_text_passes_through() {
+        let tokens = vec![MdToken::Text("hello".into())];
+        assert_eq!(render(&tokens), "hello\x1b[0m");
+    }
+
+    #[test]
+    fn test_render_appends_trailing_reset() {
+        let tokens = vec![MdToken::Text("x".into())];
+        assert!(render(&tokens).ends_with("\x1b[0m"));
+    }
+
+    #[test]
+    fn test_render_bold() {
+        let tokens = vec![MdToken::Bold(vec![MdToken::Text("bold".into())])];
+        let out = render(&tokens);
+        assert!(out.starts_with("\x1b[1m"));
+        assert!(out.contains("bold"));
+    }
+
+    #[test]
+    fn test_render_italic() {
+        let tokens = vec![MdToken::Italic(vec![MdToken::Text("italic".into())])];
+        let out = render(&tokens);
+        assert!(out.starts_with("\x1b[3m"));
+        assert!(out.contains("italic"));
+    }
+
+    #[test]
+    fn test_render_underline() {
+        let tokens = vec![MdToken::Underline(vec![MdToken::Text("under".into())])];
+        let out = render(&tokens);
+        assert!(out.starts_with("\x1b[4m"));
+        assert!(out.contains("under"));
+    }
+
+    #[test]
+    fn test_render_strikethrough() {
+        let tokens = vec![MdToken::Strikethrough(vec![MdToken::Text("strike".into())])];
+        let out = render(&tokens);
+        assert!(out.starts_with("\x1b[9m"));
+        assert!(out.contains("strike"));
+    }
+
+    #[test]
+    fn test_render_inline_code() {
+        let tokens = vec![MdToken::Code("code".into())];
+        let out = render(&tokens);
+        assert!(out.contains("\x1b[1m"));
+        assert!(out.contains("\x1b[97m")); // BrightWhite fg
+        assert!(out.contains("\x1b[100m")); // BrightBlack bg
+        assert!(out.contains("code"));
+    }
+
+    #[test]
+    fn test_render_multiple_spans_in_order() {
+        let tokens = vec![
+            MdToken::Bold(vec![MdToken::Text("a".into())]),
+            MdToken::Italic(vec![MdToken::Text("b".into())]),
+        ];
+        let out = render(&tokens);
+        let bold_pos = out.find("\x1b[1m").unwrap();
+        let italic_pos = out.find("\x1b[3m").unwrap();
+        assert!(bold_pos < italic_pos);
+    }
+
+    #[test]
+    fn test_render_nested_bold_italic_re_emits_bold() {
+        let tokens = vec![MdToken::Bold(vec![
+            MdToken::Text("a".into()),
+            MdToken::Italic(vec![MdToken::Text("b".into())]),
+            MdToken::Text("c".into()),
+        ])];
+        let out = render(&tokens);
+        // bold should appear at least twice -- opening and re-emit after italic
+        assert!(out.matches("\x1b[1m").count() >= 2);
+        assert!(out.contains("a"));
+        assert!(out.contains("b"));
+        assert!(out.contains("c"));
+    }
+}
+
+// Skipped (side effects): none: render() is a pure function.

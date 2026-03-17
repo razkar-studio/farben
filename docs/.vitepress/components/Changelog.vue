@@ -54,6 +54,26 @@ function crateClass(crate) {
 
 const releases = [
     {
+        version: "0.1.2",
+        crate: "farben-md",
+        date: "2026-03-17",
+        sections: [
+            {
+                type: "Fixed",
+                items: [
+                    "Unclosed delimiters (<code>**</code>, <code>*</code>, <code>_</code>, <code>__</code>, <code>~~</code>) incorrectly produced styled tokens instead of falling back to plain text. <code>tokenize_inner</code> return type changed from <code>Vec&lt;MdToken&gt;</code> to <code>(Vec&lt;MdToken&gt;, bool)</code> to distinguish a found closing delimiter from end-of-input exhaustion.",
+                    "Added <code>tokens_to_text</code> helper to reconstruct plain text from partially parsed token trees when a closing delimiter is never found.",
+                ],
+            },
+            {
+                type: "Added",
+                items: [
+                    "Full unit test suite for <code>lexer.rs</code> and <code>renderer.rs</code> covering plain text, all six token types, nesting, unclosed delimiters, empty input, mixed content, and consecutive spans.",
+                ],
+            },
+        ],
+    },
+    {
         version: "0.8.1 / 0.6.3 / 0.4.1 / 0.1.1",
         crate: "Global",
         subtitle: "License Update",

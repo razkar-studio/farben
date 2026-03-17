@@ -3,6 +3,22 @@
 All notable changes to Farben will be documented here.
 farben / farben-core / farben-macros / farben-md
 
+## [0.1.2] - 2026-03-17 - farben-md
+
+### Fixed
+- `tokenize_inner` — unclosed delimiters (`**`, `*`, `_`, `__`, `~~`) were
+  incorrectly producing styled tokens instead of falling back to plain text.
+  The return type of `tokenize_inner` was changed from `Vec<MdToken>` to
+  `(Vec<MdToken>, bool)` so callers can distinguish between a found closing
+  delimiter and end-of-input exhaustion.
+- Added `tokens_to_text` helper to correctly reconstruct plain text from
+  partially parsed token trees when a closing delimiter is never found.
+
+### Added
+- Full unit test suite for `lexer.rs` and `renderer.rs` covering plain text,
+  all six token types, nesting, unclosed delimiters, empty input, mixed
+  content, and consecutive spans.
+
 ## [0.8.1 / 0.6.3 / 0.4.1 / 0.1.1] - 2026-03-17 - Global
 
 ### Changed
