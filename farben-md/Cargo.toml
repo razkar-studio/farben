@@ -12,4 +12,4 @@ categories = ["command-line-interface"]
 homepage = "https://razkar-studio.github.io/farben"
 
 [dependencies]
-farben-core = "0.6.2"
+farben-core = { workspace = true }
