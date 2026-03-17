@@ -1,7 +1,7 @@
 # Conventions and Idioms
 
 Writing text in Farben is easy, and most of the time it works with no problem,
-but it's best to remind yourselff that it could be better.
+but it's best to remind yourself that it could be better.
 
 Idioms are *good ways to use Farben*, whether it be deciding correct functions for correct use cases,
 or just ways to make working with Farben much nicer. As good programmers, it's best to follow these designed idioms.

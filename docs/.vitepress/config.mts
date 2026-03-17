@@ -35,6 +35,7 @@ export default defineConfig({
             text: "Exclusive Resetting",
             link: "/guide/specifically-resetting/",
           },
+          { text: "Markdown", link: "/guide/markdown/" },
         ],
       },
       {

@@ -1,13 +1,16 @@
-use farben::{color, color_fmt, cprintln, prefix, style, try_color};
+use farben::*;
 
 fn main() {
     style!("error", "[bold red]");
     prefix!("error", "[ERROR]");
-    style!("critical", "[error undeline]");
+    style!("critical", "[error underline]");
     prefix!("critical", "[CRITICAL]");
 
-    cprintln!("[error] Error! Figure it out yourself");
-    cprintln!("[critical] Yo");
+    cprintln!(
+        "I'm markin' **bold** *baby*, **chaining *italics* like _strays_ or ~~striking~~ beauty __under the line__**. Coding with `compile` feature"
+    );
+    // cprintln!("[error] Error! Figure it out yourself");
+    // cprintln!("[critical] Yo");
 
     cprintln!("[red]I'm red!");
     println!("Gee, I'm not red. Don't have anything to do with that guy.");
@@ -30,7 +33,10 @@ fn main() {
     let msg = "I'm a variable AND I'm highlighted!";
     println!(
         "{}",
-        color_fmt!("[bold]I'm formatted! Here's the text: [bg:white fg:black]{msg}")
+        color_fmt!(
+            "[bold]I'm formatted! Here's the text: [bg:white fg:black]{}",
+            msg
+        )
     );
     println!();
     cprintln!(

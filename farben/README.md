@@ -63,6 +63,7 @@ cprintln!("into this.");
 - **User-defined styles**: Define your own tags with `style!()` that expand to any combination of supported tags.
   + **Features shouldn't be forced upon you**: Opt-out from user-defined styles at anytime, making Farben lighter and easier to work with.
   + **Format using `prefix!()`**: Your styles, your rules. Make a prefix to go along with it, calling your custom style will resolve to the prefix you define.
+- **Markdown Support**: While minimal, Farben has limited opt-in markdown support, just the basics that you need.
 
 ## Syntax
 

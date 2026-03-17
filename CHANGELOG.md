@@ -2,6 +2,63 @@
 
 All notable changes to Farben will be documented here.
 
+## [0.1.0] - 2026-03-17 - farben-md
+
+### Added
+- `tokenize()` — parses inline markdown into a recursive `MdToken` tree.
+  Supports `**bold**`, `*italic*`, `_italic_`, `__underline__`, `~~strikethrough~~`,
+  and `` `inline code` ``. Unclosed delimiters are treated as plain text.
+- `render()` — converts an `MdToken` tree into an ANSI-escaped string with a
+  trailing reset. Nested spans are handled via an active style stack that
+  re-emits surviving styles after each reset.
+- `MdToken` — recursive token enum with `Text(String)` as the only leaf node
+  and `Bold`, `Italic`, `Underline`, `Strikethrough` carrying `Vec<MdToken>`,
+  and `Code(String)` for literal inline code.
+
+
+
+## [0.4.0] - 2026-03-17 - farben-macros
+
+### Added
+- `markdown!()` — proc macro that parses and renders inline markdown at compile
+  time, emitting the final ANSI-escaped string as a string literal baked into
+  the binary. Enabled via the `markdown` feature.
+
+
+
+## [0.8.0] - 2026-03-17 - farben
+
+### Added
+- `markdown()` — runtime function that parses and renders inline markdown into
+  an ANSI-escaped string. Always succeeds. Enabled via the `markdown` feature.
+- `md_fmt!()` — renders inline markdown with format arguments. Always runtime.
+  Enabled via the `markdown` feature.
+- `mdprint!()` — prints inline markdown to stdout without a newline. Runtime
+  under `markdown`, compile-time under `markdown-compile`.
+- `mdprintln!()` — prints inline markdown to stdout with a trailing newline.
+  Runtime under `markdown`, compile-time under `markdown-compile`.
+
+### Changed
+- `style!()` and `prefix!()` macros moved from `farben-core` to `farben`,
+  under the `format` feature flag.
+
+### Added (features)
+- `markdown` feature — enables runtime markdown rendering via `farben-md`.
+- `markdown-compile` feature — enables both `markdown` and `compile`, with
+  compile-time markdown rendering via `farben-macros`.
+
+
+## [0.8.0 / 0.4.0 / 0.1.0] - 2026-03-17 - Global
+
+Markdown update. Introduces `farben-md` as a new workspace crate and wires
+inline markdown rendering into the full Farben pipeline.
+
+### Added
+- `farben-md` — new crate providing inline markdown tokenization and rendering.
+  Depends on `farben-core` for ANSI encoding.
+- `color_to_ansi()` and `emphasis_to_ansi()` made public in `farben-core`
+  0.6.2, enabling `farben-md` to delegate ANSI encoding without reimplementing it.
+
 ## [0.6.2] - 2026-03-17 - farben-core
 
 ### Changed

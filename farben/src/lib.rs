@@ -12,14 +12,13 @@
 use farben_core::*;
 
 #[cfg(feature = "compile")]
-pub use farben_macros::color;
-#[cfg(feature = "compile")]
-pub use farben_macros::colorb;
+pub use farben_macros::{color, colorb};
+
+#[cfg(feature = "markdown-compile")]
+pub use farben_macros::markdown;
 
 #[cfg(feature = "format")]
-pub use farben_core::ansi::Style;
-#[cfg(feature = "format")]
-pub use farben_core::registry::insert_style;
+pub use farben_core::{ansi::Style, registry::insert_style};
 
 /// Defines a named style in the global registry.
 ///
@@ -94,8 +93,7 @@ pub fn color(input: impl Into<String>) -> String {
     color_runtime(input, false)
 }
 
-/// Parses and renders a farben markup string, appending a final SGR reset, without
-/// appending a trailing reset sequence.
+/// Parses and renders a farben markup string without appending a trailing reset sequence.
 ///
 /// Styles applied by this call bleed into subsequent terminal output. Use when chaining
 /// multiple colored segments where you want the style to carry forward. For the
@@ -339,6 +337,128 @@ macro_rules! cprintbln {
     };
     ($fmt:literal $(, $arg:expr)*) => {
         println!("{}", farben::color_runtime(format!(farben_macros::validate_color!($fmt) $(, $arg)*), true))
+    };
+}
+
+/// Parses and renders inline markdown into an ANSI-escaped string.
+///
+/// Processes inline markdown syntax at runtime, converting bold, italic,
+/// underline, strikethrough, and inline code spans into ANSI escape sequences.
+/// Always succeeds — unclosed delimiters are treated as plain text.
+///
+/// # Examples
+///
+/// ```
+/// use farben::*;
+/// let s = markdown("**bold** and *italic*");
+/// ```
+#[cfg(feature = "markdown")]
+pub fn markdown(input: impl Into<String>) -> String {
+    farben_md::renderer::render(&farben_md::lexer::tokenize(&input.into()))
+}
+
+/// Parses and renders inline markdown with format arguments.
+///
+/// Behaves like [`format!`] but processes inline markdown syntax in the
+/// resulting string. Always runtime — format arguments are substituted
+/// before markdown rendering.
+///
+/// # Examples
+///
+/// ```
+/// use farben::*;
+/// let name = "world";
+/// let s = md_fmt!("**hello {}**", name);
+/// ```
+#[cfg(feature = "markdown")]
+#[macro_export]
+macro_rules! md_fmt {
+    ($($arg:tt)*) => {
+        farben::markdown(format!($($arg)*))
+    };
+}
+
+/// Prints inline markdown to stdout without a newline.
+///
+/// Parses and renders markdown at runtime, converting inline styles to ANSI
+/// escape sequences before printing. Behaves like [`print!`] but processes
+/// markdown syntax first.
+///
+/// # Examples
+///
+/// ```
+/// use farben::*;
+/// mdprint!("**bold** and *italic*");
+/// ```
+#[cfg(all(feature = "markdown", not(feature = "markdown-compile")))]
+#[macro_export]
+macro_rules! mdprint {
+    ($($arg:tt)*) => {
+        print!("{}", farben::markdown(format!($($arg)*)))
+    };
+}
+
+/// Prints inline markdown to stdout with a trailing newline.
+///
+/// Parses and renders markdown at runtime, converting inline styles to ANSI
+/// escape sequences before printing. Behaves like [`println!`] but processes
+/// markdown syntax first.
+///
+/// # Examples
+///
+/// ```
+/// use farben::*;
+/// mdprintln!("**bold** and *italic*");
+/// ```
+#[cfg(all(feature = "markdown", not(feature = "markdown-compile")))]
+#[macro_export]
+macro_rules! mdprintln {
+    ($($arg:tt)*) => {
+        println!("{}", farben::markdown(format!($($arg)*)))
+    };
+}
+
+/// Prints inline markdown to stdout without a newline.
+///
+/// Format string is rendered at compile time via [`farben_macros::markdown!`].
+/// Behaves like [`print!`] but processes markdown syntax at compile time.
+///
+/// # Examples
+///
+/// ```
+/// use farben::*;
+/// mdprint!("**bold** and *italic*");
+/// ```
+#[cfg(feature = "markdown-compile")]
+#[macro_export]
+macro_rules! mdprint {
+    ($fmt:literal) => {
+        print!("{}", farben::markdown!($fmt))
+    };
+    ($fmt:literal $(, $arg:expr)*) => {
+        print!("{}", farben::markdown(format!($fmt $(, $arg)*)))
+    };
+}
+
+/// Prints inline markdown to stdout with a trailing newline.
+///
+/// Format string is rendered at compile time via [`farben_macros::markdown!`].
+/// Behaves like [`println!`] but processes markdown syntax at compile time.
+///
+/// # Examples
+///
+/// ```
+/// use farben::*;
+/// mdprintln!("**bold** and *italic*");
+/// ```
+#[cfg(feature = "markdown-compile")]
+#[macro_export]
+macro_rules! mdprintln {
+    ($fmt:literal) => {
+        println!("{}", farben::markdown!($fmt))
+    };
+    ($fmt:literal $(, $arg:expr)*) => {
+        println!("{}", farben::markdown(format!($fmt $(, $arg)*)))
     };
 }
 

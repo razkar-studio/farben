@@ -48,10 +48,78 @@ function crateClass(crate) {
     if (crate === "farben-macros") return "crate-macros";
     if (crate === "farben") return "crate-farben";
     if (crate === "farben / farben-macros") return "crate-macros";
-    return "crate-global";
+    if (crate === "Global") return "crate-global";
+    if (crate === "farben-md") return "crate-md";
 }
 
 const releases = [
+    {
+        version: "0.1.0",
+        crate: "farben-md",
+        date: "2026-03-17",
+        sections: [
+            {
+                type: "Added",
+                items: [
+                    "<code>tokenize()</code> — parses inline markdown into a recursive <code>MdToken</code> tree. Supports <code>**bold**</code>, <code>*italic*</code>, <code>_italic_</code>, <code>__underline__</code>, <code>~~strikethrough~~</code>, and <code>`inline code`</code>. Unclosed delimiters are treated as plain text.",
+                    "<code>render()</code> — converts an <code>MdToken</code> tree into an ANSI-escaped string. Nested spans are handled via an active style stack that re-emits surviving styles after each reset.",
+                    "<code>MdToken</code> — recursive token enum. <code>Text(String)</code> and <code>Code(String)</code> are leaf nodes; <code>Bold</code>, <code>Italic</code>, <code>Underline</code>, and <code>Strikethrough</code> carry <code>Vec&lt;MdToken&gt;</code>.",
+                ],
+            },
+        ],
+    },
+    {
+        version: "0.4.0",
+        crate: "farben-macros",
+        date: "2026-03-17",
+        sections: [
+            {
+                type: "Added",
+                items: [
+                    "<code>markdown!()</code> — proc macro that parses and renders inline markdown at compile time, emitting the final ANSI-escaped string baked into the binary. Enabled via the <code>markdown</code> feature.",
+                ],
+            },
+        ],
+    },
+    {
+        version: "0.8.0",
+        crate: "farben",
+        date: "2026-03-17",
+        sections: [
+            {
+                type: "Added",
+                items: [
+                    "<code>markdown()</code> — runtime function that parses and renders inline markdown into an ANSI-escaped string. Always succeeds. Enabled via the <code>markdown</code> feature.",
+                    "<code>md_fmt!()</code> — renders inline markdown with format arguments. Always runtime. Enabled via the <code>markdown</code> feature.",
+                    "<code>mdprint!()</code> — prints inline markdown to stdout without a newline. Runtime under <code>markdown</code>, compile-time under <code>markdown-compile</code>.",
+                    "<code>mdprintln!()</code> — prints inline markdown to stdout with a trailing newline. Runtime under <code>markdown</code>, compile-time under <code>markdown-compile</code>.",
+                    "<code>markdown</code> feature — enables runtime markdown rendering via <code>farben-md</code>.",
+                    "<code>markdown-compile</code> feature — enables both <code>markdown</code> and <code>compile</code> with compile-time rendering via <code>farben-macros</code>.",
+                ],
+            },
+            {
+                type: "Changed",
+                items: [
+                    "<code>style!()</code> and <code>prefix!()</code> macros moved from <code>farben-core</code> to <code>farben</code>, under the <code>format</code> feature flag.",
+                ],
+            },
+        ],
+    },
+    {
+        version: "0.8.0 / 0.4.0 / 0.1.0",
+        crate: "Global",
+        date: "2026-03-17",
+        subtitle: "Markdown Update",
+        sections: [
+            {
+                type: "Added",
+                items: [
+                    "<code>farben-md</code> — new crate providing inline markdown tokenization and ANSI rendering. Depends on <code>farben-core</code> for ANSI encoding.",
+                    "<code>color_to_ansi()</code> and <code>emphasis_to_ansi()</code> made public in <code>farben-core</code> 0.6.2, enabling <code>farben-md</code> to delegate ANSI encoding without reimplementing it.",
+                ],
+            },
+        ],
+    },
     {
         version: "0.6.2",
         crate: "farben-core",
@@ -613,6 +681,16 @@ const releases = [
 .crate-cascade {
     background-color: var(--vp-c-teal-soft);
     color: var(--vp-c-teal-1);
+}
+
+.crate-md {
+    background-color: var(--vp-c-cyan-soft);
+    color: var(--vp-c-cyan-1);
+}
+
+.crate-global {
+    background-color: var(--vp-c-default-soft);
+    color: var(--vp-c-text-2);
 }
 
 .release-meta {
