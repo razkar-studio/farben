@@ -4,6 +4,18 @@
 
 ### Markdown-specific library for [Farben](https://github.com/razkar-studio/farben). Completely opt-in.
 
+[![Crates.io Version](https://img.shields.io/crates/v/farben)](https://crates.io/crates/farben)
+[![docs.rs](https://img.shields.io/docsrs/farben)](https://docs.rs/farben)
+[![License](https://img.shields.io/crates/l/farben)](https://github.com/razkar-studio/farben/blob/main/LICENSE)
+[![Crates.io Downloads](https://img.shields.io/crates/d/farben)](https://crates.io/crates/farben)
+[![GitHub Stars](https://img.shields.io/github/stars/razkar-studio/farben)](https://github.com/razkar-studio/farben/stargazers)
+[![GitHub Issues](https://img.shields.io/github/issues/razkar-studio/farben)](https://github.com/razkar-studio/farben/issues)
+[![GitHub Last Commit](https://img.shields.io/github/last-commit/razkar-studio/farben)](https://github.com/razkar-studio/farben/commits/main)
+[![Rust Edition](https://img.shields.io/badge/rust%20edition-2024-orange)](https://doc.rust-lang.org/edition-guide/rust-2024/)
+[![Deps.rs](https://deps.rs/repo/github/razkar-studio/farben/status.svg)](https://deps.rs/repo/github/razkar-studio/farben)
+[![Repo Size](https://img.shields.io/github/repo-size/razkar-studio/farben)](https://github.com/razkar-studio/farben)
+[![Maintenance](https://img.shields.io/badge/maintenance-actively--developed-brightgreen)](https://github.com/razkar-studio/farben)
+
 </div>
 
 > [!WARNING]
@@ -11,7 +23,7 @@
 
 ## License
 
-This project is protected under the RazkarStudio Permissive License. See the [LICENSE](./LICENSE.md) for more details.
+Licensed under either of [MIT License](LICENSE-MIT) or [Apache License, Version 2.0](LICENSE-APACHE) at your option.
 
 Cheers, RazkarStudio.
 

@@ -32,7 +32,7 @@ This crate contains the shared logic used by `farben` and `farben-macros`:
 
 ## License
 
-This project is protected under the RazkarStudio Permissive License. See the  [LICENSE](./LICENSE.md) fosr more details.
+Licensed under either of [MIT License](LICENSE-MIT) or [Apache License, Version 2.0](LICENSE-APACHE) at your option.
 
 Cheers, RazkarStudio.
 
