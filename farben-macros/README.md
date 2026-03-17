@@ -6,7 +6,8 @@
 
 [![Crates.io Version](https://img.shields.io/crates/v/farben)](https://crates.io/crates/farben)
 [![docs.rs](https://img.shields.io/docsrs/farben)](https://docs.rs/farben)
-[![License](https://img.shields.io/crates/l/farben)](https://github.com/razkar-studio/farben/blob/main/LICENSE)
+[![License MIT](https://img.shields.io/crates/l/farben)](https://github.com/razkar-studio/farben/blob/main/LICENSE-MIT)
+[![License Apache-2.0](https://img.shields.io/crates/l/farben)](https://github.com/razkar-studio/farben/blob/main/LICENSE-APACHE)
 [![Crates.io Downloads](https://img.shields.io/crates/d/farben)](https://crates.io/crates/farben)
 [![GitHub Stars](https://img.shields.io/github/stars/razkar-studio/farben)](https://github.com/razkar-studio/farben/stargazers)
 [![GitHub Issues](https://img.shields.io/github/issues/razkar-studio/farben)](https://github.com/razkar-studio/farben/issues)
