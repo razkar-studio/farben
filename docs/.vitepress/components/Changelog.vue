@@ -59,7 +59,7 @@ const releases = [
         subtitle: "License Update",
         date: "2026-03-17",
         sections: [
-          {type: "Changed", items: [{"Changed LICENSE to MIT/Apache-2.0"}]},
+            { type: "Changed", items: ["Changed LICENSE to MIT/Apache-2.0"] },
         ],
     },
     {
