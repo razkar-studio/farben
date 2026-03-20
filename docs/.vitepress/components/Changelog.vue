@@ -54,10 +54,31 @@ function crateClass(crate) {
 
 const releases = [
     {
+        version: "0.9.0",
+        crate: "farben",
+        date: "2026-03-20",
+        sections: [
+            {
+                type: "Added",
+                items: [
+                    "<code>ceprint!</code>, <code>ceprintln!</code>, <code>ceprintb!</code>, <code>ceprintbln!</code>, stderr variants of the colored print macros.",
+                    "<code>mdeprint!</code>, <code>mdeprintln!</code>, stderr variants of the inline markdown print macros.",
+                    "Empty invocation support for all print macros. <code>cprintln!()</code> now prints a bare newline, <code>cprint!()</code> prints nothing. Applies to <code>ceprint!</code>, <code>ceprintln!</code>, <code>mdprint!</code>, <code>mdprintln!</code>, <code>mdeprint!</code>, and all bleed variants.",
+                ],
+            },
+            {
+                type: "Changed",
+                items: [
+                    "<code>src/lib.rs</code> split into focused modules: <code>functions.rs</code>, <code>macros/color.rs</code>, <code>macros/format.rs</code>, <code>macros/markdown.rs</code>, <code>macros/eprint.rs</code>, and <code>tests.rs</code>. No public API changes.",
+                ],
+            },
+        ],
+    },
+    {
         version: "0.8.3",
         crate: "farben",
         date: "2026-03-20",
-        section: [
+        sections: [
             {
                 type: "Fixed",
                 items: [

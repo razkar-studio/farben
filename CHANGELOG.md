@@ -3,7 +3,24 @@
 All notable changes to Farben will be documented here.
 farben / farben-core / farben-macros / farben-md
 
-## [0.8.3] - 2026-03-20
+## [0.9.0] - 2026-03-20 - farben
+
+### Added
+
+- `ceprint!`, `ceprintln!`, `ceprintb!`, `ceprintbln!` — stderr variants of the colored print macros.
+- `mdeprint!`, `mdeprintln!` — stderr variants of the inline markdown print macros.
+- Empty invocation support for all print macros. `cprintln!()` now prints a bare newline,
+  `cprint!()` prints nothing — consistent with how `println!()` and `print!()` behave in std.
+  Applies to `ceprint!`, `ceprintln!`, `mdprint!`, `mdprintln!`, `mdeprint!`, `mdeprintln!`,
+  and all bleed variants.
+
+### Changed
+
+- `src/lib.rs` split into focused modules: `functions.rs`, `macros/color.rs`,
+  `macros/format.rs`, `macros/markdown.rs`, `macros/eprint.rs`, and `tests.rs`.
+  No public API changes.
+
+## [0.8.3] - 2026-03-20 - farben
 
 ### Fixed
 

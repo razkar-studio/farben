@@ -4,5 +4,6 @@
 //! `format` for the style registry macros, and `markdown` for inline markdown printing.
 
 pub mod color;
+pub mod eprint;
 pub mod format;
 pub mod markdown;

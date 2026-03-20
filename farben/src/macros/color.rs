@@ -54,6 +54,9 @@ macro_rules! color_fmt {
 #[cfg(not(feature = "compile"))]
 #[macro_export]
 macro_rules! cprint {
+    () => {
+        print!()
+    };
     ($fmt:literal $(, $arg:expr)*) => {
         print!("{}", farben::color_runtime(format!($fmt $(, $arg)*), false))
     };
@@ -78,6 +81,9 @@ macro_rules! cprint {
 #[cfg(feature = "compile")]
 #[macro_export]
 macro_rules! cprint {
+    () => {
+        print!()
+    };
     ($fmt:literal) => {
         print!("{}", farben::color!($fmt))
     };
@@ -105,6 +111,9 @@ macro_rules! cprint {
 #[cfg(not(feature = "compile"))]
 #[macro_export]
 macro_rules! cprintln {
+    () => {
+        println!()
+    };
     ($fmt:literal $(, $arg:expr)*) => {
         println!("{}", farben::color_runtime(format!($fmt $(, $arg)*), false))
     };
@@ -129,6 +138,9 @@ macro_rules! cprintln {
 #[cfg(feature = "compile")]
 #[macro_export]
 macro_rules! cprintln {
+    () => {
+        println!()
+    };
     ($fmt:literal) => {
         println!("{}", farben::color!($fmt))
     };
@@ -157,6 +169,9 @@ macro_rules! cprintln {
 #[cfg(not(feature = "compile"))]
 #[macro_export]
 macro_rules! cprintb {
+    () => {
+        print!()
+    };
     ($fmt:literal $(, $arg:expr)*) => {
         print!("{}", farben::color_runtime(format!($fmt $(, $arg)*), true))
     };
@@ -172,6 +187,9 @@ macro_rules! cprintb {
 #[cfg(feature = "compile")]
 #[macro_export]
 macro_rules! cprintb {
+    () => {
+        print!()
+    };
     ($fmt:literal) => {
         print!("{}", farben::colorb!($fmt))
     };
@@ -200,6 +218,9 @@ macro_rules! cprintb {
 #[cfg(not(feature = "compile"))]
 #[macro_export]
 macro_rules! cprintbln {
+    () => {
+        println!()
+    };
     ($fmt:literal $(, $arg:expr)*) => {
         println!("{}", farben::color_runtime(format!($fmt $(, $arg)*), true))
     };
@@ -215,6 +236,9 @@ macro_rules! cprintbln {
 #[cfg(feature = "compile")]
 #[macro_export]
 macro_rules! cprintbln {
+    () => {
+        println!()
+    };
     ($fmt:literal) => {
         println!("{}", farben::colorb!($fmt))
     };
