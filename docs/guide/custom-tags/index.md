@@ -74,3 +74,7 @@ prefix!("header", "#");
 cprintln!("[header] Cool Header");
 ```
 :::
+
+::: warning
+A known limitation for the custom-styles feature is that **it is not compatible** with the `compile` feature. Don't worry though, I'm working on it!
+:::
