@@ -21,7 +21,7 @@
 
 ## What Is Farben
 
-Farben is a color library that uses markup-like syntax. Color your terminal without typing whatever the heck '\x1b[31m' is.
+Farben is a color library that uses markup-like syntax. Color your terminal without typing whatever the heck `\x1b[31m` is.
 
 ## Documentation
 
@@ -32,7 +32,7 @@ Farben is a color library that uses markup-like syntax. Color your terminal with
 ## Usage
 
 ```rust
-// Using no features
+// Using default features
 use farben::*;
 
 style!("error", "[bold underline red]");
@@ -53,9 +53,7 @@ cprintln!("into this.");
 // Using the "compile" feature
 use farben::*;
 
-style!("error", "[bold underline red]");
-
-cprintln!("[error]error: [/]Something bad happened."); // compile-time validation
+cprintln!("[bold underline red]error: [/]Something bad happened."); // compile-time validation
 cprintln!("[bg:blue fg:white]White on blue!");
 
 let name = "Razkar";
@@ -74,6 +72,17 @@ cprintln!("into this.");
 - **Drop-in Print Macros**: `cprint!`, `cprintln!`, `cprintb!`, and `cprintbln!` work just like `print!` and `println!` but with markup support.
 - **Bleed Variants**: `cprintb!`, `cprintbln!`, `colorb()`, and `colorb!()` skip the trailing reset, letting styles carry forward across multiple calls.
 - **User-defined styles**: Define your own tags with `style!()` that expand to any combination of supported tags.
+
+# Known Limitations
+
+**Custom named tags are not validated at compile time.** The `compile` feature validates
+markup strings via proc macros, but it has no visibility into styles registered at runtime
+via [`style!`]. Using a custom tag like `[warn]` with `compile` active will fail to compile
+even if the style is registered before use. Stick to runtime macros (`cprintln!` without
+`compile`) when working with custom tags.
+
+This feature is a work in progress and I am currently working towards building it.
+Make awesome things with Farben.
 
 ## Syntax
 

@@ -1,12 +1,13 @@
 <div align="center">
 
-![banner logo](images/farben.png)
+![banner logo](farben/images/farben.png)
 
 ### Markup for the Terminal
 
 [![Crates.io Version](https://img.shields.io/crates/v/farben)](https://crates.io/crates/farben)
 [![docs.rs](https://img.shields.io/docsrs/farben)](https://docs.rs/farben)
-[![License](https://img.shields.io/crates/l/farben)](https://github.com/razkar-studio/farben/blob/main/LICENSE)
+[![License MIT](https://img.shields.io/crates/l/farben)](https://github.com/razkar-studio/farben/blob/main/LICENSE-MIT)
+[![License Apache-2.0](https://img.shields.io/crates/l/farben)](https://github.com/razkar-studio/farben/blob/main/LICENSE-APACHE)
 [![Crates.io Downloads](https://img.shields.io/crates/d/farben)](https://crates.io/crates/farben)
 [![GitHub Stars](https://img.shields.io/github/stars/razkar-studio/farben)](https://github.com/razkar-studio/farben/stargazers)
 [![GitHub Issues](https://img.shields.io/github/issues/razkar-studio/farben)](https://github.com/razkar-studio/farben/issues)
@@ -20,7 +21,7 @@
 
 ## What Is Farben
 
-Farben is a color library that uses markup-like syntax. Color your terminal without typing whatever the heck '\x1b[31m' is.
+Farben is a color library that uses markup-like syntax. Color your terminal without typing whatever the heck `\x1b[31m` is.
 
 ## Documentation
 
@@ -31,7 +32,7 @@ Farben is a color library that uses markup-like syntax. Color your terminal with
 ## Usage
 
 ```rust
-// Using no features
+// Using default features
 use farben::*;
 
 style!("error", "[bold underline red]");
@@ -52,9 +53,7 @@ cprintln!("into this.");
 // Using the "compile" feature
 use farben::*;
 
-style!("error", "[bold underline red]");
-
-cprintln!("[error]error: [/]Something bad happened."); // compile-time validation
+cprintln!("[bold underline red]error: [/]Something bad happened."); // compile-time validation
 cprintln!("[bg:blue fg:white]White on blue!");
 
 let name = "Razkar";
@@ -73,9 +72,17 @@ cprintln!("into this.");
 - **Drop-in Print Macros**: `cprint!`, `cprintln!`, `cprintb!`, and `cprintbln!` work just like `print!` and `println!` but with markup support.
 - **Bleed Variants**: `cprintb!`, `cprintbln!`, `colorb()`, and `colorb!()` skip the trailing reset, letting styles carry forward across multiple calls.
 - **User-defined styles**: Define your own tags with `style!()` that expand to any combination of supported tags.
-  + **Features shouldn't be forced upon you**: Opt-out from user-defined styles at anytime, making Farben lighter and easier to work with.
-  + **Format using `prefix!()`**: Your styles, your rules. Make a prefix to go along with it, calling your custom style will resolve to the prefix you define.
-- **Markdown Support**: While minimal, Farben has limited opt-in markdown support, just the basics that you need.
+
+# Known Limitations
+
+**Custom named tags are not validated at compile time.** The `compile` feature validates
+markup strings via proc macros, but it has no visibility into styles registered at runtime
+via [`style!`]. Using a custom tag like `[warn]` with `compile` active will fail to compile
+even if the style is registered before use. Stick to runtime macros (`cprintln!` without
+`compile`) when working with custom tags.
+
+This feature is a work in progress and I am currently working towards building it.
+Make awesome things with Farben.
 
 ## Syntax
 

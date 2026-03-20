@@ -3,6 +3,15 @@
 All notable changes to Farben will be documented here.
 farben / farben-core / farben-macros / farben-md
 
+## [0.8.3] - 2026-03-20
+
+### Fixed
+
+- `prefix!` macro no longer requires users to manually add `farben-core` as a dependency.
+  The `set_prefix` function is now re-exported through `farben` and the macro expands via `farben::set_prefix`.
+- `color_fmt!`, `cprint!`, `cprintln!`, `cprintb!`, and `cprintbln!` (compile feature) no longer require
+  `farben-macros` as a direct dependency. `validate_color` is now re-exported through `farben`.
+
 ## [0.1.2] - 2026-03-17 - farben-md
 
 ### Fixed

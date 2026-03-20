@@ -54,6 +54,20 @@ function crateClass(crate) {
 
 const releases = [
     {
+        version: "0.8.3",
+        crate: "farben",
+        date: "2026-03-20",
+        section: [
+            {
+                type: "Fixed",
+                items: [
+                    "<code>prefix!</code> macro no longer required users to manually add <code>farben-core</code> as a dependency. The <code>set_prefix</code> function is now re-exported through <code>farben</code> and the macro expands via <code>farben::set_prefix</code>.",
+                    "<code>color_fmt!</code>, <code>cprint!</code>, <code>cprintln!</code>, <code>cprintb!</code>, and <code>cprintbln!</code> (compile feature) no longer require <code>farben-macros</code> as a direct dependency. <code>validate_color</code> is now re-exported through <code>farben</code>",
+                ],
+            },
+        ],
+    },
+    {
         version: "0.1.2",
         crate: "farben-md",
         date: "2026-03-17",
