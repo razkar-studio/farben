@@ -36,6 +36,7 @@ export default defineConfig({
             link: "/guide/specifically-resetting/",
           },
           { text: "Markdown", link: "/guide/markdown/" },
+          { text: "Standard Error", link: "/guide/standard-error/" },
         ],
       },
       {
