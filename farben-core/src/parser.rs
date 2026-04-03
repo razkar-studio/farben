@@ -24,39 +24,36 @@ use crate::lexer::{TagType, Token};
 pub fn render(tokens: Vec<Token>) -> String {
     let mut result = String::new();
     let mut active: Vec<TagType> = Vec::new();
-    for tok in tokens {
-        match tok {
-            Token::Text(text) => result.push_str(&text),
-            Token::Tag(tag) => match tag {
-                TagType::Color { color, ground } => {
-                    result.push_str(&color_to_ansi(&color, ground.clone()));
-                    active.push(TagType::Color { color, ground })
-                }
-                TagType::Emphasis(emphasis) => {
-                    result.push_str(&emphasis_to_ansi(&emphasis));
-                    active.push(TagType::Emphasis(emphasis))
-                }
-                TagType::Reset(None) => result.push_str("\x1b[0m"),
-                TagType::Reset(Some(tag)) => {
-                    active.retain(|item| item != tag.as_ref());
-                    result.push_str("\x1b[0m");
-                    for item in &active {
-                        match item {
-                            TagType::Color { color, ground } => {
-                                result.push_str(&color_to_ansi(color, ground.clone()))
-                            }
-                            TagType::Emphasis(emphasis) => {
-                                result.push_str(&emphasis_to_ansi(emphasis))
-                            }
-                            _ => unreachable!(),
+    for t in tokens {
+        match t {
+            Token::Text(s) | Token::Tag(TagType::Prefix(s)) => result.push_str(&s),
+            Token::Tag(TagType::Color { color, ground }) => {
+                result.push_str(&color_to_ansi(&color, ground.clone()));
+                active.push(TagType::Color { color, ground });
+            }
+            Token::Tag(TagType::Emphasis(e)) => {
+                result.push_str(&emphasis_to_ansi(&e));
+                active.push(TagType::Emphasis(e));
+            }
+            Token::Tag(TagType::Reset(None)) => {
+                result.push_str("\x1b[0m");
+                active.clear();
+            }
+            Token::Tag(TagType::Reset(Some(r))) => {
+                result.push_str("\x1b[0m");
+                active.retain(|x| x != r.as_ref());
+                for a in &active {
+                    match a {
+                        TagType::Color { color, ground } => {
+                            result.push_str(&color_to_ansi(color, ground.clone()))
                         }
+                        TagType::Emphasis(e) => result.push_str(&emphasis_to_ansi(e)),
+                        _ => {}
                     }
                 }
-                TagType::Prefix(prefix) => result.push_str(&prefix),
-            },
+            }
         }
     }
-
     result
 }
 
