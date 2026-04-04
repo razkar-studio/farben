@@ -5,8 +5,11 @@
 //! in the farben pipeline: tokenize with [`crate::lexer::tokenize`], then render
 //! with [`render`].
 
-use crate::ansi::{color_to_ansi, emphasis_to_ansi};
-use crate::lexer::{TagType, Token};
+use crate::{
+    ansi::{color_to_ansi, emphasis_to_ansi},
+    env::color_enabled,
+    lexer::{TagType, Token},
+};
 
 /// Renders a token stream into a raw ANSI-escaped string.
 ///
@@ -22,6 +25,15 @@ use crate::lexer::{TagType, Token};
 /// assert_eq!(output, "\x1b[31mhello\x1b[0m");
 /// ```
 pub fn render(tokens: Vec<Token>) -> String {
+    if !color_enabled() {
+        return tokens
+            .into_iter()
+            .filter_map(|t| match t {
+                Token::Text(s) | Token::Tag(TagType::Prefix(s)) => Some(s),
+                _ => None,
+            })
+            .collect();
+    }
     let mut result = String::new();
     let mut active: Vec<TagType> = Vec::new();
     for t in tokens {

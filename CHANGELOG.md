@@ -3,6 +3,23 @@
 All notable changes to Farben will be documented here.
 farben / farben-core / farben-macros / farben-md
 
+## [0.7.0] - 2026-04-04 - farben-core
+
+### Added
+
+- `env` module: runtime detection of whether ANSI color output should be enabled.
+  Respects the `NO_COLOR` and `FORCE_COLOR` environment variable conventions (in that
+  order), then falls back to TTY detection. Result is computed once per process and
+  cached via `OnceLock`.
+  + `color_enabled()`: returns the cached bool for the current process.
+  + TTY detection on Unix via `isatty(1)`; on Windows via `GetStdHandle` +
+    `GetConsoleMode`; `false` on all other targets.
+- `strip` module: utilities for removing ANSI escape sequences from strings.
+  + `strip_ansi(input)`: strips CSI sequences (`ESC [ ... <letter>`) from a string
+    and returns plain text. Non-CSI `ESC` bytes are passed through unchanged.
+    Useful for measuring display width, plain-text logging, or piping to tools that
+    do not interpret ANSI codes.
+
 ## [0.9.0] - 2026-03-20 - farben
 
 ### Added

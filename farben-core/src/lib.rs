@@ -8,7 +8,9 @@
 //! with optional style definitions via the [`registry`] module and its macros.
 
 pub mod ansi;
+pub mod env;
 pub mod errors;
 pub mod lexer;
 pub mod parser;
 pub mod registry;
+pub mod strip;

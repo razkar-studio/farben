@@ -75,13 +75,18 @@ cprintln!("into this.");
 
 # Known Limitations
 
-**Custom named tags are not validated at compile time.** The `compile` feature validates
+- **Custom named tags are not validated at compile time.** The `compile` feature validates
 markup strings via proc macros, but it has no visibility into styles registered at runtime
 via [`style!`]. Using a custom tag like `[warn]` with `compile` active will fail to compile
 even if the style is registered before use. Stick to runtime macros (`cprintln!` without
 `compile`) when working with custom tags.
 
-This feature is a work in progress and I am currently working towards building it.
+- **No `NO_COLOR`, `FORCE_COLOR`, or TTY detection, in `compile`.** The `compile` feature processes markup at build time and 
+bakes ANSI codes directly into the binary. As a result, `NO_COLOR`, `FORCE_COLOR`, and TTY detection are only respected at 
+build time, not at end-user runtime. They are fundamentally different, and I cannot solve this. Use runtime macros if you need 
+full environment awareness.
+
+These features are a work in progress and I am currently working towards building it.
 Make awesome things with Farben.
 
 ## Syntax
