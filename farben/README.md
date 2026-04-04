@@ -69,7 +69,7 @@ cprintln!("into this.");
 - **Zero required runtime dependencies**: Only `farben-core` as a path dependency, Farben introduces no complicated dependency tree.
 - **Opt-in Compile-time Processing**: Validate and process markup at compile time with no runtime overhead, via the `compile` feature flag.
 - **Complete Toolkit**: Named colors, ANSI256, RGB, emphasis styles, style chaining, foreground and background support.
-- **Drop-in Print Macros**: `cprint!`, `cprintln!`, `cprintb!`, and `cprintbln!` work just like `print!` and `println!` but with markup support.
+- **Drop-in Print Macros**: `cprint!`, `cprintln!`, `cprintb!`, `cprintbln!` work just like `print!` and `println!` but with markup support. Writer variants `cwrite!`, `cwriteln!`, `cwriteb!`, `cwritebln!` work with any `Write` implementor.
 - **Bleed Variants**: `cprintb!`, `cprintbln!`, `colorb()`, and `colorb!()` skip the trailing reset, letting styles carry forward across multiple calls.
 - **User-defined styles**: Define your own tags with `style!()` that expand to any combination of supported tags.
 

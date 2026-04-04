@@ -56,3 +56,19 @@ mdeprintln!("**error:** the config file is *missing* or malformed.");
 ```
 
 No reason your error messages can't look good.
+
+## Writer Variants
+
+If you need to write to something other than stdout or stderr, Farben provides writer variants that work with any `Write` implementor.
+
+```rust
+use farben::prelude::*;
+use std::io::Write;
+
+let mut file = std::fs::File::create("log.txt")?;
+cwriteln!(file, "[red]error:[/] {}", message);
+cwriteb!(file, "[yellow]warning: ");
+cwriteln!(file, "retrying...[/]");
+```
+
+All writer variants are available: `cwrite!`, `cwriteln!`, `cwriteb!`, and `cwritebln!`.

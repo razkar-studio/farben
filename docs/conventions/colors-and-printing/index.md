@@ -77,3 +77,32 @@ cprintln!("\nGuys, what did I miss?");
 This is the idiomatic way to use bleeds. It doesn't matter if you use newlines or not,
 but declaring the style and then using an in-line print is the correct way.
 :::
+
+## Writer Variants
+
+Sometimes you need to write to somewhere other than stdout or stderr. Maybe a file, a `String`, or a custom buffer. Farben has you covered with writer variants that work with any `Write` implementor.
+
+```rust
+use farben::prelude::*;
+use std::io::Write;
+
+// Write to a String
+let mut output = String::new();
+cwriteln!(output, "[green]Success![/] operation completed.");
+cwrite!(output, "[yellow]Warning: [/]{} items remaining.", count);
+
+// Write to a file
+let mut file = std::fs::File::create("log.txt")?;
+cwriteb!(file, "[red]ERROR: ");
+cwriteln!(file, "{}[/]", error_message);
+```
+
+All four variants are available:
+- `cwrite!` writes without a newline, appends reset
+- `cwriteln!` writes with a trailing newline, appends reset
+- `cwriteb!` writes without a newline, does not reset (bleeds)
+- `cwritebln!` writes with a newline, does not reset (bleeds)
+
+::: tip
+The writer variants use the exact same markup processing as the stdout macros. They support all colors, emphasis styles, RGB, ANSI256, and everything else Farben offers.
+:::

@@ -54,6 +54,19 @@ function crateClass(crate) {
 
 const releases = [
     {
+        version: "0.12.0",
+        crate: "farben",
+        date: "2026-04-04",
+        sections: [
+            {
+                type: "Added",
+                items: [
+                    "<code>cwrite!</code>, <code>cwriteln!</code>, <code>cwriteb!</code>, <code>cwritebln!</code> - writer variants of the colored print macros. Work with any <code>Write</code> implementor. Useful for writing to files, <code>String</code> buffers, or custom writers. All four support the same markup features as the stdout variants (named colors, RGB, ANSI256, emphasis, bleeding via the <code>b</code> variants).",
+                ],
+            },
+        ],
+    },
+    {
         version: "0.8.0",
         crate: "farben-core",
         date: "2026-04-04",
@@ -202,9 +215,9 @@ const releases = [
             {
                 type: "Added",
                 items: [
-                    "<code>tokenize()</code> — parses inline markdown into a recursive <code>MdToken</code> tree. Supports <code>**bold**</code>, <code>*italic*</code>, <code>_italic_</code>, <code>__underline__</code>, <code>~~strikethrough~~</code>, and <code>`inline code`</code>. Unclosed delimiters are treated as plain text.",
-                    "<code>render()</code> — converts an <code>MdToken</code> tree into an ANSI-escaped string. Nested spans are handled via an active style stack that re-emits surviving styles after each reset.",
-                    "<code>MdToken</code> — recursive token enum. <code>Text(String)</code> and <code>Code(String)</code> are leaf nodes; <code>Bold</code>, <code>Italic</code>, <code>Underline</code>, and <code>Strikethrough</code> carry <code>Vec&lt;MdToken&gt;</code>.",
+                    "<code>tokenize()</code> - parses inline markdown into a recursive <code>MdToken</code> tree. Supports <code>**bold**</code>, <code>*italic*</code>, <code>_italic_</code>, <code>__underline__</code>, <code>~~strikethrough~~</code>, and <code>`inline code`</code>. Unclosed delimiters are treated as plain text.",
+                    "<code>render()</code> - converts an <code>MdToken</code> tree into an ANSI-escaped string. Nested spans are handled via an active style stack that re-emits surviving styles after each reset.",
+                    "<code>MdToken</code> - recursive token enum. <code>Text(String)</code> and <code>Code(String)</code> are leaf nodes; <code>Bold</code>, <code>Italic</code>, <code>Underline</code>, and <code>Strikethrough</code> carry <code>Vec&lt;MdToken&gt;</code>.",
                 ],
             },
         ],
@@ -217,7 +230,7 @@ const releases = [
             {
                 type: "Added",
                 items: [
-                    "<code>markdown!()</code> — proc macro that parses and renders inline markdown at compile time, emitting the final ANSI-escaped string baked into the binary. Enabled via the <code>markdown</code> feature.",
+                    "<code>markdown!()</code> - proc macro that parses and renders inline markdown at compile time, emitting the final ANSI-escaped string baked into the binary. Enabled via the <code>markdown</code> feature.",
                 ],
             },
         ],
@@ -230,12 +243,12 @@ const releases = [
             {
                 type: "Added",
                 items: [
-                    "<code>markdown()</code> — runtime function that parses and renders inline markdown into an ANSI-escaped string. Always succeeds. Enabled via the <code>markdown</code> feature.",
-                    "<code>md_fmt!()</code> — renders inline markdown with format arguments. Always runtime. Enabled via the <code>markdown</code> feature.",
-                    "<code>mdprint!()</code> — prints inline markdown to stdout without a newline. Runtime under <code>markdown</code>, compile-time under <code>markdown-compile</code>.",
-                    "<code>mdprintln!()</code> — prints inline markdown to stdout with a trailing newline. Runtime under <code>markdown</code>, compile-time under <code>markdown-compile</code>.",
-                    "<code>markdown</code> feature — enables runtime markdown rendering via <code>farben-md</code>.",
-                    "<code>markdown-compile</code> feature — enables both <code>markdown</code> and <code>compile</code> with compile-time rendering via <code>farben-macros</code>.",
+                    "<code>markdown()</code> - runtime function that parses and renders inline markdown into an ANSI-escaped string. Always succeeds. Enabled via the <code>markdown</code> feature.",
+                    "<code>md_fmt!()</code> - renders inline markdown with format arguments. Always runtime. Enabled via the <code>markdown</code> feature.",
+                    "<code>mdprint!()</code> - prints inline markdown to stdout without a newline. Runtime under <code>markdown</code>, compile-time under <code>markdown-compile</code>.",
+                    "<code>mdprintln!()</code> - prints inline markdown to stdout with a trailing newline. Runtime under <code>markdown</code>, compile-time under <code>markdown-compile</code>.",
+                    "<code>markdown</code> feature - enables runtime markdown rendering via <code>farben-md</code>.",
+                    "<code>markdown-compile</code> feature - enables both <code>markdown</code> and <code>compile</code> with compile-time rendering via <code>farben-macros</code>.",
                 ],
             },
             {
@@ -255,7 +268,7 @@ const releases = [
             {
                 type: "Added",
                 items: [
-                    "<code>farben-md</code> — new crate providing inline markdown tokenization and ANSI rendering. Depends on <code>farben-core</code> for ANSI encoding.",
+                    "<code>farben-md</code> - new crate providing inline markdown tokenization and ANSI rendering. Depends on <code>farben-core</code> for ANSI encoding.",
                     "<code>color_to_ansi()</code> and <code>emphasis_to_ansi()</code> made public in <code>farben-core</code> 0.6.2, enabling <code>farben-md</code> to delegate ANSI encoding without reimplementing it.",
                 ],
             },
@@ -282,8 +295,8 @@ const releases = [
             {
                 type: "Added",
                 items: [
-                    "<code>style!()</code> — moved from <code>farben-core</code>. Defines a named style in the global registry. Gated behind the <code>format</code> feature.",
-                    "<code>prefix!()</code> — moved from <code>farben-core</code>. Sets a prefix string on a previously defined named style. Gated behind the <code>format</code> feature.",
+                    "<code>style!()</code> - moved from <code>farben-core</code>. Defines a named style in the global registry. Gated behind the <code>format</code> feature.",
+                    "<code>prefix!()</code> - moved from <code>farben-core</code>. Sets a prefix string on a previously defined named style. Gated behind the <code>format</code> feature.",
                 ],
             },
         ],
@@ -296,8 +309,8 @@ const releases = [
             {
                 type: "Changed",
                 items: [
-                    "<code>style!()</code> — moved to <code>farben</code>. Users importing directly from <code>farben-core</code> should update to <code>farben::style!()</code>.",
-                    "<code>prefix!()</code> — moved to <code>farben</code>. Users importing directly from <code>farben-core</code> should update to <code>farben::prefix!()</code>.",
+                    "<code>style!()</code> - moved to <code>farben</code>. Users importing directly from <code>farben-core</code> should update to <code>farben::style!()</code>.",
+                    "<code>prefix!()</code> - moved to <code>farben</code>. Users importing directly from <code>farben-core</code> should update to <code>farben::prefix!()</code>.",
                 ],
             },
         ],
@@ -321,8 +334,8 @@ const releases = [
             {
                 type: "Changed",
                 items: [
-                    "<code>colorb!</code> — replaced one-line stub doc with a full doc comment explaining what bleed means, when to use it, and how it differs from <code>color!</code>. Includes a working example.",
-                    "<code>validate_color!</code> — removed misleading user-facing example. Doc comment now explicitly marks it as internal and directs users toward <code>color!</code> and <code>color_fmt!</code>.",
+                    "<code>colorb!</code> - replaced one-line stub doc with a full doc comment explaining what bleed means, when to use it, and how it differs from <code>color!</code>. Includes a working example.",
+                    "<code>validate_color!</code> - removed misleading user-facing example. Doc comment now explicitly marks it as internal and directs users toward <code>color!</code> and <code>color_fmt!</code>.",
                 ],
             },
         ],
@@ -335,8 +348,8 @@ const releases = [
             {
                 type: "Added",
                 items: [
-                    "<code>colorb</code> — added missing doc comment explaining bleed behavior and when to use it over <code>color</code>.",
-                    "<code>color_fmt!</code> (compile-time variant) — added missing doc comment. Previously the runtime variant was documented but the <code>compile</code>-feature counterpart had none.",
+                    "<code>colorb</code> - added missing doc comment explaining bleed behavior and when to use it over <code>color</code>.",
+                    "<code>color_fmt!</code> (compile-time variant) - added missing doc comment. Previously the runtime variant was documented but the <code>compile</code>-feature counterpart had none.",
                 ],
             },
             {
@@ -348,9 +361,9 @@ const releases = [
             {
                 type: "Fixed",
                 items: [
-                    "<code>cprint!</code> (compile-time variant) — example referenced unbound variable <code>message</code>. Added declaration so it compiles as a doctest.",
-                    "<code>cprintln!</code> (compile-time variant) — example referenced unbound variable <code>result</code>. Added declaration so it compiles as a doctest.",
-                    '<code>test_try_color_inline_reset</code> — strengthened assertion to a full equality check against the expected output <code>"\\x1b[31mbefore\\x1b[0mafter\\x1b[0m"</code>.',
+                    "<code>cprint!</code> (compile-time variant) - example referenced unbound variable <code>message</code>. Added declaration so it compiles as a doctest.",
+                    "<code>cprintln!</code> (compile-time variant) - example referenced unbound variable <code>result</code>. Added declaration so it compiles as a doctest.",
+                    '<code>test_try_color_inline_reset</code> - strengthened assertion to a full equality check against the expected output <code>"\\x1b[31mbefore\\x1b[0mafter\\x1b[0m"</code>.',
                 ],
             },
         ],
@@ -363,8 +376,8 @@ const releases = [
             {
                 type: "Added",
                 items: [
-                    "<code>LexError::InvalidResetTarget</code> — returned when a reset tag targets something that cannot be reset (e.g. <code>[//]</code> or <code>[/prefix]</code>). Previously caused a panic.",
-                    "<code>LexError::UnknownStyle</code> — returned by <code>registry::set_prefix</code> when the given style name has not been registered.",
+                    "<code>LexError::InvalidResetTarget</code> - returned when a reset tag targets something that cannot be reset (e.g. <code>[//]</code> or <code>[/prefix]</code>). Previously caused a panic.",
+                    "<code>LexError::UnknownStyle</code> - returned by <code>registry::set_prefix</code> when the given style name has not been registered.",
                     "<code>registry::set_prefix</code> now returns <code>Result&lt;(), LexError&gt;</code> instead of <code>()</code>, allowing callers to handle unknown style names without panicking.",
                 ],
             },
@@ -372,7 +385,7 @@ const releases = [
                 type: "Changed",
                 items: [
                     "<code>ansi::style_to_ansi</code> promoted from <code>pub(crate)</code> to <code>pub</code>. Users building on top of <code>farben-core</code> can now call it directly.",
-                    "<code>ansi::style_to_ansi</code> — removed <code>#[allow(unused)]</code> now that it is part of the public API.",
+                    "<code>ansi::style_to_ansi</code> - removed <code>#[allow(unused)]</code> now that it is part of the public API.",
                     "<code>registry::prefix!</code> macro updated to call <code>.expect()</code> on the <code>Result</code> returned by <code>set_prefix</code>, preserving panic-on-misuse at the macro callsite.",
                     '<code>LexError::InvalidArgumentCount</code> display improved from <code>"expected N, got M"</code> to <code>"expected N arguments, got M"</code>.',
                 ],
@@ -380,12 +393,12 @@ const releases = [
             {
                 type: "Fixed",
                 items: [
-                    "<code>lexer::parse_part</code> — replaced <code>panic!</code> with <code>Err(LexError::InvalidResetTarget)</code> when a reset tag targets a <code>Reset</code> or <code>Prefix</code> node.",
-                    "<code>registry::set_prefix</code> — replaced <code>panic!</code> with <code>Err(LexError::UnknownStyle)</code> when the style name is not found in the registry.",
-                    '<code>errors.rs</code> — corrected typo in <code>UnclosedValue</code> display: "parantheses" → "parentheses".',
-                    '<code>ansi::NamedColor</code> doc comment — corrected "eight standard ANSI named colors" to "sixteen ANSI named colors".',
-                    "<code>ansi::style_to_ansi</code> — added a working doctest demonstrating bold + named color output.",
-                    "<code>parser::render</code> — removed unnecessary <code>.as_str()</code> calls on <code>String</code> return values.",
+                    "<code>lexer::parse_part</code> - replaced <code>panic!</code> with <code>Err(LexError::InvalidResetTarget)</code> when a reset tag targets a <code>Reset</code> or <code>Prefix</code> node.",
+                    "<code>registry::set_prefix</code> - replaced <code>panic!</code> with <code>Err(LexError::UnknownStyle)</code> when the style name is not found in the registry.",
+                    '<code>errors.rs</code> - corrected typo in <code>UnclosedValue</code> display: "parantheses" → "parentheses".',
+                    '<code>ansi::NamedColor</code> doc comment - corrected "eight standard ANSI named colors" to "sixteen ANSI named colors".',
+                    "<code>ansi::style_to_ansi</code> - added a working doctest demonstrating bold + named color output.",
+                    "<code>parser::render</code> - removed unnecessary <code>.as_str()</code> calls on <code>String</code> return values.",
                 ],
             },
         ],
@@ -398,8 +411,8 @@ const releases = [
             {
                 type: "Added",
                 items: [
-                    "Specified resets — <code>[/bold]</code>, <code>[/red]</code>, <code>[/italic]</code> etc. reset only the named style, leaving all other active styles intact.",
-                    "<code>TagType::Reset</code> now takes <code>Option&lt;Box&lt;TagType&gt;&gt;</code> — <code>None</code> for full reset <code>[/]</code>, <code>Some(tag)</code> for partial reset.",
+                    "Specified resets - <code>[/bold]</code>, <code>[/red]</code>, <code>[/italic]</code> etc. reset only the named style, leaving all other active styles intact.",
+                    "<code>TagType::Reset</code> now takes <code>Option&lt;Box&lt;TagType&gt;&gt;</code> - <code>None</code> for full reset <code>[/]</code>, <code>Some(tag)</code> for partial reset.",
                     "<code>parser::render</code> now maintains an active tag stack, re-emitting surviving styles after a partial reset.",
                 ],
             },
@@ -473,13 +486,13 @@ const releases = [
                 type: "Added",
                 items: [
                     "Added bugs.",
-                    "<code>Style::prefix</code> field — optional text prepended before the style's ANSI codes when applied.",
-                    "<code>TagType::Prefix(String)</code> variant — carries prefix text through the token pipeline to the renderer.",
-                    "<code>set_prefix()</code> — sets the prefix on an existing registry entry, panics if the style is not found.",
-                    "<code>prefix!()</code> macro — user-facing API for binding a text prefix to a named style.",
+                    "<code>Style::prefix</code> field - optional text prepended before the style's ANSI codes when applied.",
+                    "<code>TagType::Prefix(String)</code> variant - carries prefix text through the token pipeline to the renderer.",
+                    "<code>set_prefix()</code> - sets the prefix on an existing registry entry, panics if the style is not found.",
+                    "<code>prefix!()</code> macro - user-facing API for binding a text prefix to a named style.",
                     "<code>style_to_tags()</code> now emits <code>TagType::Prefix</code> as the first tag when a prefix is present.",
                     "<code>parser::render()</code> now handles <code>TagType::Prefix</code> by appending the text directly to output.",
-                    "<code>format</code> default feature — gates logic for <code>style!()</code> and <code>prefix!()</code>.",
+                    "<code>format</code> default feature - gates logic for <code>style!()</code> and <code>prefix!()</code>.",
                 ],
             },
             {
@@ -535,14 +548,14 @@ const releases = [
             {
                 type: "Added",
                 items: [
-                    "<code>Style::parse()</code> — builds a <code>Style</code> from a farben markup string.",
-                    "<code>Style::reset</code> field — when <code>true</code>, overrides all other style attributes with a full SGR reset.",
-                    "<code>registry</code> module — global style registry backed by <code>OnceLock&lt;Mutex&lt;HashMap&lt;String, Style&gt;&gt;&gt;</code>.",
-                    "<code>insert_style()</code> — inserts a named style into the global registry.",
-                    "<code>search_registry()</code> — looks up a named style from the global registry.",
-                    "<code>style!()</code> macro — user-facing API for defining custom named styles.",
-                    "<code>style_to_tags()</code> — converts a <code>Style</code> into a <code>Vec&lt;TagType&gt;</code> for lexer expansion.",
-                    "Custom tag resolution in <code>parse_part()</code> — unknown tags now check the registry before returning <code>InvalidTag</code>.",
+                    "<code>Style::parse()</code> - builds a <code>Style</code> from a farben markup string.",
+                    "<code>Style::reset</code> field - when <code>true</code>, overrides all other style attributes with a full SGR reset.",
+                    "<code>registry</code> module - global style registry backed by <code>OnceLock&lt;Mutex&lt;HashMap&lt;String, Style&gt;&gt;&gt;</code>.",
+                    "<code>insert_style()</code> - inserts a named style into the global registry.",
+                    "<code>search_registry()</code> - looks up a named style from the global registry.",
+                    "<code>style!()</code> macro - user-facing API for defining custom named styles.",
+                    "<code>style_to_tags()</code> - converts a <code>Style</code> into a <code>Vec&lt;TagType&gt;</code> for lexer expansion.",
+                    "Custom tag resolution in <code>parse_part()</code> - unknown tags now check the registry before returning <code>InvalidTag</code>.",
                     "<code>parse_part()</code> return type changed from <code>Result&lt;TagType, LexError&gt;</code> to <code>Result&lt;Vec&lt;TagType&gt;, LexError&gt;</code> to support style expansion.",
                     "<code>colorb!()</code> bleeds at compile-time with the <code>colorb()</code> runtime counterpart.",
                 ],
@@ -586,14 +599,14 @@ const releases = [
             {
                 type: "Added",
                 items: [
-                    "<code>Style::parse()</code> — builds a <code>Style</code> from a farben markup string.",
-                    "<code>Style::reset</code> field — when <code>true</code>, overrides all other style attributes with a full SGR reset.",
-                    "<code>registry</code> module — global style registry backed by <code>OnceLock&lt;Mutex&lt;HashMap&lt;String, Style&gt;&gt;&gt;</code>.",
-                    "<code>insert_style()</code> — inserts a named style into the global registry.",
-                    "<code>search_registry()</code> — looks up a named style from the global registry.",
-                    "<code>style!()</code> macro — user-facing API for defining custom named styles.",
-                    "<code>style_to_tags()</code> — converts a <code>Style</code> into a <code>Vec&lt;TagType&gt;</code> for lexer expansion.",
-                    "Custom tag resolution in <code>parse_part()</code> — unknown tags now check the registry before returning <code>InvalidTag</code>.",
+                    "<code>Style::parse()</code> - builds a <code>Style</code> from a farben markup string.",
+                    "<code>Style::reset</code> field - when <code>true</code>, overrides all other style attributes with a full SGR reset.",
+                    "<code>registry</code> module - global style registry backed by <code>OnceLock&lt;Mutex&lt;HashMap&lt;String, Style&gt;&gt;&gt;</code>.",
+                    "<code>insert_style()</code> - inserts a named style into the global registry.",
+                    "<code>search_registry()</code> - looks up a named style from the global registry.",
+                    "<code>style!()</code> macro - user-facing API for defining custom named styles.",
+                    "<code>style_to_tags()</code> - converts a <code>Style</code> into a <code>Vec&lt;TagType&gt;</code> for lexer expansion.",
+                    "Custom tag resolution in <code>parse_part()</code> - unknown tags now check the registry before returning <code>InvalidTag</code>.",
                     "<code>parse_part()</code> return type changed from <code>Result&lt;TagType, LexError&gt;</code> to <code>Result&lt;Vec&lt;TagType&gt;, LexError&gt;</code> to support style expansion.",
                 ],
             },
@@ -648,8 +661,8 @@ const releases = [
             {
                 type: "Added",
                 items: [
-                    "<code>cprint!()</code> — prints farben-colored markup to stdout without a newline, behaves like <code>print!</code>.",
-                    "<code>cprintln!()</code> — prints farben-colored markup to stdout with a trailing newline, behaves like <code>println!</code>.",
+                    "<code>cprint!()</code> - prints farben-colored markup to stdout without a newline, behaves like <code>print!</code>.",
+                    "<code>cprintln!()</code> - prints farben-colored markup to stdout with a trailing newline, behaves like <code>println!</code>.",
                     "Both macros support format args and compile-time validation when the <code>compile</code> feature is enabled.",
                 ],
             },
@@ -663,11 +676,11 @@ const releases = [
             {
                 type: "Added",
                 items: [
-                    "<code>color!()</code> — compile-time markup processing via optional <code>compile</code> feature flag.",
-                    "<code>color_fmt!()</code> — format args support with compile-time tag validation when <code>compile</code> is enabled.",
-                    "<code>validate_color!()</code> — proc-macro that validates farben markup at compile time.",
-                    "<code>color_runtime()</code> — internal runtime fallback used by <code>color_fmt!</code>.",
-                    "<code>bg:</code> and <code>fg:</code> prefix support in color tags — <code>[bg:red]</code>, <code>[fg:white bg:blue]</code>.",
+                    "<code>color!()</code> - compile-time markup processing via optional <code>compile</code> feature flag.",
+                    "<code>color_fmt!()</code> - format args support with compile-time tag validation when <code>compile</code> is enabled.",
+                    "<code>validate_color!()</code> - proc-macro that validates farben markup at compile time.",
+                    "<code>color_runtime()</code> - internal runtime fallback used by <code>color_fmt!</code>.",
+                    "<code>bg:</code> and <code>fg:</code> prefix support in color tags - <code>[bg:red]</code>, <code>[fg:white bg:blue]</code>.",
                     "<code>farben-core</code> and <code>farben-macros</code> as separate workspace crates.",
                     "<code>compile</code> feature flag for opt-in compile-time processing.",
                 ],
@@ -711,14 +724,14 @@ const releases = [
             {
                 type: "Added",
                 items: [
-                    "<code>color!()</code> — compile-time markup processing via optional <code>compile</code> feature flag.",
-                    "<code>color_fmt!()</code> — format args support with compile-time tag validation.",
-                    "<code>validate_color!()</code> — proc-macro that validates farben markup at compile time, emitting the original string literal unchanged on success.",
-                    "<code>color_runtime()</code> — internal runtime fallback used by <code>color_fmt!</code>.",
-                    "<code>farben-core</code> — extracted shared logic crate containing lexer, parser, ANSI encoding, and error types.",
-                    "<code>farben-macros</code> — proc-macro crate powering compile-time processing.",
+                    "<code>color!()</code> - compile-time markup processing via optional <code>compile</code> feature flag.",
+                    "<code>color_fmt!()</code> - format args support with compile-time tag validation.",
+                    "<code>validate_color!()</code> - proc-macro that validates farben markup at compile time, emitting the original string literal unchanged on success.",
+                    "<code>color_runtime()</code> - internal runtime fallback used by <code>color_fmt!</code>.",
+                    "<code>farben-core</code> - extracted shared logic crate containing lexer, parser, ANSI encoding, and error types.",
+                    "<code>farben-macros</code> - proc-macro crate powering compile-time processing.",
                     "Cargo workspace setup with <code>farben</code>, <code>farben-core</code>, and <code>farben-macros</code> as members.",
-                    "<code>compile</code> feature flag — opt-in compile-time processing via <code>farben-macros</code>.",
+                    "<code>compile</code> feature flag - opt-in compile-time processing via <code>farben-macros</code>.",
                 ],
             },
             {
@@ -738,8 +751,8 @@ const releases = [
             {
                 type: "Added",
                 items: [
-                    "<code>color()</code> — colorizes a string using markup-like syntax, panics on invalid markup.",
-                    "<code>try_color()</code> — same as <code>color()</code> but returns <code>Result&lt;String, LexError&gt;</code>.",
+                    "<code>color()</code> - colorizes a string using markup-like syntax, panics on invalid markup.",
+                    "<code>try_color()</code> - same as <code>color()</code> but returns <code>Result&lt;String, LexError&gt;</code>.",
                     "Named color tags: <code>[black]</code>, <code>[red]</code>, <code>[green]</code>, <code>[yellow]</code>, <code>[blue]</code>, <code>[magenta]</code>, <code>[cyan]</code>, <code>[white]</code>.",
                     "256-color palette support via <code>[ansi(n)]</code>.",
                     "24-bit RGB support via <code>[rgb(r,g,b)]</code>.",

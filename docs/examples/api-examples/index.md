@@ -162,6 +162,60 @@ cprintbln!("[bold red]Section header");
 cprintln!("still bold and red here"); // inherits style
 ```
 
+## `cwrite!(writer, ...)`
+
+Writes farben-colored markup to a writer without a trailing newline. Works with any `Write` implementor.
+
+```rust
+use farben::prelude::*;
+use std::io::Write;
+
+let mut buffer = Vec::new();
+cwrite!(buffer, "[red]Error: [/]{}", message);
+```
+
+## `cwriteln!(writer, ...)`
+
+Writes farben-colored markup to a writer with a trailing newline. Works with any `Write` implementor.
+
+```rust
+use farben::prelude::*;
+use std::io::Write;
+
+let mut buffer = Vec::new();
+cwriteln!(buffer, "[green]Success: [/]{}", result);
+```
+
+## `cwriteb!(writer, ...)`
+
+Like `cwrite!`, but does not append a trailing reset. Styles bleed into subsequent output.
+
+```rust
+use farben::prelude::*;
+use std::io::Write;
+
+let mut buffer = Vec::new();
+cwriteb!(buffer, "[red]Error: ");
+cwrite!(buffer, "something went wrong"); // inherits red
+```
+
+## `cwritebln!(writer, ...)`
+
+Like `cwriteln!`, but does not append a trailing reset. Styles bleed into subsequent output.
+
+```rust
+use farben::prelude::*;
+use std::io::Write;
+
+let mut buffer = Vec::new();
+cwritebln!(buffer, "[bold red]Section header");
+cwrite!(buffer, "still bold and red here"); // inherits style
+```
+
+::: tip
+The writer variants support all the same features as the stdout macros: named colors, RGB, ANSI256, emphasis, custom tags, and bleeding.
+:::
+
 ## `strip_ansi(input)`
 
 Removes all CSI ANSI escape sequences from a string and returns the plain text. Available via `use farben::*` or `use farben::strip_ansi`.

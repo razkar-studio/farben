@@ -27,7 +27,7 @@
 //! | [`color`], [`colorb`] | always (function without `compile`; proc-macro with `compile`) |
 //! | [`markdown`] | `markdown` or `markdown-compile` feature |
 //! | [`LexError`] | always (needed to match on [`try_color`] results) |
-//! | [`color_fmt!`], [`cprint!`], [`cprintln!`], [`cprintb!`], [`cprintbln!`] | always |
+//! | [`color_fmt!`], [`cprint!`], [`cprintln!`], [`cprintb!`], [`cprintbln!`], [`cwrite!`], [`cwriteln!`], [`cwriteb!`], [`cwritebln!`] | always |
 //! | [`ceprint!`], [`ceprintln!`], [`ceprintb!`], [`ceprintbln!`] | always |
 //! | [`ansi_strip!`] | always |
 //! | [`md_fmt!`], [`mdprint!`], [`mdprintln!`], [`mdeprint!`], [`mdeprintln!`] | `markdown` or `markdown-compile` feature |
@@ -52,7 +52,9 @@ pub use crate::markdown;
 
 pub use farben_core::errors::LexError;
 
-pub use crate::{color_fmt, cprint, cprintb, cprintbln, cprintln};
+pub use crate::{
+    color_fmt, cprint, cprintb, cprintbln, cprintln, cwrite, cwriteb, cwritebln, cwriteln,
+};
 
 pub use crate::{ceprint, ceprintb, ceprintbln, ceprintln};
 

@@ -1,8 +1,8 @@
 //! Print and format macros for farben markup.
 //!
-//! Covers [`color_fmt!`], [`cprint!`], [`cprintln!`], [`cprintb!`], and [`cprintbln!`].
-//! Each macro has two implementations selected by `#[cfg]`: a runtime variant and a
-//! compile-time variant activated by the `compile` feature.
+//! Covers [`color_fmt!`], [`cprint!`], [`cprintln!`], [`cprintb!`], [`cprintbln!`],
+//! [`cwrite!`], [`cwriteln!`], [`cwriteb!`], [`cwritebln!`]. Each macro has two implementations
+//! selected by `#[cfg]`: a runtime variant and a compile-time variant activated by the `compile` feature.
 
 /// Parses and renders a farben markup string with format arguments, appending a final SGR reset.
 ///
@@ -244,5 +244,205 @@ macro_rules! cprintbln {
     };
     ($fmt:literal $(, $arg:expr)*) => {
         println!("{}", farben::color_runtime(format!(farben::validate_color!($fmt) $(, $arg)*), true))
+    };
+}
+
+/// Writes farben-colored markup to a writer without a newline.
+///
+/// Behaves like [`write!`] but processes farben markup tags before output.
+/// The format string is validated at compile time when the `compile` feature is enabled.
+///
+/// # Panics
+///
+/// Panics if the markup is invalid. Use [`try_color`] directly for error handling.
+///
+/// # Examples
+///
+/// ```
+/// use farben::prelude::*;
+/// use std::io::Cursor;
+///
+/// let mut buf = Cursor::new(Vec::new());
+/// cwrite!(buf, "[red]Error: [/]{}", "something went wrong");
+/// ```
+#[cfg(not(feature = "compile"))]
+#[macro_export]
+macro_rules! cwrite {
+    ($writer:expr $(, $arg:tt)*) => {
+        write!($writer, "{}", farben::color_runtime(format!($($arg)*), false))
+    };
+}
+
+/// Writes farben-colored markup to a writer without a newline.
+///
+/// Behaves like [`write!`] but processes farben markup tags before output.
+/// The format string is validated at compile time.
+///
+/// # Panics
+///
+/// Panics if the markup is invalid. Use [`try_color`] directly for error handling.
+///
+/// # Examples
+///
+/// ```
+/// use farben::prelude::*;
+/// use std::io::Cursor;
+///
+/// let mut buf = Cursor::new(Vec::new());
+/// cwrite!(buf, "[red]Error: [/]{}", "something went wrong");
+/// ```
+#[cfg(feature = "compile")]
+#[macro_export]
+macro_rules! cwrite {
+    ($writer:expr, $fmt:literal) => {
+        write!($writer, "{}", farben::color!($fmt))
+    };
+    ($writer:expr, $fmt:literal $(, $arg:expr)*) => {
+        write!($writer, "{}", farben::color_runtime(format!(farben::validate_color!($fmt) $(, $arg)*), false))
+    };
+}
+
+/// Writes farben-colored markup to a writer with a trailing newline.
+///
+/// Behaves like [`writeln!`] but processes farben markup tags before output.
+/// The format string is validated at compile time when the `compile` feature is enabled.
+///
+/// # Panics
+///
+/// Panics if the markup is invalid. Use [`try_color`] directly for error handling.
+///
+/// # Examples
+///
+/// ```
+/// use farben::prelude::*;
+/// use std::io::Cursor;
+///
+/// let mut buf = Cursor::new(Vec::new());
+/// cwriteln!(buf, "[green]Success: [/]{}", "all done");
+/// ```
+#[cfg(not(feature = "compile"))]
+#[macro_export]
+macro_rules! cwriteln {
+    ($writer:expr $(, $arg:tt)*) => {
+        writeln!($writer, "{}", farben::color_runtime(format!($($arg)*), false))
+    };
+}
+
+/// Writes farben-colored markup to a writer with a trailing newline.
+///
+/// Behaves like [`writeln!`] but processes farben markup tags before output.
+/// The format string is validated at compile time.
+///
+/// # Panics
+///
+/// Panics if the markup is invalid. Use [`try_color`] directly for error handling.
+///
+/// # Examples
+///
+/// ```
+/// use farben::prelude::*;
+/// use std::io::Cursor;
+///
+/// let mut buf = Cursor::new(Vec::new());
+/// cwriteln!(buf, "[green]Success: [/]{}", "all done");
+/// ```
+#[cfg(feature = "compile")]
+#[macro_export]
+macro_rules! cwriteln {
+    ($writer:expr, $fmt:literal) => {
+        writeln!($writer, "{}", farben::color!($fmt))
+    };
+    ($writer:expr, $fmt:literal $(, $arg:expr)*) => {
+        writeln!($writer, "{}", farben::color_runtime(format!(farben::validate_color!($fmt) $(, $arg)*), false))
+    };
+}
+
+/// Writes farben-colored markup to a writer without a newline, without appending a reset.
+///
+/// Styles bleed into subsequent output. Use when chaining multiple colored segments
+/// where you want the style to carry forward.
+///
+/// # Panics
+///
+/// Panics if the markup is invalid. Use [`try_color`] directly for error handling.
+///
+/// # Examples
+///
+/// ```
+/// use farben::prelude::*;
+/// use std::io::Cursor;
+///
+/// let mut buf = Cursor::new(Vec::new());
+/// cwriteb!(buf, "[red]Error: ");
+/// cwrite!(buf, "something went wrong"); // inherits red
+/// ```
+#[cfg(not(feature = "compile"))]
+#[macro_export]
+macro_rules! cwriteb {
+    ($writer:expr $(, $arg:tt)*) => {
+        write!($writer, "{}", farben::color_runtime(format!($($arg)*), true))
+    };
+}
+
+/// Writes farben-colored markup to a writer without a newline, without appending a reset.
+///
+/// Format string is validated at compile time. Styles bleed into subsequent output.
+///
+/// # Panics
+///
+/// Panics if the markup is invalid. Use [`try_color`] directly for error handling.
+#[cfg(feature = "compile")]
+#[macro_export]
+macro_rules! cwriteb {
+    ($writer:expr, $fmt:literal) => {
+        write!($writer, "{}", farben::colorb!($fmt))
+    };
+    ($writer:expr, $fmt:literal $(, $arg:expr)*) => {
+        write!($writer, "{}", farben::color_runtime(format!(farben::validate_color!($fmt) $(, $arg)*), true))
+    };
+}
+
+/// Writes farben-colored markup to a writer with a trailing newline, without appending a reset.
+///
+/// Styles bleed into subsequent output. Use when chaining multiple colored segments
+/// where you want the style to carry forward.
+///
+/// # Panics
+///
+/// Panics if the markup is invalid. Use [`try_color`] directly for error handling.
+///
+/// # Examples
+///
+/// ```
+/// use farben::prelude::*;
+/// use std::io::Cursor;
+///
+/// let mut buf = Cursor::new(Vec::new());
+/// cwritebln!(buf, "[bold red]Fatal error");
+/// cwrite!(buf, "still bold and red here"); // inherits style
+/// ```
+#[cfg(not(feature = "compile"))]
+#[macro_export]
+macro_rules! cwritebln {
+    ($writer:expr $(, $arg:tt)*) => {
+        writeln!($writer, "{}", farben::color_runtime(format!($($arg)*), true))
+    };
+}
+
+/// Writes farben-colored markup to a writer with a trailing newline, without appending a reset.
+///
+/// Format string is validated at compile time. Styles bleed into subsequent output.
+///
+/// # Panics
+///
+/// Panics if the markup is invalid. Use [`try_color`] directly for error handling.
+#[cfg(feature = "compile")]
+#[macro_export]
+macro_rules! cwritebln {
+    ($writer:expr, $fmt:literal) => {
+        writeln!($writer, "{}", farben::colorb!($fmt))
+    };
+    ($writer:expr, $fmt:literal $(, $arg:expr)*) => {
+        writeln!($writer, "{}", farben::color_runtime(format!(farben::validate_color!($fmt) $(, $arg)*), true))
     };
 }
