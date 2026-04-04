@@ -17,7 +17,7 @@
 /// # Examples
 ///
 /// ```
-/// use farben::*;
+/// use farben::prelude::*;
 /// ceprint!("[red]error:[/] something went wrong");
 /// ```
 #[cfg(not(feature = "compile"))]
@@ -43,7 +43,7 @@ macro_rules! ceprint {
 /// # Examples
 ///
 /// ```
-/// use farben::*;
+/// use farben::prelude::*;
 /// ceprint!("[red]error:[/] something went wrong");
 /// ```
 #[cfg(feature = "compile")]
@@ -72,7 +72,7 @@ macro_rules! ceprint {
 /// # Examples
 ///
 /// ```
-/// use farben::*;
+/// use farben::prelude::*;
 /// ceprintln!("[red]error:[/] something went wrong");
 /// ```
 #[cfg(not(feature = "compile"))]
@@ -98,7 +98,7 @@ macro_rules! ceprintln {
 /// # Examples
 ///
 /// ```
-/// use farben::*;
+/// use farben::prelude::*;
 /// ceprintln!("[red]error:[/] something went wrong");
 /// ```
 #[cfg(feature = "compile")]
@@ -127,7 +127,7 @@ macro_rules! ceprintln {
 /// # Examples
 ///
 /// ```
-/// use farben::*;
+/// use farben::prelude::*;
 ///
 /// ceprintb!("[red]error: ");
 /// ceprintln!("something went wrong"); // inherits red
@@ -176,7 +176,7 @@ macro_rules! ceprintb {
 /// # Examples
 ///
 /// ```
-/// use farben::*;
+/// use farben::prelude::*;
 ///
 /// ceprintbln!("[bold red]Fatal error");
 /// ceprintln!("still bold and red here"); // inherits style

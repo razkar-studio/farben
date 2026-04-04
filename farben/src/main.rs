@@ -1,4 +1,4 @@
-use farben::*;
+use farben::prelude::*;
 
 fn main() {
     style!("error", "[bold red]");
@@ -27,7 +27,7 @@ fn main() {
         "[italic red]Gee, I'm red first, [/]reset, [bold ansi(21)]then I'm bold blue in ansi256. Don't have anything to do with that guy."
     );
     println!();
-    println!("{:?}", try_color("[error] This would fail"));
+    println!("{:?}", try_color("[errro] This would fail"));
     cprintln!("\\[error] But this wouldn't!");
 
     let msg = "I'm a variable AND I'm highlighted!";
@@ -41,5 +41,13 @@ fn main() {
     println!();
     cprintln!(
         "[bold red]I'm bold and red! [underline]I'm underlined![/underline][/bold] I'm just red now! [/red]Now I'm not!"
+    );
+
+    println!(
+        "{}",
+        ansi_strip!(
+            "{}",
+            color("[underline red bg:white]This shouldn't be colored")
+        )
     );
 }

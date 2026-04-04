@@ -5,7 +5,7 @@ Farben fully supports user-defined tags, so define it once and use it everywhere
 
 For example, say you're building a logger and want consistent styling for different log levels. Instead of repeating the same tag combinations or wrapping everything in a helper function, use `style!()`.
 ```rust
-use farben::*;
+use farben::prelude::*;
 
 fn main() {
     style!("error", "[bold underline red]");

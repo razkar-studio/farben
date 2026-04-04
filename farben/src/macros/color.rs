@@ -47,7 +47,7 @@ macro_rules! color_fmt {
 /// # Examples
 ///
 /// ```
-/// use farben::*;
+/// use farben::prelude::*;
 /// let message = "I don't know";
 /// cprint!("[red]Error: [/]{}", message);
 /// ```
@@ -74,7 +74,7 @@ macro_rules! cprint {
 /// # Examples
 ///
 /// ```
-/// use farben::*;
+/// use farben::prelude::*;
 /// let message = "I don't know";
 /// cprint!("[red]Error: [/]{}", message);
 /// ```
@@ -104,7 +104,7 @@ macro_rules! cprint {
 /// # Examples
 ///
 /// ```
-/// use farben::*;
+/// use farben::prelude::*;
 /// let result = "We did it!";
 /// cprintln!("[green]Success: [/]{}", result);
 /// ```
@@ -131,7 +131,7 @@ macro_rules! cprintln {
 /// # Examples
 ///
 /// ```
-/// use farben::*;
+/// use farben::prelude::*;
 /// let result = "We did it!";
 /// cprintln!("[green]Success: [/]{}", result);
 /// ```
@@ -161,7 +161,7 @@ macro_rules! cprintln {
 /// # Examples
 ///
 /// ```
-/// use farben::*;
+/// use farben::prelude::*;
 ///
 /// cprintb!("[red]Error: ");
 /// cprintln!("something went wrong"); // inherits red
@@ -210,7 +210,7 @@ macro_rules! cprintb {
 /// # Examples
 ///
 /// ```
-/// use farben::*;
+/// use farben::prelude::*;
 ///
 /// cprintbln!("[bold red]Section header");
 /// cprintln!("still bold and red here"); // inherits style

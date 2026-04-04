@@ -26,7 +26,7 @@ So `**I'm bold *and italic*, heck yeah!**` works nicely.
 
 Farben has a handful of functions and macros for markdown, mirroring the existing `color` API:
 ```rust
-use farben::*;
+use farben::prelude::*;
 
 let bold = markdown("**bold**");
 let formatted = md_fmt!("**{}** is the answer", 42); // Bold "42 is the answer"
@@ -50,7 +50,7 @@ The rest stays the same.
 :::
 
 ```rust
-use farben::*;
+use farben::prelude::*;
 
 // Rendered at compile time — zero runtime cost
 mdprintln!("**bold** and *italic*");

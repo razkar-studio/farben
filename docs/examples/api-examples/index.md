@@ -108,7 +108,7 @@ Behaves like `format!` but processes farben markup on the result. Panics on inva
 When the `compile` feature is enabled, the format string is validated at compile time via `validate_color!`.
 
 ```rust
-use farben::*;
+use farben::prelude::*;
 
 let name = "Razkar";
 println!("{}", color_fmt!("[green]Hello, {}!", name));
@@ -121,7 +121,7 @@ Prints farben-colored markup to stdout without a trailing newline. Behaves like 
 When the `compile` feature is enabled, the format string is validated at compile time.
 
 ```rust
-use farben::*;
+use farben::prelude::*;
 
 let message = "I don't know";
 cprint!("[red]Error: [/]{}", message);
@@ -134,7 +134,7 @@ Prints farben-colored markup to stdout with a trailing newline. Behaves like `pr
 When the `compile` feature is enabled, the format string is validated at compile time.
 
 ```rust
-use farben::*;
+use farben::prelude::*;
 
 let result = "We did it!";
 cprintln!("[green]Success: [/]{}", result);
@@ -145,7 +145,7 @@ cprintln!("[green]Success: [/]{}", result);
 Like `cprint!`, but does not append a trailing reset. Styles bleed into subsequent output.
 
 ```rust
-use farben::*;
+use farben::prelude::*;
 
 cprintb!("[red]Error: ");
 cprintln!("something went wrong"); // inherits red
@@ -156,11 +156,51 @@ cprintln!("something went wrong"); // inherits red
 Like `cprintln!`, but does not append a trailing reset. Styles bleed into subsequent output.
 
 ```rust
-use farben::*;
+use farben::prelude::*;
 
 cprintbln!("[bold red]Section header");
 cprintln!("still bold and red here"); // inherits style
 ```
+
+## `strip_ansi(input)`
+
+Removes all CSI ANSI escape sequences from a string and returns the plain text. Available via `use farben::*` or `use farben::strip_ansi`.
+
+```rust
+pub fn strip_ansi(input: &str) -> String
+```
+
+Strips sequences of the form `ESC [ ... <letter>` (the standard SGR form used by all Farben output). Non-CSI `ESC` bytes — those not followed by `[` — are passed through unchanged.
+
+Typical uses: measuring display width of colored strings, writing plain-text log lines from pre-colored output, feeding output to tools that do not interpret ANSI codes.
+
+**Example**
+
+```rust
+use farben::strip_ansi;
+
+let colored = color("[red]Error:[/] something failed");
+let plain = strip_ansi(&colored);
+// plain == "Error: something failed"
+```
+
+## `ansi_strip!(...)`
+
+Macro version of `strip_ansi`. Accepts `format!`-style arguments, builds the string, then strips all CSI ANSI sequences from the result.
+
+**Example**
+
+```rust
+use farben::prelude::*;
+
+let label = "Warning";
+let plain = ansi_strip!("[bold yellow]{}:[/] disk space low", label);
+// plain == "Warning: disk space low"
+```
+
+::: tip
+Use `ansi_strip!` when you want to compose a string with format args and strip it in one step. Use `strip_ansi` directly when you already have a `&str` or `String`.
+:::
 
 ## `style!(name, markup)`: `format` feature
 
@@ -182,7 +222,7 @@ macro_rules! style {
 **Example**
 
 ```rust
-use farben::*;
+use farben::prelude::*;
 
 style!("ok",  "[bold green]");
 style!("err", "[bold red]");
@@ -210,7 +250,7 @@ The prefix is prepended as plain text before the style's ANSI escape sequence at
 **Example**
 
 ```rust
-use farben::*;
+use farben::prelude::*;
 
 style!("ok",   "[bold green]");
 style!("warn", "[bold yellow]");

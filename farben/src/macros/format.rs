@@ -12,7 +12,7 @@
 /// # Examples
 ///
 /// ```
-/// use farben::*;
+/// use farben::prelude::*;
 ///
 /// style!("danger", "[bold red]");
 /// // [danger] in markup now expands to bold red text
@@ -38,7 +38,7 @@ macro_rules! style {
 /// # Examples
 ///
 /// ```
-/// use farben::*;
+/// use farben::prelude::*;
 ///
 /// style!("warn", "[yellow]");
 /// prefix!("warn", "⚠ ");

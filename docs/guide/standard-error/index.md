@@ -20,7 +20,7 @@ This matters more than it might seem. Tools that pipe your program's output (lik
 
 Farben's stderr macros mirror the stdout ones exactly, just with an `e` after the `c`:
 ```rust
-use farben::*;
+use farben::prelude::*;
 
 ceprint!("[red]error:[/] ");
 ceprintln!("file not found.");
@@ -38,7 +38,7 @@ This also applies to the other printing macros.
 
 `ceprintb!` and `ceprintbln!` work the same as their stdout counterparts, styles carry forward without a trailing reset.
 ```rust
-use farben::*;
+use farben::prelude::*;
 
 ceprintb!("[bold red]fatal: ");
 ceprintln!("something went very wrong."); // inherits bold red
@@ -50,7 +50,7 @@ See [Purposefully Bleeding](../bleeding/) for a full breakdown of how bleed work
 
 If you have the `markdown` feature enabled, `mdeprint!` and `mdeprintln!` bring inline markdown rendering to stderr too.
 ```rust
-use farben::*;
+use farben::prelude::*;
 
 mdeprintln!("**error:** the config file is *missing* or malformed.");
 ```

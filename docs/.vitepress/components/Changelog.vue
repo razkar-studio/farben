@@ -54,6 +54,41 @@ function crateClass(crate) {
 
 const releases = [
     {
+        version: "0.10.0",
+        crate: "farben",
+        date: "2026-04-04",
+        sections: [
+            {
+                type: "Added",
+                items: [
+                    "<code>ansi_strip!(...)</code> macro that accepts <code>format!</code>-style arguments, builds the string, then strips all CSI ANSI escape sequences from the result. Non-CSI <code>ESC</code> bytes pass through unchanged. Returns <code>String</code>.",
+                    "<code>strip_ansi</code> re-exported at the <code>farben</code> crate root from <code>farben-core::strip::strip_ansi</code>. Available via <code>use farben::*</code>.",
+                ],
+            },
+            {
+                type: "Changed",
+                items: [
+                    "<code>farben-core</code> dependency bumped to <code>0.7.0</code>.",
+                ],
+            },
+        ],
+    },
+    {
+        version: "0.7.0",
+        crate: "farben-core",
+        date: "2026-04-04",
+        sections: [
+            {
+                type: "Added",
+                items: [
+                    "<code>env</code> module: runtime detection of whether ANSI color output should be enabled. Respects <code>NO_COLOR</code> and <code>FORCE_COLOR</code> environment variable conventions, then falls back to TTY detection. Result is computed once per process and cached via <code>OnceLock</code>. TTY detection via <code>isatty(1)</code> on Unix, <code>GetConsoleMode</code> on Windows, <code>false</code> elsewhere.",
+                    "<code>strip</code> module: <code>strip_ansi(input)</code> removes CSI ANSI escape sequences (<code>ESC [ ... &lt;letter&gt;</code>) from a string and returns plain text. Non-CSI <code>ESC</code> bytes are passed through unchanged.",
+                    "Zero dependencies added to core library internals.",
+                ],
+            },
+        ],
+    },
+    {
         version: "0.9.0",
         crate: "farben",
         date: "2026-03-20",

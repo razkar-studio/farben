@@ -68,7 +68,7 @@ pub fn color_runtime(input: impl Into<String>, bleed: bool) -> String {
 /// # Examples
 ///
 /// ```
-/// use farben::*;
+/// use farben::prelude::*;
 /// let s = markdown("**bold** and *italic*");
 /// ```
 #[cfg(feature = "markdown")]

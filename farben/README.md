@@ -33,7 +33,7 @@ Farben is a color library that uses markup-like syntax. Color your terminal with
 
 ```rust
 // Using default features
-use farben::*;
+use farben::prelude::*;
 
 style!("error", "[bold underline red]");
 style!("warn",  "[bold yellow]");
@@ -51,7 +51,7 @@ cprintln!("into this.");
 
 ```rust
 // Using the "compile" feature
-use farben::*;
+use farben::prelude::*;
 
 cprintln!("[bold underline red]error: [/]Something bad happened."); // compile-time validation
 cprintln!("[bg:blue fg:white]White on blue!");

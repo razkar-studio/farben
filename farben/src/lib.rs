@@ -6,7 +6,7 @@
 //! tags, inline resets, and inline markdown rendering.
 //!
 //! ```
-//! use farben::*;
+//! use farben::prelude::*;
 //!
 //! cprintln!("[bold green]Done![/] All tests passed.");
 //! ```
@@ -31,7 +31,7 @@
 //! ### Named colors and emphasis
 //!
 //! ```
-//! use farben::*;
+//! use farben::prelude::*;
 //!
 //! cprintln!("[red]Error![/] Something went wrong.");
 //! cprintln!("[bold underline]Important.[/]");
@@ -41,7 +41,7 @@
 //! ### RGB and ANSI 256
 //!
 //! ```
-//! use farben::*;
+//! use farben::prelude::*;
 //!
 //! cprintln!("[rgb(255,128,0)]Orange.");
 //! cprintln!("[ansi(93)]Deep purple.");
@@ -50,7 +50,7 @@
 //! ### Custom named tags (`format` feature)
 //!
 //! ```
-//! use farben::*;
+//! use farben::prelude::*;
 //!
 //! style!("warn", "[bold yellow]");
 //! prefix!("warn", "! ");
@@ -60,7 +60,7 @@
 //! ### Inline markdown (`markdown` feature)
 //!
 //! ```
-//! use farben::*;
+//! use farben::prelude::*;
 //!
 //! mdprintln!("**bold**, *italic*, `code`, ~~strikethrough~~");
 //! ```
@@ -90,6 +90,10 @@ pub use farben_core::{
 
 mod functions;
 pub use functions::*;
+
+pub mod prelude;
+
+pub use farben_core::strip::strip_ansi;
 
 mod macros;
 

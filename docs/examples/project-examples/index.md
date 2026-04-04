@@ -5,7 +5,7 @@
 Print a few lines with different colors.
 
 ```rust
-use farben::*;
+use farben::prelude::*;
 
 fn main() {
     cprintln!("[green]Success! [/]Operation completed.");
@@ -21,7 +21,7 @@ fn main() {
 A minimal logger that prefixes messages with a colored level tag.
 
 ```rust
-use farben::*;
+use farben::prelude::*;
 
 fn log(level: &str, message: &str) {
     match level {
@@ -51,7 +51,7 @@ farben = { version = "...", features = ["format"] }
 ```
 
 ```rust
-use farben::*;
+use farben::prelude::*;
 
 fn main() {
     style!("ok",   "[bold green]");
@@ -78,7 +78,7 @@ fn main() {
 Use RGB colors to render visually distinct severity labels.
 
 ```rust
-use farben::*;
+use farben::prelude::*;
 
 fn main() {
     let labels = vec![
@@ -100,7 +100,7 @@ fn main() {
 Use farben to make CLI error messages more readable.
 
 ```rust
-use farben::*;
+use farben::prelude::*;
 
 fn require_arg(name: &str, value: Option<&str>) -> Result<String, String> {
     value
@@ -128,7 +128,7 @@ fn main() {
 Display a build pipeline's steps with visual status indicators.
 
 ```rust
-use farben::*;
+use farben::prelude::*;
 
 fn step(done: bool, label: &str) {
     if done {
@@ -156,7 +156,7 @@ Use the bleed variants when a style should persist across multiple print calls w
 repeating the markup.
 
 ```rust
-use farben::*;
+use farben::prelude::*;
 
 fn main() {
     cprintb!("[bold yellow]");
@@ -203,7 +203,7 @@ fn main() {
 Color table headers and alternate row styles in terminal output.
 
 ```rust
-use farben::*;
+use farben::prelude::*;
 
 fn main() {
     cprintln!("[bold underline]{:<20}{:<10}{:<10}[/]", "Name", "Status", "Latency");
@@ -237,7 +237,7 @@ fn main() {
 Color the prompt label and input hint in a terminal read loop.
 
 ```rust
-use farben::*;
+use farben::prelude::*;
 use std::io::{self, Write};
 
 fn prompt(label: &str) -> String {
@@ -263,7 +263,7 @@ fn main() {
 Render line-by-line diffs with added/removed/unchanged indicators.
 
 ```rust
-use farben::*;
+use farben::prelude::*;
 
 enum DiffLine<'a> {
     Added(&'a str),
@@ -298,7 +298,7 @@ fn main() {
 Animate a simple spinner using carriage return and bleed output.
 
 ```rust
-use farben::*;
+use farben::prelude::*;
 use std::{io::{self, Write}, thread, time::Duration};
 
 fn main() {
@@ -322,7 +322,7 @@ fn main() {
 Draw attention to major output sections with a simple colored box.
 
 ```rust
-use farben::*;
+use farben::prelude::*;
 
 fn section(title: &str) {
     let border = "─".repeat(title.len() + 4);
@@ -349,7 +349,7 @@ fn main() {
 Apply colors dynamically based on runtime values, such as metrics or thresholds.
 
 ```rust
-use farben::*;
+use farben::prelude::*;
 
 fn colored_percent(value: u8) -> String {
     match value {
@@ -380,7 +380,7 @@ fn main() {
 Print a pass/fail summary at the end of a test run.
 
 ```rust
-use farben::*;
+use farben::prelude::*;
 
 struct TestResult {
     name: String,
@@ -426,7 +426,7 @@ fn main() {
 Print a directory tree with colored file types.
 
 ```rust
-use farben::*;
+use farben::prelude::*;
 
 enum Entry<'a> {
     Dir(&'a str),
@@ -462,7 +462,7 @@ fn main() {
 Print a consistent header for paged terminal output, like a `--help` screen.
 
 ```rust
-use farben::*;
+use farben::prelude::*;
 
 fn print_header(name: &str, version: &str, description: &str) {
     cprintln!("[bold]{} [dim]v{}[/]", name, version);

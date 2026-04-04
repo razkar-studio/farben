@@ -3,6 +3,20 @@
 All notable changes to Farben will be documented here.
 farben / farben-core / farben-macros / farben-md
 
+## [0.10.0] - 2026-04-04 - farben
+
+### Added
+
+- `ansi_strip!(...)` — macro that accepts `format!`-style arguments, builds the string,
+  then strips all CSI ANSI escape sequences from the result. Non-CSI `ESC` bytes pass
+  through unchanged. Returns `String`.
+- `strip_ansi` re-exported at the `farben` crate root from `farben-core::strip::strip_ansi`,
+  making it available via `use farben::*` and as the expansion target for `ansi_strip!`.
+
+### Changed
+
+- `farben-core` dependency bumped to `0.7.0`.
+
 ## [0.7.0] - 2026-04-04 - farben-core
 
 ### Added

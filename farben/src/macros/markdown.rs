@@ -13,7 +13,7 @@
 /// # Examples
 ///
 /// ```
-/// use farben::*;
+/// use farben::prelude::*;
 /// let name = "world";
 /// let s = md_fmt!("**hello {}**", name);
 /// ```
@@ -34,7 +34,7 @@ macro_rules! md_fmt {
 /// # Examples
 ///
 /// ```
-/// use farben::*;
+/// use farben::prelude::*;
 /// mdprint!("**bold** and *italic*");
 /// ```
 #[cfg(all(feature = "markdown", not(feature = "markdown-compile")))]
@@ -57,7 +57,7 @@ macro_rules! mdprint {
 /// # Examples
 ///
 /// ```
-/// use farben::*;
+/// use farben::prelude::*;
 /// mdprintln!("**bold** and *italic*");
 /// ```
 #[cfg(all(feature = "markdown", not(feature = "markdown-compile")))]
@@ -79,7 +79,7 @@ macro_rules! mdprintln {
 /// # Examples
 ///
 /// ```
-/// use farben::*;
+/// use farben::prelude::*;
 /// mdprint!("**bold** and *italic*");
 /// ```
 #[cfg(feature = "markdown-compile")]
@@ -104,7 +104,7 @@ macro_rules! mdprint {
 /// # Examples
 ///
 /// ```
-/// use farben::*;
+/// use farben::prelude::*;
 /// mdprintln!("**bold** and *italic*");
 /// ```
 #[cfg(feature = "markdown-compile")]
@@ -130,7 +130,7 @@ macro_rules! mdprintln {
 /// # Examples
 ///
 /// ```
-/// use farben::*;
+/// use farben::prelude::*;
 /// mdeprint!("**error:** something went wrong");
 /// ```
 #[cfg(all(feature = "markdown", not(feature = "markdown-compile")))]
@@ -153,7 +153,7 @@ macro_rules! mdeprint {
 /// # Examples
 ///
 /// ```
-/// use farben::*;
+/// use farben::prelude::*;
 /// mdeprintln!("**error:** something went wrong");
 /// ```
 #[cfg(all(feature = "markdown", not(feature = "markdown-compile")))]
@@ -175,7 +175,7 @@ macro_rules! mdeprintln {
 /// # Examples
 ///
 /// ```
-/// use farben::*;
+/// use farben::prelude::*;
 /// mdeprint!("**error:** something went wrong");
 /// ```
 #[cfg(feature = "markdown-compile")]
@@ -200,7 +200,7 @@ macro_rules! mdeprint {
 /// # Examples
 ///
 /// ```
-/// use farben::*;
+/// use farben::prelude::*;
 /// mdeprintln!("**error:** something went wrong");
 /// ```
 #[cfg(feature = "markdown-compile")]

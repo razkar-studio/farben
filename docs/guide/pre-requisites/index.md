@@ -45,7 +45,7 @@ To search the versions, visit the [Crates.io](https://crates.io/crates/farben) p
 To start, change the code inside `main.rs` to the following:
 
 ```rust
-use farben::*;
+use farben::prelude::*;
 
 fn main() {
     cprintln!("[bold blue]Hello, [italic cyan]world!");
