@@ -13,7 +13,7 @@ dependencies = [
 
 [[package]]
 name = "farben-core"
-version = "0.6.4"
+version = "0.7.0"
 
 [[package]]
 name = "farben-macros"
