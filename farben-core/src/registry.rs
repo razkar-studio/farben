@@ -12,8 +12,7 @@ use std::{
     sync::{Mutex, OnceLock},
 };
 
-use crate::ansi::Style;
-use crate::errors::LexError;
+use crate::{ansi::Style, errors::RegistryError};
 
 static REGISTRY: OnceLock<Mutex<HashMap<String, Style>>> = OnceLock::new();
 
@@ -37,7 +36,7 @@ pub fn insert_style(name: impl Into<String>, style: Style) {
 ///
 /// Returns [`LexError::UnknownStyle`] if `name` has not been registered via
 /// [`insert_style`] (or the [`style!`] macro).
-pub fn set_prefix(name: impl Into<String>, prefix: impl Into<String>) -> Result<(), LexError> {
+pub fn set_prefix(name: impl Into<String>, prefix: impl Into<String>) -> Result<(), RegistryError> {
     let name = name.into();
     let prefix = prefix.into();
 
@@ -50,7 +49,7 @@ pub fn set_prefix(name: impl Into<String>, prefix: impl Into<String>) -> Result<
         style.prefix = Some(prefix);
         Ok(())
     } else {
-        Err(LexError::UnknownStyle(name))
+        Err(RegistryError::UnknownStyle(name))
     }
 }
 
@@ -59,7 +58,7 @@ pub fn set_prefix(name: impl Into<String>, prefix: impl Into<String>) -> Result<
 /// # Errors
 ///
 /// Returns `LexError::InvalidTag` if `query` does not match any registered style name.
-pub(crate) fn search_registry(query: impl Into<String>) -> Result<Style, LexError> {
+pub(crate) fn search_registry(query: impl Into<String>) -> Result<Style, RegistryError> {
     let map = REGISTRY
         .get_or_init(|| Mutex::new(HashMap::new()))
         .lock()
@@ -68,6 +67,6 @@ pub(crate) fn search_registry(query: impl Into<String>) -> Result<Style, LexErro
     let query = query.into();
     match map.get(&query) {
         Some(style) => Ok(style.clone()),
-        None => Err(LexError::InvalidTag(query)),
+        None => Err(RegistryError::UnknownStyle(query)),
     }
 }

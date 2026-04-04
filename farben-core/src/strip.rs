@@ -39,11 +39,20 @@ pub fn strip_ansi(input: &str) -> String {
     let mut chars = input.chars();
     while let Some(c) = chars.next() {
         if c == '\x1b' {
-            if let Some('[') = chars.next() {
-                while let Some(c) = chars.next() {
-                    if c.is_alphabetic() {
-                        break;
+            match chars.next() {
+                Some('[') => {
+                    while let Some(c) = chars.next() {
+                        if c.is_alphabetic() {
+                            break;
+                        }
                     }
+                }
+                Some(other) => {
+                    output.push('\x1b');
+                    output.push(other);
+                }
+                None => {
+                    output.push('\x1b');
                 }
             }
         } else {

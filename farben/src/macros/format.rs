@@ -48,6 +48,6 @@ macro_rules! style {
 #[macro_export]
 macro_rules! prefix {
     ($name:expr, $prefix:expr) => {
-        farben::set_prefix($name, $prefix).expect("prefix!() called with unregistered style name");
+        farben::set_prefix($name, $prefix).unwrap_or_else(|e| panic!("{}", e));
     };
 }

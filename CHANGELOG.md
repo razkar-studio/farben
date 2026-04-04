@@ -3,6 +3,47 @@
 All notable changes to Farben will be documented here.
 farben / farben-core / farben-macros / farben-md
 
+## [0.8.0] - 2026-04-04 - farben-core
+
+### Added
+
+- `RegistryError` enum — a separate error type for registry operations (`set_prefix`, `insert_style`).
+  Split out from `LexError` because registry errors have no source position (they occur outside markup
+  parsing). Has one variant: `UnknownStyle(String)`.
+- `LexErrorDisplay<'a>` struct — wraps a `&LexError` and the original `&str` input to produce
+  compiler-style diagnostic output. Renders two lines: the full input string, then a caret (`^`)
+  aligned to the byte offset of the error. Example:
+  ```
+     | [bold unknown]text
+     |       ^^^^^^^ invalid tag: 'unknown'
+  ```
+
+### Changed
+
+- All `LexError` variants now carry a `position: usize` field (byte offset into the markup string).
+  Affected variants: `UnclosedTag`, `InvalidTag`, `UnclosedValue`, `InvalidArgumentCount`,
+  `InvalidValue`, `InvalidResetTarget`. Previously no variants stored position info.
+- `LexError::UnknownStyle` removed — registry errors now use `RegistryError::UnknownStyle` instead.
+- `LexError`'s `Display` impl now includes position in every message
+  (e.g. `"invalid tag 'foo' at position 5"`).
+
+## [0.11.0] - 2026-04-04 - farben
+
+### Added
+
+- `farben::prelude` module - the recommended import path going forward. `use farben::prelude::*`
+  brings every user-facing item into scope (functions, macros, types) gated by the same feature
+  flags as their definitions. Prefer this over `use farben::*`, which also pulls in
+  `color_runtime` and `validate_color` - items that are `pub` only to satisfy macro expansion,
+  not intended for direct use.
+
+### Changed
+
+- `farben-core` dependency bumped to `0.8.0`, picking up position-aware `LexError` variants and
+  the new `LexErrorDisplay` diagnostic formatter. `try_color` error messages now include the byte
+  offset of the offending token.
+- All documentation and examples updated to use `use farben::prelude::*`.
+
 ## [0.10.0] - 2026-04-04 - farben
 
 ### Added

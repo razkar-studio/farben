@@ -52,7 +52,16 @@ pub fn colorb(input: impl Into<String>) -> String {
 /// Panics if the input contains invalid farben markup. Use [`try_color`] for error handling.
 pub fn color_runtime(input: impl Into<String>, bleed: bool) -> String {
     let input = input.into();
-    let mut res = parser::render(lexer::tokenize(input).expect("Failed to colorize"));
+    let tokens = lexer::tokenize(&input).unwrap_or_else(|e| {
+        panic!(
+            "{}",
+            errors::LexErrorDisplay {
+                error: &e,
+                input: &input
+            }
+        );
+    });
+    let mut res = parser::render(tokens);
     if !bleed {
         res.push_str("\x1b[0m");
     }

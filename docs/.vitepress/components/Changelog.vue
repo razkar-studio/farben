@@ -54,6 +54,48 @@ function crateClass(crate) {
 
 const releases = [
     {
+        version: "0.8.0",
+        crate: "farben-core",
+        date: "2026-04-04",
+        sections: [
+            {
+                type: "Added",
+                items: [
+                    "<code>RegistryError</code> enum - a separate error type for registry operations (<code>set_prefix</code>, <code>insert_style</code>). Split out from <code>LexError</code> because registry errors have no source position (they occur outside markup parsing). Has one variant: <code>UnknownStyle(String)</code>.",
+                    "<code>LexErrorDisplay&lt;'a&gt;</code> struct - wraps a <code>&amp;LexError</code> and the original <code>&amp;str</code> input to produce compiler-style diagnostic output. Renders two lines: the full input string, then a caret (<code>^</code>) aligned to the byte offset of the error.",
+                ],
+            },
+            {
+                type: "Changed",
+                items: [
+                    "All <code>LexError</code> variants now carry a <code>position: usize</code> field (byte offset into the markup string). Affected variants: <code>UnclosedTag</code>, <code>InvalidTag</code>, <code>UnclosedValue</code>, <code>InvalidArgumentCount</code>, <code>InvalidValue</code>, <code>InvalidResetTarget</code>. Previously no variants stored position info.",
+                    "<code>LexError::UnknownStyle</code> removed - registry errors now use <code>RegistryError::UnknownStyle</code> instead.",
+                    "<code>LexError</code>'s <code>Display</code> impl now includes position in every message (e.g. <code>\"invalid tag 'foo' at position 5\"</code>).",
+                ],
+            },
+        ],
+    },
+    {
+        version: "0.11.0",
+        crate: "farben",
+        date: "2026-04-04",
+        sections: [
+            {
+                type: "Added",
+                items: [
+                    "<code>farben::prelude</code> module - the recommended import path going forward. <code>use farben::prelude::*</code> brings every user-facing item into scope (functions, macros, types) gated by the same feature flags as their definitions. Prefer this over <code>use farben::*</code>, which also pulls in <code>color_runtime</code> and <code>validate_color</code> - items that are <code>pub</code> only to satisfy macro expansion, not intended for direct use.",
+                ],
+            },
+            {
+                type: "Changed",
+                items: [
+                    "<code>farben-core</code> dependency bumped to <code>0.8.0</code>, picking up position-aware <code>LexError</code> variants and the new <code>LexErrorDisplay</code> diagnostic formatter. <code>try_color</code> error messages now include the byte offset of the offending token.",
+                    "All documentation and examples updated to use <code>use farben::prelude::*</code>.",
+                ],
+            },
+        ],
+    },
+    {
         version: "0.10.0",
         crate: "farben",
         date: "2026-04-04",

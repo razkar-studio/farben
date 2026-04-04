@@ -140,7 +140,7 @@ fn style_to_tags(style: Style) -> Vec<TagType> {
 /// Returns `LexError::InvalidTag` if the part matches none of the above forms.
 /// Returns `LexError::InvalidValue` if a numeric argument cannot be parsed.
 /// Returns `LexError::InvalidArgumentCount` if `rgb(...)` does not receive exactly three values.
-fn parse_part(part: &str) -> Result<Vec<TagType>, LexError> {
+fn parse_part(part: &str, position: usize) -> Result<Vec<TagType>, LexError> {
     let (ground, part) = if let Some(rest) = part.strip_prefix("bg:") {
         (Ground::Background, rest)
     } else if let Some(rest) = part.strip_prefix("fg:") {
@@ -152,13 +152,18 @@ fn parse_part(part: &str) -> Result<Vec<TagType>, LexError> {
         if remainder.is_empty() {
             Ok(vec![TagType::Reset(None)])
         } else {
-            let inner = parse_part(remainder)?;
+            let inner = parse_part(remainder, position + 1)?;
             match inner.as_slice() {
                 [tag] => match tag {
-                    TagType::Reset(_) | TagType::Prefix(_) => Err(LexError::InvalidResetTarget),
+                    TagType::Reset(_) | TagType::Prefix(_) => {
+                        Err(LexError::InvalidResetTarget(position))
+                    }
                     _ => Ok(vec![TagType::Reset(Some(Box::new(tag.clone())))]),
                 },
-                _ => Err(LexError::InvalidTag(part.to_string())),
+                _ => Err(LexError::InvalidTag {
+                    tag_content: part.to_string(),
+                    position,
+                }),
             }
         }
     } else if let Some(color) = NamedColor::from_str(part) {
@@ -168,14 +173,21 @@ fn parse_part(part: &str) -> Result<Vec<TagType>, LexError> {
         }])
     } else if let Some(emphasis) = EmphasisType::from_str(part) {
         Ok(vec![TagType::Emphasis(emphasis)])
+    } else if part.starts_with("ansi(") && !part.ends_with(')') {
+        Err(LexError::UnclosedValue(position))
     } else if let Some(ansi_val) = part.strip_prefix("ansi(").and_then(|s| s.strip_suffix(")")) {
         match ansi_val.trim().parse::<u8>() {
             Ok(code) => Ok(vec![TagType::Color {
                 color: Color::Ansi256(code),
                 ground,
             }]),
-            Err(_) => Err(LexError::InvalidValue(ansi_val.to_string())),
+            Err(_) => Err(LexError::InvalidValue {
+                value: ansi_val.to_string(),
+                position,
+            }),
         }
+    } else if part.starts_with("rgb(") && !part.ends_with(')') {
+        Err(LexError::UnclosedValue(position))
     } else if let Some(rgb_val) = part.strip_prefix("rgb(").and_then(|s| s.strip_suffix(")")) {
         let parts: Result<Vec<u8>, _> =
             rgb_val.split(',').map(|v| v.trim().parse::<u8>()).collect();
@@ -187,13 +199,20 @@ fn parse_part(part: &str) -> Result<Vec<TagType>, LexError> {
             Ok(v) => Err(LexError::InvalidArgumentCount {
                 expected: 3,
                 got: v.len(),
+                position,
             }),
-            Err(_) => Err(LexError::InvalidValue(rgb_val.to_string())),
+            Err(_) => Err(LexError::InvalidValue {
+                value: rgb_val.to_string(),
+                position,
+            }),
         }
     } else {
         match search_registry(part) {
             Ok(style) => Ok(style_to_tags(style)),
-            Err(e) => Err(e),
+            Err(_) => Err(LexError::InvalidTag {
+                tag_content: part.to_string(),
+                position,
+            }),
         }
     }
 }
@@ -206,10 +225,18 @@ fn parse_part(part: &str) -> Result<Vec<TagType>, LexError> {
 /// # Errors
 ///
 /// Propagates any error from `parse_part`.
-fn parse_tag(raw_tag: &str) -> Result<Vec<TagType>, LexError> {
-    let nested: Result<Vec<Vec<TagType>>, LexError> =
-        raw_tag.split_whitespace().map(parse_part).collect();
-    Ok(nested?.into_iter().flatten().collect())
+fn parse_tag(raw_tag: &str, tag_start: usize) -> Result<Vec<TagType>, LexError> {
+    let mut result = Vec::new();
+    let mut search_from = 0;
+
+    for part in raw_tag.split_whitespace() {
+        let part_offset = raw_tag[search_from..].find(part).unwrap() + search_from;
+        let abs_position = tag_start + part_offset;
+        result.extend(parse_part(part, abs_position)?);
+        search_from = part_offset + part.len();
+    }
+
+    Ok(result)
 }
 
 /// Tokenizes a farben markup string into a sequence of `Token`s.
@@ -258,11 +285,11 @@ pub fn tokenize(input: impl Into<String>) -> Result<Vec<Token>, LexError> {
         }
 
         let Some(closing) = input[abs_starting..].find(']') else {
-            return Err(LexError::UnclosedTag);
+            return Err(LexError::UnclosedTag(abs_starting));
         };
         let abs_closing = closing + abs_starting;
         let raw_tag = &input[abs_starting + 1..abs_closing];
-        for tag in parse_tag(raw_tag)? {
+        for tag in parse_tag(raw_tag, abs_starting)? {
             tokens.push(Token::Tag(tag));
         }
         pos = abs_closing + 1;
@@ -307,13 +334,13 @@ mod tests {
 
     #[test]
     fn test_parse_part_reset() {
-        assert_eq!(parse_part("/").unwrap(), vec![TagType::Reset(None)]);
+        assert_eq!(parse_part("/", 0).unwrap(), vec![TagType::Reset(None)]);
     }
 
     #[test]
     fn test_parse_part_named_color_foreground_default() {
         assert_eq!(
-            parse_part("red").unwrap(),
+            parse_part("red", 0).unwrap(),
             vec![TagType::Color {
                 color: Color::Named(NamedColor::Red),
                 ground: Ground::Foreground,
@@ -324,7 +351,7 @@ mod tests {
     #[test]
     fn test_parse_part_named_color_explicit_fg() {
         assert_eq!(
-            parse_part("fg:red").unwrap(),
+            parse_part("fg:red", 0).unwrap(),
             vec![TagType::Color {
                 color: Color::Named(NamedColor::Red),
                 ground: Ground::Foreground,
@@ -335,7 +362,7 @@ mod tests {
     #[test]
     fn test_parse_part_named_color_bg() {
         assert_eq!(
-            parse_part("bg:red").unwrap(),
+            parse_part("bg:red", 0).unwrap(),
             vec![TagType::Color {
                 color: Color::Named(NamedColor::Red),
                 ground: Ground::Background,
@@ -346,7 +373,7 @@ mod tests {
     #[test]
     fn test_parse_part_emphasis_bold() {
         assert_eq!(
-            parse_part("bold").unwrap(),
+            parse_part("bold", 0).unwrap(),
             vec![TagType::Emphasis(EmphasisType::Bold)]
         );
     }
@@ -354,7 +381,7 @@ mod tests {
     #[test]
     fn test_parse_part_ansi256_valid() {
         assert_eq!(
-            parse_part("ansi(200)").unwrap(),
+            parse_part("ansi(200)", 0).unwrap(),
             vec![TagType::Color {
                 color: Color::Ansi256(200),
                 ground: Ground::Foreground,
@@ -365,7 +392,7 @@ mod tests {
     #[test]
     fn test_parse_part_ansi256_bg() {
         assert_eq!(
-            parse_part("bg:ansi(200)").unwrap(),
+            parse_part("bg:ansi(200)", 0).unwrap(),
             vec![TagType::Color {
                 color: Color::Ansi256(200),
                 ground: Ground::Background,
@@ -376,7 +403,7 @@ mod tests {
     #[test]
     fn test_parse_part_ansi256_with_whitespace() {
         assert_eq!(
-            parse_part("ansi( 42 )").unwrap(),
+            parse_part("ansi( 42 )", 0).unwrap(),
             vec![TagType::Color {
                 color: Color::Ansi256(42),
                 ground: Ground::Foreground,
@@ -386,13 +413,13 @@ mod tests {
 
     #[test]
     fn test_parse_part_ansi256_invalid_value() {
-        assert!(parse_part("ansi(abc)").is_err());
+        assert!(parse_part("ansi(abc)", 0).is_err());
     }
 
     #[test]
     fn test_parse_part_rgb_valid() {
         assert_eq!(
-            parse_part("rgb(255,128,0)").unwrap(),
+            parse_part("rgb(255,128,0)", 0).unwrap(),
             vec![TagType::Color {
                 color: Color::Rgb(255, 128, 0),
                 ground: Ground::Foreground,
@@ -403,7 +430,7 @@ mod tests {
     #[test]
     fn test_parse_part_rgb_bg() {
         assert_eq!(
-            parse_part("bg:rgb(255,128,0)").unwrap(),
+            parse_part("bg:rgb(255,128,0)", 0).unwrap(),
             vec![TagType::Color {
                 color: Color::Rgb(255, 128, 0),
                 ground: Ground::Background,
@@ -414,7 +441,7 @@ mod tests {
     #[test]
     fn test_parse_part_rgb_with_spaces() {
         assert_eq!(
-            parse_part("rgb( 10 , 20 , 30 )").unwrap(),
+            parse_part("rgb( 10 , 20 , 30 )", 0).unwrap(),
             vec![TagType::Color {
                 color: Color::Rgb(10, 20, 30),
                 ground: Ground::Foreground,
@@ -424,9 +451,9 @@ mod tests {
 
     #[test]
     fn test_parse_part_rgb_wrong_arg_count() {
-        let result = parse_part("rgb(1,2)");
+        let result = parse_part("rgb(1,2)", 0);
         assert!(result.is_err());
-        if let Err(crate::errors::LexError::InvalidArgumentCount { expected, got }) = result {
+        if let Err(crate::errors::LexError::InvalidArgumentCount { expected, got, .. }) = result {
             assert_eq!(expected, 3);
             assert_eq!(got, 2);
         }
@@ -434,12 +461,12 @@ mod tests {
 
     #[test]
     fn test_parse_part_rgb_invalid_value() {
-        assert!(parse_part("rgb(r,g,b)").is_err());
+        assert!(parse_part("rgb(r,g,b)", 0).is_err());
     }
 
     #[test]
     fn test_parse_part_unknown_tag_returns_error() {
-        assert!(parse_part("fuchsia").is_err());
+        assert!(parse_part("fuchsia", 0).is_err());
     }
 
     // --- tokenize ---
@@ -615,7 +642,7 @@ mod tests {
     #[test]
     fn test_parse_part_custom_style_from_registry() {
         crate::registry::insert_style("danger", crate::ansi::Style::parse("[bold red]").unwrap());
-        let result = parse_part("danger").unwrap();
+        let result = parse_part("danger", 0).unwrap();
         assert_eq!(
             result,
             vec![
