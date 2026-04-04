@@ -1,6 +1,6 @@
 [package]
 name = "farben-core"
-version = "0.8.0"
+version = "0.9.0"
 edition = "2024"
 description = "The internal core library for Farben"
 license = "MIT OR Apache-2.0"
@@ -10,6 +10,10 @@ documentation = "https://docs.rs/farben-core"
 keywords = ["terminal", "color", "ansi", "markup", "cli"]
 categories = ["command-line-interface"]
 homepage = "https://razkar-studio.github.io/farben"
+
+[features]
+lossy = []
+default = ["lossy"]
 
 [dependencies]
 # Zero dependencies

@@ -54,6 +54,32 @@ function crateClass(crate) {
 
 const releases = [
     {
+        version: "0.9.0",
+        crate: "farben-core",
+        date: "2026-04-04",
+        sections: [
+            {
+                type: "Added",
+                items: [
+                    "Lossy degrading. When the terminal does not support 24-bit true color, RGB values are automatically degraded to the nearest ANSI256 color. When the terminal only supports basic ANSI colors (8/16 colors), RGB and ANSI256 values are degraded to the nearest named color. The degrader module uses the <code>COLORTERM</code> and <code>TERM</code> environment variables to detect terminal color capabilities at runtime.",
+                ],
+            },
+        ],
+    },
+    {
+        version: "0.13.0",
+        crate: "farben",
+        date: "2026-04-04",
+        sections: [
+            {
+                type: "Changed",
+                items: [
+                    "<code>farben-core</code> dependency bumped to <code>0.9.0</code>, picking up lossy degrading support.",
+                ],
+            },
+        ],
+    },
+    {
         version: "0.12.0",
         crate: "farben",
         date: "2026-04-04",

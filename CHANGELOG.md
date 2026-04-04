@@ -3,6 +3,22 @@
 All notable changes to Farben will be documented here.
 farben / farben-core / farben-macros / farben-md
 
+## [0.9.0] - 2026-04-04 - farben-core
+
+### Added
+
+- Lossy degrading. When the terminal does not support 24-bit true color, RGB values are 
+  automatically degraded to the nearest ANSI256 color. When the terminal only supports 
+  basic ANSI colors (8/16 colors), RGB and ANSI256 values are degraded to the nearest 
+  named color. The degrader module uses the `COLORTERM` and `TERM` environment variables 
+  to detect terminal color capabilities at runtime.
+
+## [0.13.0] - 2026-04-04 - farben
+
+### Changed
+
+- `farben-core` dependency bumped to `0.9.0`, picking up lossy degrading support.
+
 ## [0.12.0] - 2026-04-04 - farben
 
 ### Added

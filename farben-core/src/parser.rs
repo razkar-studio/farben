@@ -40,6 +40,8 @@ pub fn render(tokens: Vec<Token>) -> String {
         match t {
             Token::Text(s) | Token::Tag(TagType::Prefix(s)) => result.push_str(&s),
             Token::Tag(TagType::Color { color, ground }) => {
+                #[cfg(feature = "lossy")]
+                let color = crate::degrader::degrade(color);
                 result.push_str(&color_to_ansi(&color, ground.clone()));
                 active.push(TagType::Color { color, ground });
             }

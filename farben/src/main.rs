@@ -1,16 +1,25 @@
 use farben::prelude::*;
 
 fn main() {
+    cprintln!("[rgb(128,0,255)]RGB purple");
+    cprintln!("[ansi(200)]ANSI 200");
+    cprintln!("[red]Named red");
     showcase();
 }
 
 fn showcase() {
     section("Named Colors");
-    cprintln!("[black]black [red]red [green]green [yellow]yellow [blue]blue [magenta]magenta [cyan]cyan [white]white");
+    cprintln!(
+        "[black]black [red]red [green]green [yellow]yellow [blue]blue [magenta]magenta [cyan]cyan [white]white"
+    );
 
     section("Bright Variants");
-    cprintln!("[bright-black]bright-black [bright-red]bright-red [bright-green]bright-green [bright-yellow]bright-yellow");
-    cprintln!("[bright-blue]bright-blue [bright-magenta]bright-magenta [bright-cyan]bright-cyan [bright-white]bright-white");
+    cprintln!(
+        "[bright-black]bright-black [bright-red]bright-red [bright-green]bright-green [bright-yellow]bright-yellow"
+    );
+    cprintln!(
+        "[bright-blue]bright-blue [bright-magenta]bright-magenta [bright-cyan]bright-cyan [bright-white]bright-white"
+    );
 
     section("Foreground & Background");
     cprintln!("[fg:red]explicit foreground");
@@ -25,12 +34,18 @@ fn showcase() {
     cprintln!("[bg:rgb(30,30,30) fg:rgb(220,220,220)]dark background, light foreground");
 
     section("ANSI 256");
-    cprintln!("[ansi(1)]ansi(1) [ansi(2)]ansi(2) [ansi(3)]ansi(3) [ansi(4)]ansi(4) [ansi(5)]ansi(5) [ansi(6)]ansi(6)");
-    cprintln!("[ansi(196)]ansi(196) [ansi(214)]ansi(214) [ansi(226)]ansi(226) [ansi(46)]ansi(46) [ansi(21)]ansi(21) [ansi(93)]ansi(93)");
+    cprintln!(
+        "[ansi(1)]ansi(1) [ansi(2)]ansi(2) [ansi(3)]ansi(3) [ansi(4)]ansi(4) [ansi(5)]ansi(5) [ansi(6)]ansi(6)"
+    );
+    cprintln!(
+        "[ansi(196)]ansi(196) [ansi(214)]ansi(214) [ansi(226)]ansi(226) [ansi(46)]ansi(46) [ansi(21)]ansi(21) [ansi(93)]ansi(93)"
+    );
     cprintln!("[bg:ansi(236) fg:ansi(255)]dark ansi background");
 
     section("Emphasis");
-    cprintln!("[bold]bold[/bold]  [dim]dim[/dim]  [italic]italic[/italic]  [underline]underline[/underline]  [blink]blink[/blink]  [strikethrough]strikethrough[/strikethrough]");
+    cprintln!(
+        "[bold]bold[/bold]  [dim]dim[/dim]  [italic]italic[/italic]  [underline]underline[/underline]  [blink]blink[/blink]  [strikethrough]strikethrough[/strikethrough]"
+    );
 
     section("Multi-tag Brackets");
     cprintln!("[bold red]bold and red");
@@ -43,7 +58,9 @@ fn showcase() {
 
     section("Reset -Specific");
     cprintln!("[bold red]bold and red [/bold]just red now [/red]unstyled");
-    cprintln!("[underline italic green]underline italic green [/underline]italic green [/italic]green [/]unstyled");
+    cprintln!(
+        "[underline italic green]underline italic green [/underline]italic green [/italic]green [/]unstyled"
+    );
 
     section("Escape Sequence");
     cprintln!("To apply red, write \\[red] in your markup.");
@@ -51,13 +68,20 @@ fn showcase() {
 
     section("Format Arguments");
     let name = "Farben";
-    let version = "0.10.0";
-    cprintln!("[bold green]{} v{}[/] is the current release.", name, version);
+    let version = env!("CARGO_PKG_VERSION");
+    cprintln!(
+        "[bold green]{} v{}[/] is the current release.",
+        name,
+        version
+    );
     let pct = 91u8;
     println!("{}", color_fmt!("Disk usage: [bold red]{}%[/]", pct));
 
     section("color() and try_color()");
-    println!("{}", color("[bold cyan]color()[/] panics on invalid markup."));
+    println!(
+        "{}",
+        color("[bold cyan]color()[/] panics on invalid markup.")
+    );
     println!("{}", colorb("[dim]colorb()[/] -no trailing reset, styles"));
     cprintln!("[/] -reset that bleed.");
     match try_color("[red]try_color[/] returns a Result") {
@@ -77,20 +101,20 @@ fn showcase() {
     cprintln!("line two (still red)[/]");
 
     section("Custom Tags -style! and prefix!");
-    style!("ok",   "[bold green]");
+    style!("ok", "[bold green]");
     style!("warn", "[bold yellow]");
-    style!("err",  "[bold red]");
-    prefix!("ok",   "✔ ");
+    style!("err", "[bold red]");
+    prefix!("ok", "✔ ");
     prefix!("warn", "⚠ ");
-    prefix!("err",  "✖ ");
+    prefix!("err", "✖ ");
     cprintln!("[ok]all checks passed.");
     cprintln!("[warn]deprecated API in use.");
     cprintln!("[err]connection refused.");
 
     section("Chained Custom Tags");
-    style!("error",    "[bold red]");
+    style!("error", "[bold red]");
     style!("critical", "[error underline]");
-    prefix!("error",    "[ERROR] ");
+    prefix!("error", "[ERROR] ");
     prefix!("critical", "[CRIT]  ");
     cprintln!("[error]something went wrong.");
     cprintln!("[critical]unrecoverable failure.");

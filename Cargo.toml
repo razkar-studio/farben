@@ -6,6 +6,6 @@ members = [
 resolver = "3"
 
 [workspace.dependencies]
-farben-core = { path = "farben-core", version = "0.8.0" }
+farben-core = { path = "farben-core", version = "0.9.0" }
 farben-macros = { path = "farben-macros", version = "0.4.2" }
 farben-md = { path = "farben-md", version = "0.1.3" }

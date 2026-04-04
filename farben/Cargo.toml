@@ -1,6 +1,6 @@
 [package]
 name = "farben"
-version = "0.12.0"
+version = "0.13.0"
 edition = "2024"
 description = "Markup for the Terminal, but safer and faster."
 license = "MIT OR Apache-2.0"
@@ -17,8 +17,9 @@ farben-macros = { workspace = true, optional = true }
 farben-md = { workspace = true, optional = true }
 
 [features]
-default = ["format"]
+default = ["format", "lossy"]
 format = []
+lossy = ["farben-core/lossy"]
 compile = ["farben-macros"]
 markdown = ["farben-md"]
 markdown-compile = ["markdown", "compile", "farben-macros/markdown"]
