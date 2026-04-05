@@ -73,22 +73,17 @@ cprintln!("into this.");
 - **Stderr Variants**: All print macros have `e` variants (`ceprint!`, `ceprintln!`, etc.) that target stderr.
 - **Bleed Variants**: `cprintb!`, `cprintbln!`, `colorb()`, and `colorb!()` skip the trailing reset, letting styles carry forward across multiple calls.
 - **User-defined styles**: Define your own tags with `style!()` that expand to any combination of supported tags.
+- **Custom style files**: Drop in a `name.frb.toml` file, write 1 line on `build.rs` and 2 on `main.rs`, and all styles from that file is set.
 
 # Known Limitations
-
-- **Custom named tags are not validated at compile time.** The `compile` feature validates
-markup strings via proc macros, but it has no visibility into styles registered at runtime
-via [`style!`]. Using a custom tag like `[warn]` with `compile` active will fail to compile
-even if the style is registered before use. Stick to runtime macros (`cprintln!` without
-`compile`) when working with custom tags.
 
 - **No `NO_COLOR`, `FORCE_COLOR`, or TTY detection, in `compile`.** The `compile` feature processes markup at build time and 
 bakes ANSI codes directly into the binary. As a result, `NO_COLOR`, `FORCE_COLOR`, and TTY detection are only respected at 
 build time, not at end-user runtime. They are fundamentally different, and I cannot solve this. Use runtime macros if you need 
 full environment awareness.
 
-These features are a work in progress and I am currently working towards building it.
-Make awesome things with Farben.
+> [!NOTE]
+> Update, compile-time style thingy works now I guess. [Check the docs](https://razkar-studio.github.io/farben/styles) for how they work.
 
 ## Syntax
 

@@ -3,7 +3,7 @@
 All notable changes to Farben will be documented here.
 farben / farben-core / farben-macros / farben-md
 
-## [farben-build 0.1.0 / farben-macros 0.5.0 / farben-core 0.10.0 / farben-md 0.2.0] - 2026-04-05 - Global
+## [farben-build 0.1.0 / farben-macros 0.5.0 / farben-core 0.10.0 / farben-md 0.2.0 / farben 0.14.0] - 2026-04-05 - Global
 ### Compile-time Custom Style Support
 
 ### Added

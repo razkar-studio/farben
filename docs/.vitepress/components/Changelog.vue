@@ -55,7 +55,7 @@ function crateClass(crate) {
 const releases = [
     {
         version:
-            "farben-build 0.1.0 / farben-macros 0.5.0 / farben-core 0.10.0 / farben-md 0.2.0",
+            "farben-build 0.1.0 / farben-macros 0.5.0 / farben-core 0.10.0 / farben-md 0.2.0 / farben 0.14.0",
         crate: "Global",
         subtitle: "Compile-time Custom Style Support",
         date: "2026-04-05",

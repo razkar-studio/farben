@@ -58,6 +58,14 @@ export default defineConfig({
         ],
       },
       {
+        text: "Custom Styles",
+        link: "/styles/",
+        items: [
+          { text: "Styles-toml", link: "/styles/styles-toml/" },
+          { text: "Under The Hood", link: "/styles/advanced/" },
+        ],
+      },
+      {
         text: "Examples",
         items: [
           { text: "API Reference", link: "/examples/api-examples/" },

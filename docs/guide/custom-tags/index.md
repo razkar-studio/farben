@@ -19,7 +19,7 @@ fn main() {
 ```
 
 ::: info
-Think of `style!` like an alias, where `[error]` becomes shorthand for `[bold underline red]`. Farben expands it automatically at parse time, so there's no runtime overhead beyond what the tags themselves would cost. Using `compile` also works, and parses it at compile-time!
+Think of `style!` like an alias, where `[error]` becomes shorthand for `[bold underline red]`. Farben expands it automatically at parse time, so there's no runtime overhead beyond what the tags themselves would cost. Using `compile` also works, but it requires a [whole different setup](/styles) that's also compatible with runtime stuff!
 :::
 
 ::: tip

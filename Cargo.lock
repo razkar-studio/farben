@@ -4,7 +4,7 @@ version = 4
 
 [[package]]
 name = "farben"
-version = "0.13.0"
+version = "0.14.0"
 dependencies = [
  "farben-core",
  "farben-macros",
@@ -32,7 +32,7 @@ dependencies = [
 
 [[package]]
 name = "farben-md"
-version = "0.1.3"
+version = "0.2.0"
 dependencies = [
  "farben-core",
 ]
@@ -64,15 +64,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "unicode-ident",
-]
-
-[[package]]
-name = "testfarbenyay"
-version = "0.1.0"
-dependencies = [
- "farben",
- "farben-build",
- "farben-core",
 ]
 
 [[package]]
