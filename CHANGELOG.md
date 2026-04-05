@@ -3,6 +3,33 @@
 All notable changes to Farben will be documented here.
 farben / farben-core / farben-macros / farben-md
 
+## [farben-build 0.1.0 / farben-macros 0.5.0 / farben-core 0.10.0 / farben-md 0.2.0] - 2026-04-05 - Global
+### Compile-time Custom Style Support
+
+### Added
+
+- `farben-build` 0.1.0 - new build script helper crate. Call `farben_build::run()` from
+  `build.rs` to read `farben.frb.toml` and generate two artifacts in `OUT_DIR`:
+  - `farben_styles.rs` - a Rust source file containing an `init_styles()` function that
+    registers all styles and prefixes at runtime. Include it via `load_styles!()` at startup.
+  - `farben_registry.lsv` - a line-separated values file consumed by `farben-macros` proc
+    macros at compile time, so `color!`, `colorb!`, and `validate_color!` can see user-defined
+    style tags. Use `farben_build::run_with(&[paths])` to supply custom config file paths
+    instead of the default `farben.frb.toml`.
+  - Config format: INI-like `[styles]` and `[prefixes]` sections with `key = "value"` pairs.
+    Namespaced sections like `[styles.myns]` produce keys of the form `myns:key`.
+- **Absolutely zero external dependencies added.**
+
+### Changed
+
+- `farben-macros` bumped to `0.5.0`. Every proc macro invocation now calls `load_registry()`
+  at startup, which reads `farben_registry.lsv` from `OUT_DIR` and pre-populates the
+  compile-time registry. As a result, `color!("[myTag]text")` now compiles successfully when
+  `myTag` was declared in a `.frb.toml` config file.
+- `farben-core` bumped to `0.10.0`. No new public API.
+- `farben-md` bumped to `0.2.0`, picking up the `farben-core 0.10.0` dependency. No new
+  public API.
+
 ## [0.9.0] - 2026-04-04 - farben-core
 
 ### Added

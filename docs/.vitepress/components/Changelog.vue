@@ -54,6 +54,30 @@ function crateClass(crate) {
 
 const releases = [
     {
+        version:
+            "farben-build 0.1.0 / farben-macros 0.5.0 / farben-core 0.10.0 / farben-md 0.2.0",
+        crate: "Global",
+        subtitle: "Compile-time Custom Style Support",
+        date: "2026-04-05",
+        sections: [
+            {
+                type: "Added",
+                items: [
+                    "<code>farben-build</code> 0.1.0 - a new build script helper crate. Call <code>farben_build::run()</code> from <code>build.rs</code> to read <code>farben.frb.toml</code> and generate two artifacts in <code>OUT_DIR</code>: <code>farben_styles.rs</code> (a Rust source file containing an <code>init_styles()</code> function that registers all styles and prefixes at runtime via <code>load_styles!()</code>) and <code>farben_registry.lsv</code> (a line-separated values file consumed by <code>farben-macros</code> proc macros at compile time). Use <code>farben_build::run_with(&amp;[paths])</code> to supply custom config file paths instead of the default. Config files use a TOML format with <code>[styles]</code> and <code>[prefixes]</code> sections. Namespaced sections like <code>[styles.myns]</code> produce keys of the form <code>myns:key</code>.",
+                    "Absolutely zero external dependencies added.",
+                ],
+            },
+            {
+                type: "Changed",
+                items: [
+                    "<code>farben-macros</code> bumped to <code>0.5.0</code>. Every proc macro invocation now calls <code>load_registry()</code> at startup, which reads <code>farben_registry.lsv</code> from <code>OUT_DIR</code> and pre-populates the compile-time registry. As a result, <code>color!</code>, <code>colorb!</code>, and <code>validate_color!</code> now resolve user-defined style tags (e.g. <code>[myTag]</code>) that were declared in a <code>.frb.toml</code> config file.",
+                    "<code>farben-core</code> bumped to <code>0.10.0</code>. No new public API.",
+                    "<code>farben-md</code> bumped to <code>0.2.0</code>, picking up the <code>farben-core 0.10.0</code> dependency. No new public API.",
+                ],
+            },
+        ],
+    },
+    {
         version: "0.9.0",
         crate: "farben-core",
         date: "2026-04-04",
