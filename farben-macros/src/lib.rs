@@ -14,6 +14,46 @@ use proc_macro::TokenStream;
 use quote::quote;
 use syn::{LitStr, parse_macro_input};
 
+/// Reads `farben_registry.lsv` from `OUT_DIR` and pre-populates the compile-time registry.
+///
+/// Calls `insert_style` for each style entry and `set_prefix` for each prefix entry
+/// written by the build script from `.frb` config files. Called at the start of each
+/// proc macro invocation. If the file does not exist, the function returns silently.
+fn load_registry() {
+    let out_dir = std::env::var("OUT_DIR").unwrap_or_default();
+    let path = std::path::Path::new(&out_dir).join("farben_registry.lsv");
+    if let Ok(content) = std::fs::read_to_string(&path) {
+        let mut sections = content.splitn(2, "---\n");
+        let styles_section = sections.next().unwrap_or("");
+        let prefixes_section = sections.next().unwrap_or("");
+
+        for line in styles_section.lines() {
+            if line.is_empty() {
+                continue;
+            }
+            let mut parts = line.splitn(2, '=');
+            let key = parts.next().unwrap();
+            let value = parts.next().unwrap();
+            farben_core::registry::insert_style(
+                key,
+                farben_core::ansi::Style::parse(format!("[{value}]"))
+                    .unwrap_or_else(|e| panic!("farben: invalid style in registry '{key}': {e}")),
+            );
+        }
+
+        for line in prefixes_section.lines() {
+            if line.is_empty() {
+                continue;
+            }
+            let mut parts = line.splitn(2, '=');
+            let key = parts.next().unwrap();
+            let value = parts.next().unwrap();
+            farben_core::registry::set_prefix(key, value)
+                .unwrap_or_else(|e| panic!("farben: failure while setting prefix '{key}': {e}"));
+        }
+    }
+}
+
 /// Parses and colorizes a farben markup string at compile time.
 ///
 /// Tokenizes and renders the input at compile time, emitting the final ANSI-escaped
@@ -28,6 +68,13 @@ use syn::{LitStr, parse_macro_input};
 /// ```
 #[proc_macro]
 pub fn color(input: TokenStream) -> TokenStream {
+    load_registry();
+    if std::env::var("NO_COLOR").is_err() {
+        unsafe {
+            std::env::set_var("FORCE_COLOR", "1");
+        }
+    }
+
     let input = parse_macro_input!(input as LitStr);
     let value = input.value();
     let tokens = match farben_core::lexer::tokenize(&value) {
@@ -62,6 +109,13 @@ pub fn color(input: TokenStream) -> TokenStream {
 /// ```
 #[proc_macro]
 pub fn colorb(input: TokenStream) -> TokenStream {
+    load_registry();
+    if std::env::var("NO_COLOR").is_err() {
+        unsafe {
+            std::env::set_var("FORCE_COLOR", "1");
+        }
+    }
+
     let input = parse_macro_input!(input as LitStr);
     let value = input.value();
     let tokens = match farben_core::lexer::tokenize(&value) {
@@ -87,6 +141,8 @@ pub fn colorb(input: TokenStream) -> TokenStream {
 /// [`color_fmt!`] for strings with format arguments.
 #[proc_macro]
 pub fn validate_color(input: TokenStream) -> TokenStream {
+    load_registry();
+
     let input = parse_macro_input!(input as LitStr);
     let value = input.value();
 

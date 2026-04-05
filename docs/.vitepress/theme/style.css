@@ -1,0 +1,38 @@
+:root {
+  --vp-home-hero-name-color: transparent;
+  --vp-home-hero-name-background: linear-gradient(
+    135deg,
+    #818cf8 0%,
+    #a78bfa 25%,
+    #c084fc 50%,
+    #f472b6 75%,
+    #fb7185 100%
+  );
+  --vp-home-hero-image-filter: drop-shadow(0 0 24px rgba(167, 139, 250, 0.5));
+}
+
+.VPHero .image-container::before {
+  content: '';
+  position: absolute;
+  inset: -32px;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(167, 139, 250, 0.45) 0%,
+    rgba(244, 114, 182, 0.25) 45%,
+    transparent 70%
+  );
+  filter: blur(18px);
+  animation: glowPulse 4s ease-in-out infinite;
+  z-index: -1;
+}
+
+@keyframes glowPulse {
+  0%, 100% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.06);
+  }
+}

@@ -1,3 +1,5 @@
+//! Integration tests for `color`, `try_color`, and related functions.
+
 use super::*;
 
 // --- try_color ---

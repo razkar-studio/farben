@@ -7,6 +7,8 @@ export default defineConfig({
   title: "Farben",
   description: "Markup for the Terminal",
   themeConfig: {
+    logo: "/logo-bracket-f.svg",
+
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: "Home", link: "/" },
@@ -37,6 +39,7 @@ export default defineConfig({
           },
           { text: "Markdown", link: "/guide/markdown/" },
           { text: "Standard Error", link: "/guide/standard-error/" },
+          { text: "Stripping ANSI", link: "/guide/stripping-ansi/" },
         ],
       },
       {

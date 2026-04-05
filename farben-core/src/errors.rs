@@ -9,6 +9,7 @@
 ///
 /// These errors carry no source position because registry calls happen outside of markup
 /// parsing, where no input string is available to point into.
+#[derive(Debug)]
 pub enum RegistryError {
     /// The `prefix!` macro was called with a style name that has not been registered.
     UnknownStyle(String),

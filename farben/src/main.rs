@@ -1,3 +1,5 @@
+//! Demo binary showcasing the full farben feature set.
+
 use farben::prelude::*;
 
 fn main() {

@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <defs>
+    <linearGradient id="bracketGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#818cf8"/>
+      <stop offset="50%" stop-color="#a78bfa"/>
+      <stop offset="100%" stop-color="#f472b6"/>
+    </linearGradient>
+    <linearGradient id="letterGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#c084fc"/>
+      <stop offset="100%" stop-color="#fb7185"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect x="2" y="2" width="116" height="116" rx="20" fill="#1e1b4b"/>
+
+  <!-- Left bracket [ -->
+  <path d="M 38 28 L 28 28 L 28 92 L 38 92"
+        stroke="url(#bracketGrad)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+
+  <!-- Right bracket ] -->
+  <path d="M 82 28 L 92 28 L 92 92 L 82 92"
+        stroke="url(#bracketGrad)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+
+  <!-- Letter F -->
+  <path d="M 46 38 L 74 38 L 74 48 L 56 48 L 56 56 L 70 56 L 70 66 L 56 66 L 56 82 L 46 82 Z"
+        fill="url(#letterGrad)"/>
+</svg>

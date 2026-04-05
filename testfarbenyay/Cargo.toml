@@ -1,0 +1,11 @@
+[package]
+name = "testfarbenyay"
+version = "0.1.0"
+edition = "2024"
+
+[build-dependencies]
+farben-build = { workspace = true }
+
+[dependencies]
+farben = { version = "0.13.0", path = "../farben", features = ["compile"] }
+farben-core.workspace = true

@@ -23,7 +23,7 @@ pub enum Ground {
 }
 
 /// A complete set of visual attributes for a span of text.
-#[derive(Default, Clone)]
+#[derive(Default, Clone, Debug)]
 pub struct Style {
     /// Foreground color. `None` leaves the terminal default unchanged.
     pub fg: Option<Color>,

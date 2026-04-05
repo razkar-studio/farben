@@ -1,0 +1,11 @@
+[styles]
+error = "bold red"
+
+[styles.my]
+error = "bold underline red"
+
+[prefixes]
+error = "error:"
+
+[prefixes.my]
+error = "[ERROR]"

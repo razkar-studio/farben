@@ -5,6 +5,9 @@ layout: home
 hero:
   name: "Farben"
   text: "Markup for the Terminal"
+  image:
+    src: /logo-bracket-f.svg
+    alt: Farben Logo
   tagline: "Color your terminal without typing whatever the heck '\\x1b[31m' is."
   actions:
     - theme: brand

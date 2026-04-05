@@ -1,11 +1,12 @@
 [workspace]
 members = [
-    "farben", "farben-core",
-    "farben-macros", "farben-md",
+    "farben", "farben-build", "farben-core",
+    "farben-macros", "farben-md", "testfarbenyay",
 ]
 resolver = "3"
 
 [workspace.dependencies]
-farben-core = { path = "farben-core", version = "0.9.0" }
-farben-macros = { path = "farben-macros", version = "0.4.2" }
+farben-build = { path = "farben-build", version = "0.1.0" }
+farben-core = { path = "farben-core", version = "0.10.0" }
+farben-macros = { path = "farben-macros", version = "0.5.0" }
 farben-md = { path = "farben-md", version = "0.1.3" }

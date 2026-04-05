@@ -25,6 +25,10 @@ pub enum MdToken {
     Underline(Vec<MdToken>),
 }
 
+/// Converts a token tree back into a plain string, re-inserting the opening delimiter.
+///
+/// Used to recover text when a span turns out to be unclosed. Child tokens are
+/// flattened recursively so their delimiters are also re-inserted.
 fn tokens_to_text(tokens: Vec<MdToken>, delim: &str) -> String {
     let mut s = String::from(delim);
     for tok in tokens {
@@ -51,6 +55,12 @@ fn tokens_to_text(tokens: Vec<MdToken>, delim: &str) -> String {
     s
 }
 
+/// Recursive descent parser that reads tokens from `pos` until `stop_at` is matched or input ends.
+///
+/// Returns `(tokens, found)`. `found` is `true` when `stop_at` was matched and consumed,
+/// `false` when the parser reached end of input without finding the stop delimiter. Callers
+/// use `found` to decide whether to emit a typed span or fall back to plain text via
+/// [`tokens_to_text`].
 fn tokenize_inner(input: &str, pos: &mut usize, stop_at: Option<&str>) -> (Vec<MdToken>, bool) {
     let mut tokens = Vec::new();
     let mut text_buf = String::new();
