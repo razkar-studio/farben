@@ -74,6 +74,7 @@ cprintln!("into this.");
 - **Bleed Variants**: `cprintb!`, `cprintbln!`, `colorb()`, and `colorb!()` skip the trailing reset, letting styles carry forward across multiple calls.
 - **User-defined styles**: Define your own tags with `style!()` that expand to any combination of supported tags.
 - **Custom style files**: Drop in a `name.frb.toml` file, write 1 line on `build.rs` and 2 on `main.rs`, and all styles from that file is set.
+- **anstyle Interop**: Unlock to the `anstyle` universe, with the sugar of markup. More on the docs.
 
 # Known Limitations
 
