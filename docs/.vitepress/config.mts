@@ -40,6 +40,7 @@ export default defineConfig({
           { text: "Markdown", link: "/guide/markdown/" },
           { text: "Standard Error", link: "/guide/standard-error/" },
           { text: "Stripping ANSI", link: "/guide/stripping-ansi/" },
+          { text: "anstyle Interop", link: "/guide/anstyle/" },
         ],
       },
       {

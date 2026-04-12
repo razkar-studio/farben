@@ -1,6 +1,6 @@
 [package]
 name = "farben"
-version = "0.15.0"
+version = "0.16.0"
 edition = "2024"
 description = "Markup for the Terminal, but safer and faster."
 license = "MIT OR Apache-2.0"
@@ -15,11 +15,13 @@ homepage = "https://razkar-studio.github.io/farben"
 farben-core = { workspace = true }
 farben-macros = { workspace = true, optional = true }
 farben-md = { workspace = true, optional = true }
+anstyle = { version = "1", optional = true }
 
 [features]
 default = ["format", "lossy"]
 format = []
 lossy = ["farben-core/lossy"]
+anstyle = ["farben-core/anstyle", "dep:anstyle"]
 compile = ["farben-macros"]
 markdown = ["farben-md"]
 markdown-compile = ["markdown", "compile", "farben-macros/markdown"]

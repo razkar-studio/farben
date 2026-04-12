@@ -58,17 +58,15 @@ pub enum ColorLevel {
 /// The result is cached in [`COLOR_LEVEL`] and never recomputed.
 pub fn color_level() -> &'static ColorLevel {
     COLOR_LEVEL.get_or_init(|| {
-        if let Ok(val) = std::env::var("COLORTERM") {
-            if val == "truecolor" || val == "24bit" {
+        if let Ok(val) = std::env::var("COLORTERM")
+            && (val == "truecolor" || val == "24bit") {
                 return ColorLevel::TrueColor;
             }
-        }
 
-        if let Ok(val) = std::env::var("TERM") {
-            if val.contains("256color") {
+        if let Ok(val) = std::env::var("TERM")
+            && val.contains("256color") {
                 return ColorLevel::Ansi256;
             }
-        }
 
         ColorLevel::Basic
     })

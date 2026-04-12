@@ -9,3 +9,6 @@ pub mod format;
 pub mod load;
 pub mod markdown;
 pub mod strip;
+
+#[cfg(feature = "anstyle")]
+pub mod anstyle;

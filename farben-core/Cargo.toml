@@ -1,6 +1,6 @@
 [package]
 name = "farben-core"
-version = "0.11.0"
+version = "0.12.0"
 edition = "2024"
 description = "The internal core library for Farben"
 license = "MIT OR Apache-2.0"
@@ -14,9 +14,10 @@ homepage = "https://razkar-studio.github.io/farben"
 [features]
 lossy = []
 default = ["lossy"]
+anstyle = ["dep:anstyle"]
 
 [dependencies]
-# Zero dependencies
+anstyle = { version = "1", optional = true }
 
 [dev-dependencies]
 criterion = { version = "0.5", features = ["html_reports"] }

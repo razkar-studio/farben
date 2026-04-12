@@ -94,7 +94,7 @@ pub fn strip_ansi(input: &str) -> String {
         if c == '\x1b' {
             match chars.next() {
                 Some('[') => {
-                    while let Some(c) = chars.next() {
+                    for c in chars.by_ref() {
                         if c.is_alphabetic() {
                             break;
                         }

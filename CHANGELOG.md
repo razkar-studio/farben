@@ -3,6 +3,19 @@
 All notable changes to Farben will be documented here.
 farben / farben-core / farben-macros / farben-md
 
+## [farben-core 0.12.0 / farben 0.16.0] - 2026-04-12 - anstyle Interop
+### Added
+
+- `anstyle` feature flag - enables interoperability with the `anstyle` crate.
+- `anstyle_conv` module in `farben-core` - provides bidirectional `From`
+  implementations for converting between farben types (`Color`, `NamedColor`,
+  `Style`) and `anstyle` types (`anstyle::Color`, `anstyle::AnsiColor`,
+  `anstyle::Style`).
+- `anstyle!` macro in `farben` - parses farben markup and converts the result
+  into an `anstyle::Style`. Requires the `anstyle` feature flag.
+- `anstyle` crate added as an optional dependency to both `farben-core` and
+  `farben`.
+
 ## [farben-core 0.11.0 / farben 0.15.0] - 2026-04-12 - Global
 ### Performance Optimizations
 

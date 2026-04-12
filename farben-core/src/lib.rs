@@ -24,3 +24,6 @@ pub mod lexer;
 pub mod parser;
 pub mod registry;
 pub mod strip;
+
+#[cfg(feature = "anstyle")]
+pub mod anstyle_conv;

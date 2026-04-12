@@ -66,15 +66,14 @@ fn tokenize_inner(input: &str, pos: &mut usize, stop_at: Option<&str>) -> (Vec<M
     let mut text_buf = String::new();
 
     while *pos < input.len() {
-        if let Some(stop) = stop_at {
-            if input[*pos..].starts_with(stop) {
+        if let Some(stop) = stop_at
+            && input[*pos..].starts_with(stop) {
                 *pos += stop.len();
                 if !text_buf.is_empty() {
                     tokens.push(MdToken::Text(std::mem::take(&mut text_buf)));
                 }
                 return (tokens, true);
             }
-        }
 
         if input[*pos..].starts_with("**") {
             *pos += 2;

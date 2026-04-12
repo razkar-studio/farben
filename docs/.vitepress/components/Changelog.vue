@@ -54,6 +54,23 @@ function crateClass(crate) {
 
 const releases = [
     {
+        version: "farben-core 0.12.0 / farben 0.16.0",
+        crate: "Global",
+        subtitle: "anstyle Interop",
+        date: "2026-04-12",
+        sections: [
+            {
+                type: "Added",
+                items: [
+                    "<code>anstyle</code> feature flag - enables interoperability with the <code>anstyle</code> crate.",
+                    "<code>anstyle_conv</code> module in <code>farben-core</code> - provides bidirectional <code>From</code> implementations for converting between farben types (<code>Color</code>, <code>NamedColor</code>, <code>Style</code>) and <code>anstyle</code> types (<code>anstyle::Color</code>, <code>anstyle::AnsiColor</code>, <code>anstyle::Style</code>).",
+                    "<code>anstyle!</code> macro in <code>farben</code> - parses farben markup and converts the result into an <code>anstyle::Style</code>. Requires the <code>anstyle</code> feature flag.",
+                    "<code>anstyle</code> crate added as an optional dependency to both <code>farben-core</code> and <code>farben</code>.",
+                ],
+            },
+        ],
+    },
+    {
         version: "farben-core 0.11.0 / farben 0.15.0",
         crate: "Global",
         subtitle: "Performance Optimizations",

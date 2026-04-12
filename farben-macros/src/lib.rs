@@ -31,9 +31,9 @@ fn load_registry() {
             if line.is_empty() {
                 continue;
             }
-            let mut parts = line.splitn(2, '=');
-            let key = parts.next().unwrap();
-            let value = parts.next().unwrap();
+            let (key, value) = line.split_once('=').unwrap();
+            
+            
             farben_core::registry::insert_style(
                 key,
                 farben_core::ansi::Style::parse(format!("[{value}]"))
@@ -45,9 +45,9 @@ fn load_registry() {
             if line.is_empty() {
                 continue;
             }
-            let mut parts = line.splitn(2, '=');
-            let key = parts.next().unwrap();
-            let value = parts.next().unwrap();
+            let (key, value) = line.split_once('=').unwrap();
+            
+            
             farben_core::registry::set_prefix(key, value)
                 .unwrap_or_else(|e| panic!("farben: failure while setting prefix '{key}': {e}"));
         }
