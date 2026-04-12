@@ -102,7 +102,7 @@ impl Style {
             match tok {
                 Token::Text(_) => continue,
                 Token::Tag(tag) => match tag {
-                    TagType::Reset(_) => res.reset = true,
+                    TagType::ResetAll | TagType::ResetOne(_) => res.reset = true,
                     TagType::Emphasis(emphasis) => match emphasis {
                         EmphasisType::Dim => res.dim = true,
                         EmphasisType::Blink => res.blink = true,
@@ -206,6 +206,28 @@ fn encode_color_sgr(ansi: &mut Vec<u8>, param: Ground, color: &Color) {
     }
 }
 
+/// Returns the base SGR code for a named color (foreground basis; add 10 for background).
+const fn named_sgr(color: &NamedColor) -> u8 {
+    match color {
+        NamedColor::Black => 30,
+        NamedColor::Red => 31,
+        NamedColor::Green => 32,
+        NamedColor::Yellow => 33,
+        NamedColor::Blue => 34,
+        NamedColor::Magenta => 35,
+        NamedColor::Cyan => 36,
+        NamedColor::White => 37,
+        NamedColor::BrightBlack => 90,
+        NamedColor::BrightRed => 91,
+        NamedColor::BrightGreen => 92,
+        NamedColor::BrightYellow => 93,
+        NamedColor::BrightBlue => 94,
+        NamedColor::BrightMagenta => 95,
+        NamedColor::BrightCyan => 96,
+        NamedColor::BrightWhite => 97,
+    }
+}
+
 /// Converts a `Color` into a complete ANSI escape sequence for the given ground.
 ///
 /// # Example
@@ -214,15 +236,20 @@ fn encode_color_sgr(ansi: &mut Vec<u8>, param: Ground, color: &Color) {
 /// assert_eq!(seq, "\x1b[31m");
 /// ```
 pub fn color_to_ansi(color: &Color, ground: Ground) -> String {
-    let mut ansi: Vec<u8> = Vec::new();
-    encode_color_sgr(&mut ansi, ground, color);
-
-    vec_to_ansi_seq(ansi)
+    let add: u8 = match ground {
+        Ground::Background => 10,
+        Ground::Foreground => 0,
+    };
+    match color {
+        Color::Named(n) => format!("\x1b[{}m", named_sgr(n) + add),
+        Color::Ansi256(v) => format!("\x1b[{};5;{}m", 38 + add, v),
+        Color::Rgb(r, g, b) => format!("\x1b[{};2;{};{};{}m", 38 + add, r, g, b),
+    }
 }
 
 /// Converts an `EmphasisType` into the corresponding SGR escape sequence.
 pub fn emphasis_to_ansi(emphasis: &EmphasisType) -> String {
-    let code = match emphasis {
+    let code: u8 = match emphasis {
         EmphasisType::Bold => 1,
         EmphasisType::Dim => 2,
         EmphasisType::Italic => 3,
@@ -230,7 +257,7 @@ pub fn emphasis_to_ansi(emphasis: &EmphasisType) -> String {
         EmphasisType::Blink => 5,
         EmphasisType::Strikethrough => 9,
     };
-    vec_to_ansi_seq(vec![code])
+    format!("\x1b[{}m", code)
 }
 
 /// Converts a `Style` into a single combined SGR escape sequence.

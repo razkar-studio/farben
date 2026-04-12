@@ -7,6 +7,8 @@
 //! The main entry point is [`tokenize`]. The lower-level [`parse_tag`] and [`parse_part`]
 //! functions handle individual tag strings and are not part of the public API.
 
+use std::{borrow::Cow, sync::Arc};
+
 use crate::{
     ansi::{Color, Ground, NamedColor, Style},
     errors::LexError,
@@ -34,7 +36,9 @@ pub enum EmphasisType {
 #[derive(Debug, PartialEq, Clone)]
 pub enum TagType {
     /// Resets all active styles (`[/]`).
-    Reset(Option<Box<TagType>>),
+    ResetAll,
+    /// Resets one specific active style (`[/bold]`, `[/red]`, etc.), then re-applies the rest.
+    ResetOne(Box<TagType>),
     /// Applies a text emphasis attribute.
     Emphasis(EmphasisType),
     /// Sets a foreground or background color.
@@ -49,7 +53,7 @@ pub enum Token {
     /// A parsed styling tag.
     Tag(TagType),
     /// A run of plain text with no markup.
-    Text(String),
+    Text(Cow<'static, str>),
 }
 
 impl EmphasisType {
@@ -74,15 +78,15 @@ impl EmphasisType {
 ///
 /// A `Prefix` tag is always prepended first, if one is set. A `reset` style short-circuits
 /// after the prefix: no emphasis or color tags are emitted.
-fn style_to_tags(style: Style) -> Vec<TagType> {
+fn style_to_tags(style: Arc<Style>) -> Vec<TagType> {
     let mut res: Vec<TagType> = Vec::new();
-    let prefix = style.prefix;
+    let prefix = style.prefix.clone();
 
     if style.reset {
         if let Some(p) = prefix {
             res.push(TagType::Prefix(p));
         }
-        res.push(TagType::Reset(None));
+        res.push(TagType::ResetAll);
         return res;
     }
 
@@ -102,13 +106,13 @@ fn style_to_tags(style: Style) -> Vec<TagType> {
         }
     }
 
-    if let Some(fg) = style.fg {
+    if let Some(fg) = style.fg.clone() {
         res.push(TagType::Color {
             color: fg,
             ground: Ground::Foreground,
         })
     }
-    if let Some(bg) = style.bg {
+    if let Some(bg) = style.bg.clone() {
         res.push(TagType::Color {
             color: bg,
             ground: Ground::Background,
@@ -150,15 +154,15 @@ fn parse_part(part: &str, position: usize) -> Result<Vec<TagType>, LexError> {
     };
     if let Some(remainder) = part.strip_prefix('/') {
         if remainder.is_empty() {
-            Ok(vec![TagType::Reset(None)])
+            Ok(vec![TagType::ResetAll])
         } else {
             let inner = parse_part(remainder, position + 1)?;
             match inner.as_slice() {
                 [tag] => match tag {
-                    TagType::Reset(_) | TagType::Prefix(_) => {
+                    TagType::ResetAll | TagType::ResetOne(_) | TagType::Prefix(_) => {
                         Err(LexError::InvalidResetTarget(position))
                     }
-                    _ => Ok(vec![TagType::Reset(Some(Box::new(tag.clone())))]),
+                    _ => Ok(vec![TagType::ResetOne(Box::new(tag.clone()))]),
                 },
                 _ => Err(LexError::InvalidTag {
                     tag_content: part.to_string(),
@@ -173,9 +177,11 @@ fn parse_part(part: &str, position: usize) -> Result<Vec<TagType>, LexError> {
         }])
     } else if let Some(emphasis) = EmphasisType::from_str(part) {
         Ok(vec![TagType::Emphasis(emphasis)])
-    } else if part.starts_with("ansi(") && !part.ends_with(')') {
-        Err(LexError::UnclosedValue(position))
-    } else if let Some(ansi_val) = part.strip_prefix("ansi(").and_then(|s| s.strip_suffix(")")) {
+    } else if let Some(rest) = part.strip_prefix("ansi(") {
+        if !rest.ends_with(')') {
+            return Err(LexError::UnclosedValue(position));
+        }
+        let ansi_val = &rest[..rest.len() - 1];
         match ansi_val.trim().parse::<u8>() {
             Ok(code) => Ok(vec![TagType::Color {
                 color: Color::Ansi256(code),
@@ -186,9 +192,11 @@ fn parse_part(part: &str, position: usize) -> Result<Vec<TagType>, LexError> {
                 position,
             }),
         }
-    } else if part.starts_with("rgb(") && !part.ends_with(')') {
-        Err(LexError::UnclosedValue(position))
-    } else if let Some(rgb_val) = part.strip_prefix("rgb(").and_then(|s| s.strip_suffix(")")) {
+    } else if let Some(rest) = part.strip_prefix("rgb(") {
+        if !rest.ends_with(')') {
+            return Err(LexError::UnclosedValue(position));
+        }
+        let rgb_val = &rest[..rest.len() - 1];
         let parts: Result<Vec<u8>, _> =
             rgb_val.split(',').map(|v| v.trim().parse::<u8>()).collect();
         match parts {
@@ -258,13 +266,13 @@ fn parse_tag(raw_tag: &str, tag_start: usize) -> Result<Vec<TagType>, LexError> 
 /// //     Token::Text("hello".into())]
 /// ```
 pub fn tokenize(input: impl Into<String>) -> Result<Vec<Token>, LexError> {
-    let mut tokens: Vec<Token> = Vec::new();
     let input = input.into();
+    let mut tokens: Vec<Token> = Vec::with_capacity(input.len() / 4);
     let mut pos = 0;
     loop {
         let Some(starting) = input[pos..].find('[') else {
             if pos < input.len() {
-                tokens.push(Token::Text(input[pos..].to_string()));
+                tokens.push(Token::Text(Cow::Owned(input[pos..].to_string())));
             }
             break;
         };
@@ -273,15 +281,15 @@ pub fn tokenize(input: impl Into<String>) -> Result<Vec<Token>, LexError> {
         if abs_starting > 0 && input.as_bytes().get(abs_starting.wrapping_sub(1)) == Some(&b'\\') {
             let before = &input[pos..abs_starting - 1];
             if !before.is_empty() {
-                tokens.push(Token::Text(before.to_string()));
+                tokens.push(Token::Text(Cow::Owned(before.to_string())));
             }
-            tokens.push(Token::Text(String::from('[')));
+            tokens.push(Token::Text(Cow::Borrowed("[")));
             pos = abs_starting + 1;
             continue;
         }
 
         if pos != abs_starting {
-            tokens.push(Token::Text(input[pos..abs_starting].to_string()));
+            tokens.push(Token::Text(Cow::Owned(input[pos..abs_starting].to_string())));
         }
 
         let Some(closing) = input[abs_starting..].find(']') else {
@@ -334,7 +342,7 @@ mod tests {
 
     #[test]
     fn test_parse_part_reset() {
-        assert_eq!(parse_part("/", 0).unwrap(), vec![TagType::Reset(None)]);
+        assert_eq!(parse_part("/", 0).unwrap(), vec![TagType::ResetAll]);
     }
 
     #[test]
@@ -535,7 +543,7 @@ mod tests {
     fn test_tokenize_reset_tag() {
         assert_eq!(
             tokenize("[/]").unwrap(),
-            vec![Token::Tag(TagType::Reset(None))]
+            vec![Token::Tag(TagType::ResetAll)]
         );
     }
 

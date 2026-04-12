@@ -48,11 +48,16 @@ unsafe extern "C" {
 fn is_tty() -> bool {
     #[cfg(unix)]
     {
+        // SAFETY: fd 1 is stdout, which is always a valid open file descriptor for this process.
+        // isatty() is async-signal-safe and does not mutate any Rust-owned memory.
         unsafe { isatty(1) != 0 }
     }
 
     #[cfg(all(not(unix), windows))]
     {
+        // SAFETY: is_tty_windows only calls Win32 handle query APIs. GetStdHandle returns a
+        // pseudo-handle owned by the OS, not the caller, so it must not be closed. GetConsoleMode
+        // writes into a local u32 on the stack with no aliasing concerns.
         unsafe { is_tty_windows() }
     }
 

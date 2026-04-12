@@ -3,6 +3,73 @@
 All notable changes to Farben will be documented here.
 farben / farben-core / farben-macros / farben-md
 
+## [farben-core 0.11.0 / farben 0.15.0] - 2026-04-12 - Global
+### Performance Optimizations
+
+v0.15 is **~1.4x faster on average** across the core pipeline (geometric mean of 7 benchmarks).
+ANSI encoding is the biggest winner: named color encoding is **1.9x faster**, RGB encoding **1.7x faster**,
+and emphasis sequences **1.6x faster**. The full tokenize-to-render pipeline is **1.35x faster**.
+All figures measured against the v0.14 criterion baseline on x86-64 Linux.
+
+> [!IMPORTANT]
+> **Breaking changes in farben-core 0.11.0.** See the Breaking Changes section below.
+
+### Breaking Changes (farben-core)
+
+- `TagType::Reset(Option<Box<TagType>>)` has been split into two variants. `TagType::ResetAll`
+  replaces `Reset(None)` and `TagType::ResetOne(Box<TagType>)` replaces `Reset(Some(...))`.
+  Update all match arms that pattern-match on `TagType::Reset`.
+- `Token::Text(String)` is now `Token::Text(Cow<'static, str>)`. Construction sites must use
+  `Cow::Owned(string)` for runtime strings or `Cow::Borrowed("literal")` for static string
+  literals. Pattern-matching and `push_str` usage are unaffected, since `Cow<'static, str>`
+  deref-coerces to `&str`.
+
+### Changed
+
+- `tokenize` pre-allocates the token `Vec` with capacity `input.len() / 4`, reducing
+  reallocations for typical markup strings.
+- `parse_part` (lexer) consolidates the `ansi(...)` and `rgb(...)` prefix checks into a
+  single `strip_prefix` call each, removing a redundant scan of the tag string per call.
+- The style registry now stores `Arc<Style>` internally. Each lookup clones an `Arc`
+  (one atomic increment) instead of cloning the full `Style` struct.
+- `emphasis_to_ansi` bypasses the intermediate `Vec<u8>` and formats the escape sequence
+  directly via `format!`, saving a heap allocation per emphasis tag.
+- `color_to_ansi` bypasses the intermediate `Vec<u8>` for all color types, formatting the
+  escape sequence directly. A new private `named_sgr` const fn maps `NamedColor` to its
+  base SGR code without a runtime lookup table.
+- `render` pre-allocates the output buffer with capacity `tokens.len() * 16`.
+- Release profile: `lto = "thin"`, `codegen-units = 1`, `opt-level = 3` added to root
+  `Cargo.toml`, enabling cross-crate inlining in optimized builds.
+- `env.rs` unsafe blocks now carry `// SAFETY:` comments documenting the invariants for
+  `isatty(1)` (Unix) and the `GetStdHandle` query path (Windows).
+
+### Added
+
+- Criterion benchmark suite in `farben-core/benches/farben_bench.rs` covering: tokenize
+  (plain and complex), render, full tokenize + render pipeline, `emphasis_to_ansi`,
+  `color_to_ansi` (named and RGB), and registry lookup via tokenize.
+- Tests for `render` with color disabled: verify that tag tokens are stripped and only
+  `Token::Text` and `Token::Tag(Prefix(...))` content is emitted.
+- Edge case tests for `strip_ansi`: empty string, bare `ESC` byte, sequences-only input,
+  mixed content, RGB and ANSI256 sequences.
+
+### Performance
+
+Measured against the v0.14 baseline using criterion 0.5.1 on x86-64 Linux (CachyOS, Rust 1.94.1):
+
+|       Benchmark     |   v0.14   |   v0.15   |  Change |
+|---------------------|-----------|-----------|---------|
+| tokenize plain      | 61.1 ns   | 50.6 ns   | -22%    |
+| tokenize complex    | 1.176 µs  | 866.6 ns  | -26%    |
+| render              | 188.6 ns  | 182.9 ns  | -2% (within noise) |
+| pipeline            | 1.485 µs  | 1.099 µs  | -26%    |
+| emphasis_to_ansi    | 91.1 ns   | 56.0 ns   | -37%    |
+| color_to_ansi named | 111.6 ns  | 59.5 ns   | -47%    |
+| color_to_ansi rgb   | 367.3 ns  | 214.3 ns  | -43%    |
+| registry lookup     | 361.3 ns  | 346.6 ns  | -5%     |
+
+---
+
 ## [farben-build 0.1.0 / farben-macros 0.5.0 / farben-core 0.10.0 / farben-md 0.2.0 / farben 0.14.0] - 2026-04-05 - Global
 ### Compile-time Custom Style Support
 

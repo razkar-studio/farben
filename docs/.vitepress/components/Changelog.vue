@@ -54,6 +54,30 @@ function crateClass(crate) {
 
 const releases = [
     {
+        version: "farben-core 0.11.0 / farben 0.15.0",
+        crate: "Global",
+        subtitle: "Performance Optimizations",
+        date: "2026-04-12",
+        sections: [
+            {
+                type: "Added",
+                items: [
+                    "<strong>~1.4x faster on average</strong> across the core pipeline (geometric mean of 7 benchmarks vs v0.14). ANSI encoding sees the largest gains: named color encoding is <strong>1.9x faster</strong>, RGB encoding <strong>1.7x faster</strong>, emphasis sequences <strong>1.6x faster</strong>. The full tokenize-to-render pipeline is <strong>1.35x faster</strong>.",
+                    "<strong>Breaking (farben-core 0.11.0):</strong> <code>TagType::Reset(Option&lt;Box&lt;TagType&gt;&gt;)</code> split into <code>TagType::ResetAll</code> (was <code>Reset(None)</code>) and <code>TagType::ResetOne(Box&lt;TagType&gt;)</code> (was <code>Reset(Some(...))</code>). Update all match arms that pattern-match on <code>TagType::Reset</code>.",
+                    "<strong>Breaking (farben-core 0.11.0):</strong> <code>Token::Text(String)</code> is now <code>Token::Text(Cow&lt;'static, str&gt;)</code>. Use <code>Cow::Owned(string)</code> for runtime strings or <code>Cow::Borrowed(\"literal\")</code> for static literals. Pattern-matching and <code>push_str</code> usage are unaffected.",
+                    "Criterion benchmark suite added to <code>farben-core/benches/farben_bench.rs</code> covering tokenize, render, full pipeline, <code>emphasis_to_ansi</code>, <code>color_to_ansi</code> (named and RGB), and registry lookup.",
+                    "Tests for <code>render</code> with color disabled: verifies tag tokens are stripped and only text and prefix content is emitted.",
+                    "Edge case tests for <code>strip_ansi</code>: empty string, bare ESC byte, sequences-only input, mixed content, RGB and ANSI256 sequences.",
+                    "Release profile: <code>lto = \"thin\"</code>, <code>codegen-units = 1</code>, <code>opt-level = 3</code> in root <code>Cargo.toml</code> for cross-crate inlining in release builds.",
+                    "Reduced allocations across the hot path: token <code>Vec</code> pre-allocated, render buffer pre-sized, <code>emphasis_to_ansi</code> and <code>color_to_ansi</code> bypass intermediate <code>Vec&lt;u8&gt;</code>, registry lookups clone an <code>Arc</code> instead of a full <code>Style</code>.",
+                    "Redundant prefix scans in <code>parse_part</code> consolidated to a single <code>strip_prefix</code> per tag type.",
+                    "<code>env.rs</code> unsafe blocks annotated with <code>// SAFETY:</code> comments.",
+                    "Performance vs v0.14 (criterion 0.5.1, x86-64 Linux): tokenize plain -22%, tokenize complex -26%, pipeline -26%, <code>emphasis_to_ansi</code> -37%, <code>color_to_ansi</code> named -47%, <code>color_to_ansi</code> RGB -43%, registry lookup -5%, render -2% (within noise).",
+                ],
+            },
+        ],
+    },
+    {
         version:
             "farben-build 0.1.0 / farben-macros 0.5.0 / farben-core 0.10.0 / farben-md 0.2.0 / farben 0.14.0",
         crate: "Global",

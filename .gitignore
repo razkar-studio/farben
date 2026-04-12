@@ -2,3 +2,4 @@
 *.psu
 cache/
 node_modules/
+OPTIMIZATIONS.md

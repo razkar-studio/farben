@@ -34,6 +34,59 @@
 /// let bare_esc = "\x1bhello";
 /// assert_eq!(strip_ansi(bare_esc), "\x1bhello");
 /// ```
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_strip_ansi_empty_string() {
+        assert_eq!(strip_ansi(""), "");
+    }
+
+    #[test]
+    fn test_strip_ansi_plain_text_unchanged() {
+        assert_eq!(strip_ansi("hello world"), "hello world");
+    }
+
+    #[test]
+    fn test_strip_ansi_single_color_sequence() {
+        assert_eq!(strip_ansi("\x1b[31mred\x1b[0m"), "red");
+    }
+
+    #[test]
+    fn test_strip_ansi_bare_esc_not_followed_by_bracket_is_preserved() {
+        assert_eq!(strip_ansi("\x1bhello"), "\x1bhello");
+    }
+
+    #[test]
+    fn test_strip_ansi_bare_esc_at_end_is_preserved() {
+        assert_eq!(strip_ansi("text\x1b"), "text\x1b");
+    }
+
+    #[test]
+    fn test_strip_ansi_sequences_only_produces_empty() {
+        assert_eq!(strip_ansi("\x1b[1m\x1b[31m\x1b[0m"), "");
+    }
+
+    #[test]
+    fn test_strip_ansi_mixed_content_preserves_text() {
+        assert_eq!(
+            strip_ansi("\x1b[1mhello\x1b[0m world\x1b[32m!"),
+            "hello world!"
+        );
+    }
+
+    #[test]
+    fn test_strip_ansi_rgb_sequence_stripped() {
+        assert_eq!(strip_ansi("\x1b[38;2;255;0;0mred\x1b[0m"), "red");
+    }
+
+    #[test]
+    fn test_strip_ansi_ansi256_sequence_stripped() {
+        assert_eq!(strip_ansi("\x1b[38;5;200mcolor\x1b[0m"), "color");
+    }
+}
+
 pub fn strip_ansi(input: &str) -> String {
     let mut output = String::new();
     let mut chars = input.chars();
