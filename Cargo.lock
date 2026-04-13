@@ -188,7 +188,7 @@ version = "0.1.0"
 
 [[package]]
 name = "farben-core"
-version = "0.12.1"
+version = "0.12.0"
 dependencies = [
  "anstyle",
  "criterion",
