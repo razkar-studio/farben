@@ -188,7 +188,7 @@ version = "0.1.0"
 
 [[package]]
 name = "farben-core"
-version = "0.12.0"
+version = "0.12.1"
 dependencies = [
  "anstyle",
  "criterion",
@@ -196,7 +196,7 @@ dependencies = [
 
 [[package]]
 name = "farben-macros"
-version = "0.5.0"
+version = "0.5.1"
 dependencies = [
  "farben-core",
  "farben-md",
@@ -207,7 +207,7 @@ dependencies = [
 
 [[package]]
 name = "farben-md"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "farben-core",
 ]
@@ -460,14 +460,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "unicode-ident",
-]
-
-[[package]]
-name = "test_full"
-version = "0.1.0"
-dependencies = [
- "anstyle",
- "farben",
 ]
 
 [[package]]
