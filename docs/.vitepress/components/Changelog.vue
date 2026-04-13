@@ -54,6 +54,21 @@ function crateClass(crate) {
 
 const releases = [
     {
+        version: "farben 0.16.1",
+        crate: "farben",
+        subtitle: "Bug Fixes",
+        date: "2026-04-13",
+        sections: [
+            {
+                type: "Fixed",
+                items: [
+                    "<code>anstyle!</code> macro no longer requires <code>farben_core</code> crate as a direct dependency for users, the macro now uses <code>farben::Style</code> instead.",
+                    "Tests no longer fail in non-TTY environments, the parser now respects the <code>FORCE_COLOR</code> environment variable in all tests.",
+                ],
+            },
+        ],
+    },
+    {
         version: "farben-core 0.12.0 / farben 0.16.0",
         crate: "Global",
         subtitle: "anstyle Interop",

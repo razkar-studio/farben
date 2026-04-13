@@ -82,11 +82,10 @@ pub use farben_macros::{color, colorb, validate_color};
 #[cfg(feature = "markdown-compile")]
 pub use farben_macros::markdown;
 
+pub use farben_core::ansi::Style;
+
 #[cfg(feature = "format")]
-pub use farben_core::{
-    ansi::Style,
-    registry::{insert_style, set_prefix},
-};
+pub use farben_core::registry::{insert_style, set_prefix};
 
 mod functions;
 pub use functions::*;

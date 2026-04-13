@@ -18,8 +18,7 @@
 macro_rules! anstyle {
     ($markup:expr) => {
         Into::<anstyle::Style>::into(
-            farben_core::ansi::Style::parse($markup)
-                .unwrap_or_else(|e| panic!("farben: invalid markup: {e}")),
+            $crate::Style::parse($markup).unwrap_or_else(|e| panic!("farben: invalid markup: {e}")),
         )
     };
 }

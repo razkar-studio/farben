@@ -67,7 +67,4 @@ pub use crate::{md_fmt, mdeprint, mdeprintln, mdprint, mdprintln};
 pub use crate::{insert_style, set_prefix};
 
 #[cfg(feature = "format")]
-pub use farben_core::ansi::Style;
-
-#[cfg(feature = "format")]
 pub use crate::{prefix, style};

@@ -3,6 +3,14 @@
 All notable changes to Farben will be documented here.
 farben / farben-core / farben-macros / farben-md
 
+## [farben 0.16.1] - 2026-04-13 - Bug Fixes
+### Fixed
+
+- `anstyle!` macro no longer requires `farben_core` crate as a direct dependency
+  for users, the macro now uses `farben::Style` instead.
+- Tests no longer fail in non-TTY environments, the parser now respects the
+  `FORCE_COLOR` environment variable in all tests.
+
 ## [farben-core 0.12.0 / farben 0.16.0] - 2026-04-12 - anstyle Interop
 ### Added
 

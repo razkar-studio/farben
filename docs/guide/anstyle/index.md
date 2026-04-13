@@ -19,27 +19,29 @@ cargo add farben --features anstyle
 The `anstyle_conv` module provides `From` implementations for bidirectional conversion between farben and anstyle types.
 
 ```rust
-use farben::ansi::{Color, NamedColor, Style};
-use anstyle::{Color as AnsiColor, Style as AnsiStyle};
+use farben::Style;
+use anstyle::{Color as AnsiColor, Style as AnsiStyle, AnsiColor as AnsiRed};
 
 // farben -> anstyle
 let farben_style = Style::parse("[bold red]").unwrap();
 let anstyle_style: AnsiStyle = farben_style.into();
 
 // anstyle -> farben
-let anstyle_color = AnsiStyle::new().fg_color(Some(AnsiColor::Ansi(AnsiColor::Red)));
+let anstyle_color = AnsiStyle::new().fg_color(Some(AnsiColor::Ansi(AnsiRed::Red)));
 let farben_style: Style = anstyle_color.into();
 ```
 
 ### Supported Conversions
 
-| farben type | anstyle type |
-|------------|---------------|
-| `Color::Named(Named)` | `anstyle::Color::Ansi(AnsiColor)` |
-| `Color::Ansi256(n)` | `anstyle::Color::Ansi256(Ansi256Color(n))` |
-| `Color::Rgb(r, g, b)` | `anstyle::Color::Rgb(RgbColor(r, g, b))` |
-| `NamedColor::*` | `anstyle::AnsiColor::*` |
-| `Style` | `anstyle::Style` |
+| farben type | anstyle type | note |
+|------------|---------------|------|
+| `Style` | `anstyle::Style` | re-exported from `farben` |
+| `Color` | `anstyle::Color` | requires `farben_core` |
+| `NamedColor` | `anstyle::AnsiColor` | requires `farben_core` |
+
+::: tip
+For most use cases, you only need `farben::Style`. The `Style` type contains foreground and background colors, so direct `Color` or `NamedColor` conversions are rarely needed.
+:::
 
 ## The anstyle! Macro
 

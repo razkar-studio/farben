@@ -1,6 +1,6 @@
 <div align="center">
 
-![banner logo](farben/images/farben.png)
+![banner logo](https://github.com/razkar-studio/farben/blob/main/farben/images/farben.png)
 
 ### Markup for the Terminal
 
