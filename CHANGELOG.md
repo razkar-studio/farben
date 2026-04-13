@@ -3,6 +3,12 @@
 All notable changes to Farben will be documented here.
 farben / farben-core / farben-macros / farben-md
 
+## [farben 0.16.2] - 2026-04-13 - Style to ANSI
+### Added
+
+- `farben::core` module - exposes `style_to_ansi()` function for converting
+  `farben::Style` into ANSI escape sequences.
+
 ## [farben 0.16.1] - 2026-04-13 - Bug Fixes
 ### Fixed
 

@@ -54,6 +54,20 @@ function crateClass(crate) {
 
 const releases = [
     {
+        version: "farben 0.16.2",
+        crate: "farben",
+        subtitle: "Style to ANSI",
+        date: "2026-04-13",
+        sections: [
+            {
+                type: "Added",
+                items: [
+                    "<code>farben::core</code> module - exposes <code>style_to_ansi()</code> function for converting <code>farben::Style</code> into ANSI escape sequences.",
+                ],
+            },
+        ],
+    },
+    {
         version: "farben 0.16.1",
         crate: "farben",
         subtitle: "Bug Fixes",

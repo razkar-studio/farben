@@ -96,5 +96,7 @@ pub use farben_core::strip::strip_ansi;
 
 mod macros;
 
+pub mod core;
+
 #[cfg(test)]
 mod tests;
