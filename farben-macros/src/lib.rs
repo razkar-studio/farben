@@ -12,7 +12,7 @@
 
 use proc_macro::TokenStream;
 use quote::quote;
-use syn::{LitStr, parse_macro_input};
+use syn::{parse_macro_input, LitStr};
 
 /// Reads `farben_registry.lsv` from `OUT_DIR` and pre-populates the compile-time registry.
 ///
@@ -32,8 +32,7 @@ fn load_registry() {
                 continue;
             }
             let (key, value) = line.split_once('=').unwrap();
-            
-            
+
             farben_core::registry::insert_style(
                 key,
                 farben_core::ansi::Style::parse(format!("[{value}]"))
@@ -46,8 +45,7 @@ fn load_registry() {
                 continue;
             }
             let (key, value) = line.split_once('=').unwrap();
-            
-            
+
             farben_core::registry::set_prefix(key, value)
                 .unwrap_or_else(|e| panic!("farben: failure while setting prefix '{key}': {e}"));
         }
@@ -65,7 +63,10 @@ fn load_registry() {
 /// ```rust
 /// use farben_macros::color;
 /// println!("{}", color!("[bold red]Hello!"));
-/// ```
+/// Compiles farben markup strings to ANSI escape codes at compile time.
+///
+/// Takes a string literal like `"[bold red]hello"` and produces an expression
+/// that evaluates to the ANSI-escaped string at runtime.
 #[proc_macro]
 pub fn color(input: TokenStream) -> TokenStream {
     load_registry();
@@ -104,9 +105,10 @@ pub fn color(input: TokenStream) -> TokenStream {
 /// ```rust
 /// use farben_macros::colorb;
 /// // Style bleeds — subsequent output inherits bold red until a reset is issued.
-/// print!("{}", colorb!("[bold red]Warning: "));
-/// println!("this text is still bold red");
-/// ```
+/// Compiles farben markup to ANSI with a formatting writer.
+///
+/// Like [`color`] but returns a [`std::fmt::Write`] implementation for use
+/// with format macros.
 #[proc_macro]
 pub fn colorb(input: TokenStream) -> TokenStream {
     load_registry();
@@ -166,10 +168,10 @@ pub fn validate_color(input: TokenStream) -> TokenStream {
 ///
 /// # Examples
 ///
-/// ```rust
-/// use farben_macros::markdown;
-/// println!("{}", markdown!("**bold** and *italic*"));
-/// ```
+/// Compiles inline markdown to ANSI-escaped terminal output at compile time.
+///
+/// Parses markdown syntax (`**bold**`, `*italic*`, `` `code` ``, `~~strike~~`, `__underline__`)
+/// and produces terminal-compatible ANSI output.
 #[cfg(feature = "markdown")]
 #[proc_macro]
 pub fn markdown(input: TokenStream) -> TokenStream {

@@ -17,7 +17,7 @@
 /// # Examples
 ///
 /// ```
-/// use farben::prelude::*;
+/// use $crate::prelude::*;
 /// ceprint!("[red]error:[/] something went wrong");
 /// ```
 #[cfg(not(feature = "compile"))]
@@ -27,7 +27,7 @@ macro_rules! ceprint {
         eprint!()
     };
     ($fmt:literal $(, $arg:expr)*) => {
-        eprint!("{}", farben::color_runtime(format!($fmt $(, $arg)*), false))
+        eprint!("{}", $crate::color_runtime(format!($fmt $(, $arg)*), false))
     };
 }
 
@@ -43,7 +43,7 @@ macro_rules! ceprint {
 /// # Examples
 ///
 /// ```
-/// use farben::prelude::*;
+/// use $crate::prelude::*;
 /// ceprint!("[red]error:[/] something went wrong");
 /// ```
 #[cfg(feature = "compile")]
@@ -53,10 +53,10 @@ macro_rules! ceprint {
         eprint!()
     };
     ($fmt:literal) => {
-        eprint!("{}", farben::color!($fmt))
+        eprint!("{}", $crate::color!($fmt))
     };
     ($fmt:literal $(, $arg:expr)*) => {
-        eprint!("{}", farben::color_runtime(format!(farben::validate_color!($fmt) $(, $arg)*), false))
+        eprint!("{}", $crate::color_runtime(format!($crate::validate_color!($fmt) $(, $arg)*), false))
     };
 }
 
@@ -72,7 +72,7 @@ macro_rules! ceprint {
 /// # Examples
 ///
 /// ```
-/// use farben::prelude::*;
+/// use $crate::prelude::*;
 /// ceprintln!("[red]error:[/] something went wrong");
 /// ```
 #[cfg(not(feature = "compile"))]
@@ -82,7 +82,7 @@ macro_rules! ceprintln {
         eprintln!()
     };
     ($fmt:literal $(, $arg:expr)*) => {
-        eprintln!("{}", farben::color_runtime(format!($fmt $(, $arg)*), false))
+        eprintln!("{}", $crate::color_runtime(format!($fmt $(, $arg)*), false))
     };
 }
 
@@ -98,7 +98,7 @@ macro_rules! ceprintln {
 /// # Examples
 ///
 /// ```
-/// use farben::prelude::*;
+/// use $crate::prelude::*;
 /// ceprintln!("[red]error:[/] something went wrong");
 /// ```
 #[cfg(feature = "compile")]
@@ -108,10 +108,10 @@ macro_rules! ceprintln {
         eprintln!()
     };
     ($fmt:literal) => {
-        eprintln!("{}", farben::color!($fmt))
+        eprintln!("{}", $crate::color!($fmt))
     };
     ($fmt:literal $(, $arg:expr)*) => {
-        eprintln!("{}", farben::color_runtime(format!(farben::validate_color!($fmt) $(, $arg)*), false))
+        eprintln!("{}", $crate::color_runtime(format!($crate::validate_color!($fmt) $(, $arg)*), false))
     };
 }
 
@@ -127,7 +127,7 @@ macro_rules! ceprintln {
 /// # Examples
 ///
 /// ```
-/// use farben::prelude::*;
+/// use $crate::prelude::*;
 ///
 /// ceprintb!("[red]error: ");
 /// ceprintln!("something went wrong"); // inherits red
@@ -139,7 +139,7 @@ macro_rules! ceprintb {
         eprint!()
     };
     ($fmt:literal $(, $arg:expr)*) => {
-        eprint!("{}", farben::color_runtime(format!($fmt $(, $arg)*), true))
+        eprint!("{}", $crate::color_runtime(format!($fmt $(, $arg)*), true))
     };
 }
 
@@ -157,10 +157,10 @@ macro_rules! ceprintb {
         eprint!()
     };
     ($fmt:literal) => {
-        eprint!("{}", farben::colorb!($fmt))
+        eprint!("{}", $crate::colorb!($fmt))
     };
     ($fmt:literal $(, $arg:expr)*) => {
-        eprint!("{}", farben::color_runtime(format!(farben::validate_color!($fmt) $(, $arg)*), true))
+        eprint!("{}", $crate::color_runtime(format!($crate::validate_color!($fmt) $(, $arg)*), true))
     };
 }
 
@@ -176,7 +176,7 @@ macro_rules! ceprintb {
 /// # Examples
 ///
 /// ```
-/// use farben::prelude::*;
+/// use $crate::prelude::*;
 ///
 /// ceprintbln!("[bold red]Fatal error");
 /// ceprintln!("still bold and red here"); // inherits style
@@ -188,7 +188,7 @@ macro_rules! ceprintbln {
         eprintln!()
     };
     ($fmt:literal $(, $arg:expr)*) => {
-        eprintln!("{}", farben::color_runtime(format!($fmt $(, $arg)*), true))
+        eprintln!("{}", $crate::color_runtime(format!($fmt $(, $arg)*), true))
     };
 }
 
@@ -206,9 +206,9 @@ macro_rules! ceprintbln {
         eprintln!()
     };
     ($fmt:literal) => {
-        eprintln!("{}", farben::colorb!($fmt))
+        eprintln!("{}", $crate::colorb!($fmt))
     };
     ($fmt:literal $(, $arg:expr)*) => {
-        eprintln!("{}", farben::color_runtime(format!(farben::validate_color!($fmt) $(, $arg)*), true))
+        eprintln!("{}", $crate::color_runtime(format!($crate::validate_color!($fmt) $(, $arg)*), true))
     };
 }

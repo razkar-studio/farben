@@ -26,6 +26,24 @@
 //! | `markdown` | Runtime inline markdown rendering: [`markdown`], [`md_fmt!`], [`mdprint!`], [`mdprintln!`] |
 //! | `markdown-compile` | Compile-time inline markdown rendering |
 //!
+//! # Emphasis Styles
+//!
+//! Farben supports these emphasis types:
+//!
+//! | Tag | Description |
+//! |---|---|
+//! | `bold` | Bold (SGR 1) |
+//! | `dim` | Dimmed (SGR 2) |
+//! | `italic` | Italic (SGR 3) |
+//! | `underline` | Underline (SGR 4) |
+//! | `double-underline` | Double underline (SGR 21) |
+//! | `blink` | Slow blink (SGR 5) |
+//! | `rapid-blink` | Rapid blink (SGR 6) |
+//! | `reverse` | Reverse video (SGR 7) |
+//! | `invisible` | Hidden (SGR 8) |
+//! | `strikethrough` | Strikethrough (SGR 9) |
+//! | `overline` | Overline (SGR 53) |
+//!
 //! # Quick Examples
 //!
 //! ### Named colors and emphasis
@@ -65,16 +83,6 @@
 //! mdprintln!("**bold**, *italic*, `code`, ~~strikethrough~~");
 //! ```
 //!
-//! # Known Limitations
-//!
-//! **Custom named tags are not validated at compile time.** The `compile` feature validates
-//! markup strings via proc macros, but it has no visibility into styles registered at runtime
-//! via [`style!`]. Using a custom tag like `[warn]` with `compile` active will fail to compile
-//! even if the style is registered before use. Stick to runtime macros (`cprintln!` without
-//! `compile`) when working with custom tags.
-//!
-//! This feature is a work in progress and I am currently working towards building it.
-//! Make awesome things with Farben.
 
 #[cfg(feature = "compile")]
 pub use farben_macros::{color, colorb, validate_color};

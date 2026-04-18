@@ -2,5 +2,11 @@ use farben::prelude::*;
 farben::load_styles!();
 
 fn main() {
-    cprintln!("\x1b[31mhello");
+    style!("cool", "[bold red]");
+    style!("cool2", "[cool bg:blue]");
+    style!("thing", "[strikethrough cool2]");
+    style!("idkthing", "[cool thing]");
+    style!("verycool", "[idkthing overline double-underline]");
+    expand!("[verycool]");
+    cprintln!("[verycool]What");
 }

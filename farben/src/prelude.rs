@@ -58,6 +58,8 @@ pub use crate::{
 
 pub use crate::{ceprint, ceprintb, ceprintbln, ceprintln};
 
+pub use crate::expand;
+
 pub use crate::ansi_strip;
 
 #[cfg(any(feature = "markdown", feature = "markdown-compile"))]

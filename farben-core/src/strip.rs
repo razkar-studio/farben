@@ -87,6 +87,10 @@ mod tests {
     }
 }
 
+/// Removes all ANSI escape sequences from the input string.
+///
+/// Strips CSI sequences (SGR color codes). Other escape sequences
+/// like OSC or DCS are passed through. Returns plain text.
 pub fn strip_ansi(input: &str) -> String {
     let mut output = String::new();
     let mut chars = input.chars();

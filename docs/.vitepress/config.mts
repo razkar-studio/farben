@@ -41,6 +41,7 @@ export default defineConfig({
           { text: "Standard Error", link: "/guide/standard-error/" },
           { text: "Stripping ANSI", link: "/guide/stripping-ansi/" },
           { text: "anstyle Interop", link: "/guide/anstyle/" },
+          { text: "Debugging", link: "/guide/debugging/" },
         ],
       },
       {

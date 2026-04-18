@@ -1,13 +1,18 @@
 //! Build-time support crate for loading and parsing `.frb.toml` config files.
+//!
+//! This crate is used by `build.rs` scripts to compile farben style definitions
+//! into the binary at build time.
 
 mod parser;
 
 use std::{collections::HashMap, fs, path::Path};
 
+/// Runs the build script with the default config filename `farben.frb.toml`.
 pub fn run() {
     run_with(&["farben.frb.toml"]);
 }
 
+/// Runs the build script with custom config file paths.
 pub fn run_with(paths: &[&str]) {
     let out_dir = std::env::var("OUT_DIR").unwrap();
     let dest = Path::new(&out_dir).join("farben_styles.rs");

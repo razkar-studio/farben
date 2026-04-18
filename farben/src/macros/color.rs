@@ -15,7 +15,7 @@
 #[macro_export]
 macro_rules! color_fmt {
     ($($arg:tt)*) => {
-        farben::color_runtime(format!($($arg)*), false)
+$crate::color_runtime(format!($($arg)*), false)
     };
 }
 
@@ -31,7 +31,7 @@ macro_rules! color_fmt {
 #[macro_export]
 macro_rules! color_fmt {
     ($fmt:literal $(, $arg:expr)*) => {
-        farben::color_runtime(format!(farben::validate_color!($fmt) $(, $arg)*), false)
+        $crate::color_runtime(format!($crate::validate_color!($fmt) $(, $arg)*), false)
     };
 }
 
@@ -58,7 +58,7 @@ macro_rules! cprint {
         print!()
     };
     ($fmt:literal $(, $arg:expr)*) => {
-        print!("{}", farben::color_runtime(format!($fmt $(, $arg)*), false))
+        print!("{}", $crate::color_runtime(format!($fmt $(, $arg)*), false))
     };
 }
 
@@ -85,10 +85,10 @@ macro_rules! cprint {
         print!()
     };
     ($fmt:literal) => {
-        print!("{}", farben::color!($fmt))
+        print!("{}", $crate::color!($fmt))
     };
     ($fmt:literal $(, $arg:expr)*) => {
-        print!("{}", farben::color_runtime(format!(farben::validate_color!($fmt) $(, $arg)*), false))
+        print!("{}", $crate::color_runtime(format!($crate::validate_color!($fmt) $(, $arg)*), false))
     };
 }
 
@@ -115,7 +115,7 @@ macro_rules! cprintln {
         println!()
     };
     ($fmt:literal $(, $arg:expr)*) => {
-        println!("{}", farben::color_runtime(format!($fmt $(, $arg)*), false))
+        println!("{}", $crate::color_runtime(format!($fmt $(, $arg)*), false))
     };
 }
 
@@ -142,10 +142,10 @@ macro_rules! cprintln {
         println!()
     };
     ($fmt:literal) => {
-        println!("{}", farben::color!($fmt))
+        println!("{}", $crate::color!($fmt))
     };
     ($fmt:literal $(, $arg:expr)*) => {
-        println!("{}", farben::color_runtime(format!(farben::validate_color!($fmt) $(, $arg)*), false))
+        println!("{}", $crate::color_runtime(format!($crate::validate_color!($fmt) $(, $arg)*), false))
     };
 }
 
@@ -173,7 +173,7 @@ macro_rules! cprintb {
         print!()
     };
     ($fmt:literal $(, $arg:expr)*) => {
-        print!("{}", farben::color_runtime(format!($fmt $(, $arg)*), true))
+        print!("{}", $crate::color_runtime(format!($fmt $(, $arg)*), true))
     };
 }
 
@@ -191,10 +191,10 @@ macro_rules! cprintb {
         print!()
     };
     ($fmt:literal) => {
-        print!("{}", farben::colorb!($fmt))
+        print!("{}", $crate::colorb!($fmt))
     };
     ($fmt:literal $(, $arg:expr)*) => {
-        print!("{}", farben::color_runtime(format!(farben::validate_color!($fmt) $(, $arg)*), true))
+        print!("{}", $crate::color_runtime(format!($crate::validate_color!($fmt) $(, $arg)*), true))
     };
 }
 
@@ -222,7 +222,7 @@ macro_rules! cprintbln {
         println!()
     };
     ($fmt:literal $(, $arg:expr)*) => {
-        println!("{}", farben::color_runtime(format!($fmt $(, $arg)*), true))
+        println!("{}", $crate::color_runtime(format!($fmt $(, $arg)*), true))
     };
 }
 
@@ -240,10 +240,10 @@ macro_rules! cprintbln {
         println!()
     };
     ($fmt:literal) => {
-        println!("{}", farben::colorb!($fmt))
+        println!("{}", $crate::colorb!($fmt))
     };
     ($fmt:literal $(, $arg:expr)*) => {
-        println!("{}", farben::color_runtime(format!(farben::validate_color!($fmt) $(, $arg)*), true))
+        println!("{}", $crate::color_runtime(format!($crate::validate_color!($fmt) $(, $arg)*), true))
     };
 }
 
@@ -269,7 +269,7 @@ macro_rules! cprintbln {
 #[macro_export]
 macro_rules! cwrite {
     ($writer:expr $(, $arg:tt)*) => {
-        write!($writer, "{}", farben::color_runtime(format!($($arg)*), false))
+        write!($writer, "{}", $crate::color_runtime(format!($($arg)*), false))
     };
 }
 
@@ -295,10 +295,10 @@ macro_rules! cwrite {
 #[macro_export]
 macro_rules! cwrite {
     ($writer:expr, $fmt:literal) => {
-        write!($writer, "{}", farben::color!($fmt))
+        write!($writer, "{}", $crate::color!($fmt))
     };
     ($writer:expr, $fmt:literal $(, $arg:expr)*) => {
-        write!($writer, "{}", farben::color_runtime(format!(farben::validate_color!($fmt) $(, $arg)*), false))
+        write!($writer, "{}", $crate::color_runtime(format!($crate::validate_color!($fmt) $(, $arg)*), false))
     };
 }
 
@@ -324,7 +324,7 @@ macro_rules! cwrite {
 #[macro_export]
 macro_rules! cwriteln {
     ($writer:expr $(, $arg:tt)*) => {
-        writeln!($writer, "{}", farben::color_runtime(format!($($arg)*), false))
+        writeln!($writer, "{}", $crate::color_runtime(format!($($arg)*), false))
     };
 }
 
@@ -350,10 +350,10 @@ macro_rules! cwriteln {
 #[macro_export]
 macro_rules! cwriteln {
     ($writer:expr, $fmt:literal) => {
-        writeln!($writer, "{}", farben::color!($fmt))
+        writeln!($writer, "{}", $crate::color!($fmt))
     };
     ($writer:expr, $fmt:literal $(, $arg:expr)*) => {
-        writeln!($writer, "{}", farben::color_runtime(format!(farben::validate_color!($fmt) $(, $arg)*), false))
+        writeln!($writer, "{}", $crate::color_runtime(format!($crate::validate_color!($fmt) $(, $arg)*), false))
     };
 }
 
@@ -380,7 +380,7 @@ macro_rules! cwriteln {
 #[macro_export]
 macro_rules! cwriteb {
     ($writer:expr $(, $arg:tt)*) => {
-        write!($writer, "{}", farben::color_runtime(format!($($arg)*), true))
+        write!($writer, "{}", $crate::color_runtime(format!($($arg)*), true))
     };
 }
 
@@ -395,10 +395,10 @@ macro_rules! cwriteb {
 #[macro_export]
 macro_rules! cwriteb {
     ($writer:expr, $fmt:literal) => {
-        write!($writer, "{}", farben::colorb!($fmt))
+        write!($writer, "{}", $crate::colorb!($fmt))
     };
     ($writer:expr, $fmt:literal $(, $arg:expr)*) => {
-        write!($writer, "{}", farben::color_runtime(format!(farben::validate_color!($fmt) $(, $arg)*), true))
+        write!($writer, "{}", $crate::color_runtime(format!($crate::validate_color!($fmt) $(, $arg)*), true))
     };
 }
 
@@ -425,7 +425,7 @@ macro_rules! cwriteb {
 #[macro_export]
 macro_rules! cwritebln {
     ($writer:expr $(, $arg:tt)*) => {
-        writeln!($writer, "{}", farben::color_runtime(format!($($arg)*), true))
+        writeln!($writer, "{}", $crate::color_runtime(format!($($arg)*), true))
     };
 }
 
@@ -440,9 +440,9 @@ macro_rules! cwritebln {
 #[macro_export]
 macro_rules! cwritebln {
     ($writer:expr, $fmt:literal) => {
-        writeln!($writer, "{}", farben::colorb!($fmt))
+        writeln!($writer, "{}", $crate::colorb!($fmt))
     };
     ($writer:expr, $fmt:literal $(, $arg:expr)*) => {
-        writeln!($writer, "{}", farben::color_runtime(format!(farben::validate_color!($fmt) $(, $arg)*), true))
+        writeln!($writer, "{}", $crate::color_runtime(format!($crate::validate_color!($fmt) $(, $arg)*), true))
     };
 }

@@ -54,6 +54,44 @@ function crateClass(crate) {
 
 const releases = [
     {
+        version: "farben-core 0.13.1 / farben-macros 0.5.2 / farben-build 0.1.1 / farben-md 0.2.2 / farben 0.17.1",
+        crate: "Global",
+        subtitle: "DOCUMENTED!",
+        date: "2026-04-18",
+        sections: [
+            {
+                type: "Added",
+                items: [
+                    "Comprehensive docstrings for all public items across the workspace.",
+                    "Emphasis styles table added to farben lib docstring.",
+                    "docs/index.md updated with new emphasis styles feature.",
+                ],
+            },
+            {
+                type: "Fixed",
+                items: [
+                    "Fixed duplicate Bold variant in EmphasisType enum in lexer.rs.",
+                ],
+            },
+        ],
+    },
+    {
+                type: "Added",
+                items: [
+                    "Comprehensive docstrings for all public items across the workspace.",
+                    "Emphasis styles table added to farben lib docstring.",
+                    "docs/index.md updated with new emphasis styles feature.",
+                ],
+            },
+            {
+                type: "Fixed",
+                items: [
+                    "Fixed duplicate Bold variant in EmphasisType enum in lexer.rs.",
+                ],
+            },
+        ],
+    },
+    {
         version: "farben-core 0.13.0 / farben 0.17.0",
         crate: "Global",
         subtitle: "Expand Macro & New SGR Tags",

@@ -1,6 +1,6 @@
 [package]
 name = "farben-build"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2024"
 description = "Build script support for Farben. Parses .frb.toml style files and generates compile-time style registries."
 license = "MIT OR Apache-2.0"

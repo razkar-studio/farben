@@ -21,7 +21,7 @@
 #[macro_export]
 macro_rules! md_fmt {
     ($($arg:tt)*) => {
-        farben::markdown(format!($($arg)*))
+        $crate::markdown(format!($($arg)*))
     };
 }
 
@@ -44,7 +44,7 @@ macro_rules! mdprint {
         print!()
     };
     ($($arg:tt)*) => {
-        print!("{}", farben::markdown(format!($($arg)*)))
+        print!("{}", $crate::markdown(format!($($arg)*)))
     };
 }
 
@@ -67,7 +67,7 @@ macro_rules! mdprintln {
         println!()
     };
     ($($arg:tt)*) => {
-        println!("{}", farben::markdown(format!($($arg)*)))
+        println!("{}", $crate::markdown(format!($($arg)*)))
     };
 }
 
@@ -89,10 +89,10 @@ macro_rules! mdprint {
         print!()
     };
     ($fmt:literal) => {
-        print!("{}", farben::markdown!($fmt))
+        print!("{}", $crate::markdown!($fmt))
     };
     ($fmt:literal $(, $arg:expr)*) => {
-        print!("{}", farben::markdown(format!($fmt $(, $arg)*)))
+        print!("{}", $crate::markdown(format!($fmt $(, $arg)*)))
     };
 }
 
@@ -114,10 +114,10 @@ macro_rules! mdprintln {
         println!()
     };
     ($fmt:literal) => {
-        println!("{}", farben::markdown!($fmt))
+        println!("{}", $crate::markdown!($fmt))
     };
     ($fmt:literal $(, $arg:expr)*) => {
-        println!("{}", farben::markdown(format!($fmt $(, $arg)*)))
+        println!("{}", $crate::markdown(format!($fmt $(, $arg)*)))
     };
 }
 
@@ -140,7 +140,7 @@ macro_rules! mdeprint {
         eprint!()
     };
     ($($arg:tt)*) => {
-        eprint!("{}", farben::markdown(format!($($arg)*)))
+        eprint!("{}", $crate::markdown(format!($($arg)*)))
     };
 }
 
@@ -163,7 +163,7 @@ macro_rules! mdeprintln {
         eprintln!()
     };
     ($($arg:tt)*) => {
-        eprintln!("{}", farben::markdown(format!($($arg)*)))
+        eprintln!("{}", $crate::markdown(format!($($arg)*)))
     };
 }
 
@@ -185,10 +185,10 @@ macro_rules! mdeprint {
         eprint!()
     };
     ($fmt:literal) => {
-        eprint!("{}", farben::markdown!($fmt))
+        eprint!("{}", $crate::markdown!($fmt))
     };
     ($fmt:literal $(, $arg:expr)*) => {
-        eprint!("{}", farben::markdown(format!($fmt $(, $arg)*)))
+        eprint!("{}", $crate::markdown(format!($fmt $(, $arg)*)))
     };
 }
 
@@ -210,9 +210,9 @@ macro_rules! mdeprintln {
         eprintln!()
     };
     ($fmt:literal) => {
-        eprintln!("{}", farben::markdown!($fmt))
+        eprintln!("{}", $crate::markdown!($fmt))
     };
     ($fmt:literal $(, $arg:expr)*) => {
-        eprintln!("{}", farben::markdown(format!($fmt $(, $arg)*)))
+        eprintln!("{}", $crate::markdown(format!($fmt $(, $arg)*)))
     };
 }

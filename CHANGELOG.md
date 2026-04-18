@@ -4,6 +4,16 @@ All notable changes to Farben will be documented here.
 
 farben, farben-core, farben-macros, farben-build, farben-md.
 
+## [farben-core 0.13.1 / farben-macros 0.5.2 / farben-build 0.1.1 / farben-md 0.2.2 / farben 0.17.1] - 2026-04-18 - DOCUMENTED!
+
+### Added
+
+- Comprehensive docstrings for all public items across the workspace!
+
+### Fixed
+
+- Fixed bugs
+
 ## [farben-core 0.13.0 / farben 0.17.0] - 2026-04-18 - Expand Macro & New SGR Tags
 ### Added
 

@@ -29,19 +29,19 @@ pub struct Style {
     pub fg: Option<Color>,
     /// Background color. `None` leaves the terminal default unchanged.
     pub bg: Option<Color>,
-    /// Bold text (SGR 1).
+    /// Bold text (SGR 1). Increased intensity.
     pub bold: bool,
-    /// Reduced intensity text (SGR 2).
+    /// Reduced intensity text (SGR 2). Lower intensity.
     pub dim: bool,
-    /// Italic text (SGR 3).
+    /// Italic text (SGR 3). Slanted text.
     pub italic: bool,
-    /// Underlined text (SGR 4).
+    /// Underlined text (SGR 4). Single underline.
     pub underline: bool,
-    /// Double-underlined text (SGR 21).
+    /// Double-underlined text (SGR 21). Two lines.
     pub double_underline: bool,
-    /// Crossed-out text (SGR 9).
+    /// Crossed-out text (SGR 9). Strikethrough.
     pub strikethrough: bool,
-    /// Blinking text (SGR 5). Terminal support varies.
+    /// Blinking text (SGR 5). Slow blink.
     pub blink: bool,
     /// Overlined text (SGR 53).
     pub overline: bool,
@@ -60,29 +60,48 @@ pub struct Style {
 /// One of the eight standard ANSI named colors.
 #[derive(Debug, PartialEq, Clone)]
 pub enum NamedColor {
+    /// Black (30/40).
     Black,
+    /// Red (31/41).
     Red,
+    /// Green (32/42).
     Green,
+    /// Yellow (33/43).
     Yellow,
+    /// Blue (34/44).
     Blue,
+    /// Magenta (35/45).
     Magenta,
+    /// Cyan (36/46).
     Cyan,
+    /// White (37/47).
     White,
+    /// Bright black (90/100).
     BrightBlack,
+    /// Bright red (91/101).
     BrightRed,
+    /// Bright green (92/102).
     BrightGreen,
+    /// Bright yellow (93/103).
     BrightYellow,
+    /// Bright blue (94/104).
     BrightBlue,
+    /// Bright magenta (95/105).
     BrightMagenta,
+    /// Bright cyan (96/106).
     BrightCyan,
+    /// Bright white (97/107).
     BrightWhite,
 }
 
 /// A terminal color, expressed as a named color, an ANSI 256-palette index, or an RGB triple.
 #[derive(Debug, PartialEq, Clone)]
 pub enum Color {
+    /// A named ANSI color.
     Named(NamedColor),
+    /// A 256-palette index (0-255).
     Ansi256(u8),
+    /// An RGB triple (0-255 each).
     Rgb(u8, u8, u8),
 }
 
@@ -245,7 +264,10 @@ const fn named_sgr(color: &NamedColor) -> u8 {
 
 /// Converts a `Color` into a complete ANSI escape sequence for the given ground.
 ///
+/// Returns an ANSI escape code like `"\x1b[31m"` for red foreground.
+///
 /// # Example
+///
 /// ```ignore
 /// let seq = color_to_ansi(&Color::Named(NamedColor::Red), Ground::Foreground);
 /// assert_eq!(seq, "\x1b[31m");
@@ -263,6 +285,8 @@ pub fn color_to_ansi(color: &Color, ground: Ground) -> String {
 }
 
 /// Converts an `EmphasisType` into the corresponding SGR escape sequence.
+///
+/// Returns an ANSI escape code like `"\x1b[1m"` for bold.
 pub fn emphasis_to_ansi(emphasis: &EmphasisType) -> String {
     let code: u8 = match emphasis {
         EmphasisType::Bold => 1,

@@ -1,3 +1,5 @@
+//! Macros for converting farben markup to [`anstyle::Style`].
+
 /// Parses farben markup and converts the result into an [`anstyle::Style`].
 ///
 /// This macro parses the given farben markup string at compile time (if the

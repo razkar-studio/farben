@@ -18,27 +18,27 @@ use crate::{
 /// A text emphasis modifier supported by farben markup.
 #[derive(Debug, PartialEq, Clone)]
 pub enum EmphasisType {
-    /// Reduced intensity (SGR 2).
+    /// Reduced intensity (SGR 2). Lower intensity.
     Dim,
-    /// Italic text (SGR 3).
+    /// Italic text (SGR 3). Slanted text.
     Italic,
-    /// Underlined text (SGR 4).
+    /// Underlined text (SGR 4). Single underline.
     Underline,
-    /// Double-underlined text (SGR 21).
+    /// Double-underlined text (SGR 21). Two lines.
     DoubleUnderline,
-    /// Bold text (SGR 1).
+    /// Bold text (SGR 1). Increased intensity.
     Bold,
-    /// Crossed-out text (SGR 9).
+    /// Crossed-out text (SGR 9). Strikethrough.
     Strikethrough,
-    /// Blinking text (SGR 5). Terminal support varies.
+    /// Blinking text (SGR 5). Slow blink.
     Blink,
-    /// Overlined text (SGR 53).
+    /// Overlined text (SGR 53). Line above text.
     Overline,
-    /// Invisible text (SGR 8). Text is hidden but selectable.
+    /// Invisible text (SGR 8). Hidden but selectable.
     Invisible,
     /// Reverse video (SGR 7). Swaps foreground and background.
     Reverse,
-    /// Rapid blinking (SGR 6). Faster than Blink. Terminal support varies.
+    /// Rapid blinking (SGR 6). Faster than Blink.
     RapidBlink,
 }
 
@@ -47,12 +47,18 @@ pub enum EmphasisType {
 pub enum TagType {
     /// Resets all active styles (`[/]`).
     ResetAll,
-    /// Resets one specific active style (`[/bold]`, `[/red]`, etc.), then re-applies the rest.
+    /// Resets one specific active style, then re-applies the rest.
+    /// Example: `[/bold]` resets bold but keeps other active styles.
     ResetOne(Box<TagType>),
     /// Applies a text emphasis attribute.
     Emphasis(EmphasisType),
     /// Sets a foreground or background color.
-    Color { color: Color, ground: Ground },
+    Color {
+        /// The color to apply.
+        color: Color,
+        /// Whether foreground or background.
+        ground: Ground,
+    },
     /// A literal prefix string injected before the style sequence by the registry.
     Prefix(String),
 }
@@ -60,7 +66,7 @@ pub enum TagType {
 /// A single unit produced by the tokenizer: either a styling tag or a run of plain text.
 #[derive(Debug, PartialEq)]
 pub enum Token {
-    /// A parsed styling tag.
+    /// A parsed styling tag (color, emphasis, reset).
     Tag(TagType),
     /// A run of plain text with no markup.
     Text(Cow<'static, str>),

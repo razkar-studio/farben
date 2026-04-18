@@ -33,6 +33,6 @@
 #[macro_export]
 macro_rules! ansi_strip {
     ($($arg:tt)*) => {{
-        farben::strip_ansi(&format!($($arg)*))
+        $crate::strip_ansi(&format!($($arg)*))
     }};
 }

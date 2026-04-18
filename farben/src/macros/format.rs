@@ -12,7 +12,7 @@
 /// # Examples
 ///
 /// ```
-/// use farben::prelude::*;
+/// use $crate::prelude::*;
 ///
 /// style!("danger", "[bold red]");
 /// // [danger] in markup now expands to bold red text
@@ -21,7 +21,7 @@
 #[macro_export]
 macro_rules! style {
     ($name:expr, $markup:expr) => {
-        farben::insert_style($name, farben::Style::parse($markup).unwrap());
+        $crate::insert_style($name, $crate::Style::parse($markup).unwrap());
     };
 }
 
@@ -38,7 +38,7 @@ macro_rules! style {
 /// # Examples
 ///
 /// ```
-/// use farben::prelude::*;
+/// use $crate::prelude::*;
 ///
 /// style!("warn", "[yellow]");
 /// prefix!("warn", "⚠ ");
@@ -48,6 +48,6 @@ macro_rules! style {
 #[macro_export]
 macro_rules! prefix {
     ($name:expr, $prefix:expr) => {
-        farben::set_prefix($name, $prefix).unwrap_or_else(|e| panic!("{}", e));
+        $crate::set_prefix($name, $prefix).unwrap_or_else(|e| panic!("{}", e));
     };
 }

@@ -25,6 +25,8 @@ features:
     details: Farben has absolutely zero runtime required dependencies, only path ones, and it'll be like that, forever.
   - title: Markup-like Syntax
     details: Color your terminal output using intuitive tags like [red], [bold], [rgb(255,0,0)], and chain them like [bold red] or [italic ansi(1)]
+  - title: 11 Emphasis Styles
+    details: Bold, dim, italic, underline, double-underline, blink, rapid-blink, reverse, invisible, strikethrough, overline.
   - title: Opt-in Compile-time Processing
     details: Zero runtime overhead, completely opt-in using the library's "compile" feature. Changes nothing but function color being a macro.
   - title: Define Your Own Styles
