@@ -130,6 +130,27 @@ pub enum LexError {
     InvalidResetTarget(usize),
 }
 
+impl LexError {
+    /// Returns a helper that formats this error with a caret pointing at the
+    /// offending byte in the original input.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use farben_core::errors::LexError;
+    /// use farben_core::lexer::tokenize;
+    ///
+    /// let input = "[bold red unkn]oops";
+    /// match tokenize(input) {
+    ///     Ok(_) => {}
+    ///     Err(e) => eprintln!("{}", e.display(input)),
+    /// }
+    /// ```
+    pub fn display<'a>(&'a self, input: &'a str) -> LexErrorDisplay<'a> {
+        LexErrorDisplay { error: self, input }
+    }
+}
+
 impl std::fmt::Display for LexError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {

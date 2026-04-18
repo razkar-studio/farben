@@ -93,6 +93,8 @@ pub use farben_macros::markdown;
 
 pub use farben_core::ansi::Style;
 
+pub use farben_core::errors::{LexError, LexErrorDisplay};
+
 #[cfg(feature = "format")]
 pub use farben_core::registry::{insert_style, set_prefix};
 

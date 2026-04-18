@@ -6,6 +6,25 @@ farben, farben-core, farben-macros, farben-build, farben-md.
 as
 frb / v, core, macros, build, md
 
+## core0.13.3 / frb0.17.3 — 2026-04-18
+
+### LexError::display
+
+#### Added
+- `LexError::display(input)` in `farben-core`. Returns a `LexErrorDisplay`
+  wrapper that formats the error with a caret pointing at the offending byte
+  in the original input. Previously, this caret-style diagnostic was only
+  available through the panic path in `farben`'s macros; graceful callers of
+  `try_color` could only access the plain one-line `Display` impl. The new
+  method exposes the rich diagnostic to `Result`-based error handling.
+
+```rust
+match try_color(input) {
+    Ok(s) => println!("{s}"),
+    Err(e) => eprintln!("{}", e.display(input)),
+}
+```
+
 ## [core0.13.2 / frb0.17.2 / build0.1.2] — 2026-04-18
 
 ### Bleed Persistence & Build Hygiene

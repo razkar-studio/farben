@@ -55,6 +55,26 @@ function crateClass(crate) {
 
 const releases = [
     {
+        version: "core0.13.3 / frb0.17.3",
+        crate: "Global",
+        subtitle: "LexError::display",
+        date: "2026-04-18",
+        sections: [
+            {
+                type: "Added",
+                items: [
+                    "<code>LexError::display(input)</code> in <code>farben-core</code> — returns a <code>LexErrorDisplay</code> wrapper that formats the error with a caret pointing at the offending byte in the original input. Previously, this caret-style diagnostic was only available through the panic path in <code>farben</code>'s macros; graceful callers of <code>try_color</code> could only access the plain one-line <code>Display</code> impl. The new method exposes the rich diagnostic to <code>Result</code>-based error handling.",
+                ],
+            },
+            {
+                type: "Changed",
+                items: [
+                    "<code>farben-core</code> dependency in <code>farben</code> bumped to <code>core0.13.3</code>.",
+                ],
+            },
+        ],
+    },
+    {
         version: "core0.13.2 / frb0.17.2 / build0.1.2",
         crate: "Global",
         subtitle: "Bleed Persistence & Build Hygiene",
