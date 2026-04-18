@@ -288,8 +288,19 @@ pub fn tokenize(input: impl Into<String>) -> Result<Vec<Token>, LexError> {
             continue;
         }
 
+        if abs_starting > 0 && input.as_bytes().get(abs_starting.wrapping_sub(1)) == Some(&b'\x1b')
+        {
+            tokens.push(Token::Text(Cow::Owned(
+                input[pos..abs_starting + 1].to_string(),
+            )));
+            pos = abs_starting + 1;
+            continue;
+        }
+
         if pos != abs_starting {
-            tokens.push(Token::Text(Cow::Owned(input[pos..abs_starting].to_string())));
+            tokens.push(Token::Text(Cow::Owned(
+                input[pos..abs_starting].to_string(),
+            )));
         }
 
         let Some(closing) = input[abs_starting..].find(']') else {

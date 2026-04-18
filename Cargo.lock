@@ -174,7 +174,7 @@ checksum = "48c757948c5ede0e46177b7add2e67155f70e33c07fea8284df6576da70b3719"
 
 [[package]]
 name = "farben"
-version = "0.16.2"
+version = "0.16.3"
 dependencies = [
  "anstyle",
  "farben-core",
@@ -188,7 +188,7 @@ version = "0.1.0"
 
 [[package]]
 name = "farben-core"
-version = "0.12.0"
+version = "0.12.1"
 dependencies = [
  "anstyle",
  "criterion",
@@ -460,6 +460,15 @@ dependencies = [
  "proc-macro2",
  "quote",
  "unicode-ident",
+]
+
+[[package]]
+name = "testfarbenyay"
+version = "0.1.0"
+dependencies = [
+ "farben",
+ "farben-build",
+ "farben-core",
 ]
 
 [[package]]

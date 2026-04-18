@@ -2,6 +2,7 @@ use farben::prelude::*;
 farben::load_styles!();
 
 fn main() {
+    cprintln!("\x1b[31mhello");
     eprintln!("color_enabled: {}", farben_core::env::color_enabled());
     init_styles();
     eprintln!("tokens: {:?}", farben_core::lexer::tokenize("[error]"));

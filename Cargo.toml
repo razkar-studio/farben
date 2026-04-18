@@ -1,7 +1,7 @@
 [workspace]
 members = [
     "farben", "farben-build", "farben-core",
-    "farben-macros", "farben-md"
+    "farben-macros", "farben-md", "testfarbenyay"
 ]
 resolver = "3"
 
@@ -11,6 +11,6 @@ codegen-units = 1
 opt-level = 3
 
 [workspace.dependencies]
-farben-core = { path = "farben-core", version = "0.12.0" }
+farben-core = { path = "farben-core", version = "0.12.1" }
 farben-macros = { path = "farben-macros", version = "0.5.1" }
 farben-md = { path = "farben-md", version = "0.2.1" }

@@ -4,8 +4,8 @@ version = "0.1.0"
 edition = "2024"
 
 [build-dependencies]
-farben-build = { workspace = true }
+farben-build = { path = "../farben-build", version = "0.1.0" }
 
 [dependencies]
-farben = { version = "0.13.0", path = "../farben", features = ["compile"] }
+farben = { version = "0.16.2", path = "../farben", features = ["compile"] }
 farben-core.workspace = true

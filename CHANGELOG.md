@@ -3,6 +3,14 @@
 All notable changes to Farben will be documented here.
 farben / farben-core / farben-macros / farben-md
 
+## [farben-core 0.12.1 / farben 0.16.3] - 2026-04-18 - Bug Fix
+### Fixed
+
+- `tokenize` no longer treats `\x1b[` (CSI ANSI escape sequences embedded in the
+  input string) as tag openers. The byte preceding each `[` is now checked; if it is
+  `ESC` (`0x1b`), the character is pushed as plain text and the search continues.
+  Previously, strings like `"\x1b[31m"` passed directly to `color()` or
+
 ## [farben 0.16.2] - 2026-04-13 - Style to ANSI
 ### Added
 
