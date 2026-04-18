@@ -48,13 +48,37 @@ function crateClass(crate) {
     if (crate === "farben-macros") return "crate-macros";
     if (crate === "farben") return "crate-farben";
     if (crate === "farben / farben-macros") return "crate-macros";
+    if (crate === "farben-build") return "crate-build";
     if (crate === "Global") return "crate-global";
     if (crate === "farben-md") return "crate-md";
 }
 
 const releases = [
     {
-        version: "farben-core 0.13.1 / farben-macros 0.5.2 / farben-build 0.1.1 / farben-md 0.2.2 / farben 0.17.1",
+        version: "core0.13.2 / frb0.17.2 / build0.1.2",
+        crate: "Global",
+        subtitle: "Bleed Persistence & Build Hygiene",
+        date: "2026-04-18",
+        sections: [
+            {
+                type: "Added",
+                items: [
+                    "<code>active_stack()</code>, <code>set_active_stack()</code>, and <code>clear_active_stack()</code> in <code>farben-core</code> — public API for managing the thread-local persisted style stack across <code>render()</code> calls.",
+                    "<code>farben-build</code> now emits <code>cargo:rerun-if-changed</code> directives for each config file path, so edits to <code>.frb.toml</code> files correctly invalidate cached builds without requiring <code>cargo clean</code>.",
+                ],
+            },
+            {
+                type: "Fixed",
+                items: [
+                    "Bleed-style prints (<code>cprintb!</code>, <code>cprintbln!</code>) now correctly preserve the active style stack across calls. Previously, <code>render()</code> reset its internal stack between invocations, so a targeted reset like <code>[/red]</code> after a bleed call would emit a full reset and silently drop other active styles like <code>bold</code>. The stack is now persisted per-thread via <code>thread_local!</code>, resumed at the start of each <code>render()</code>, and cleared by <code>color_runtime()</code> after non-bleed prints append their trailing reset.",
+                    "<code>farben-build</code> generated code now uses Rust's <code>Debug</code> formatter to embed style and prefix names, properly escaping quotes, backslashes, and control characters. Previously, names containing special characters could produce invalid Rust in the generated file.",
+                ],
+            },
+        ],
+    },
+    {
+        version:
+            "farben-core 0.13.1 / farben-macros 0.5.2 / farben-build 0.1.1 / farben-md 0.2.2 / farben 0.17.1",
         crate: "Global",
         subtitle: "DOCUMENTED!",
         date: "2026-04-18",
@@ -67,9 +91,7 @@ const releases = [
             },
             {
                 type: "Fixed",
-                items: [
-                    "Fixed bugs",
-                ],
+                items: ["Fixed bugs"],
             },
         ],
     },
@@ -1001,6 +1023,11 @@ const releases = [
 .crate-macros {
     background-color: var(--vp-c-purple-soft);
     color: var(--vp-c-purple-1);
+}
+
+.crate-build {
+    background-color: var(--vp-c-yellow-soft);
+    color: var(--vp-c-yellow-1);
 }
 
 .crate-farben {

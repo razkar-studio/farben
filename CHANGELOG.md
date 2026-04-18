@@ -3,6 +3,35 @@
 All notable changes to Farben will be documented here.
 
 farben, farben-core, farben-macros, farben-build, farben-md.
+as
+frb / v, core, macros, build, md
+
+## [core0.13.2 / frb0.17.2 / build0.1.2] — 2026-04-18
+
+### Bleed Persistence & Build Hygiene
+
+#### Added
+- `active_stack()`, `set_active_stack()`, and `clear_active_stack()` in
+  `farben-core` — public API for managing the thread-local persisted style
+  stack across `render()` calls.
+- `farben-build` now emits `cargo:rerun-if-changed` directives for each
+  config file path, so edits to `.frb.toml` files correctly invalidate
+  cached builds without requiring `cargo clean`.
+
+#### Fixed
+- Bleed-style prints (`cprintb!`, `cprintbln!`) now correctly preserve the
+  active style stack across calls. Previously, `render()` reset its internal
+  stack between invocations, so a targeted reset like `[/red]` after a bleed
+  call would emit a full reset and silently drop other active styles like
+  `bold`. The stack is now persisted per-thread via `thread_local!`, resumed
+  at the start of each `render()`, and cleared by `color_runtime()` after
+  non-bleed prints append their trailing reset.
+- `farben-build` generated code now uses Rust's `Debug` formatter to embed
+  style and prefix names, properly escaping quotes, backslashes, and control
+  characters. Previously, names containing special characters could produce
+  invalid Rust in the generated file.
+
+---
 
 ## [farben-core 0.13.1 / farben-macros 0.5.2 / farben-build 0.1.1 / farben-md 0.2.2 / farben 0.17.1] - 2026-04-18 - DOCUMENTED!
 
