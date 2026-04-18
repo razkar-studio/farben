@@ -18,7 +18,7 @@ Right now they use the classic old `v` prefix. From now on, the version prefix w
 * farben-build: `build*`
 * farben-md: `md*`
 
-Why am I changing them? I'm not sure. It's just better to look at the versions in a glance and know which crates they represent instead of having to put their whole name infront of it (farben-macros 0.x.y vs macros0.x.y).
+Why am I changing them? I'm not sure. It's just better to look at the versions in a glance and know which crates they represent instead of having to put their whole name in front of it (farben-macros 0.x.y vs macros0.x.y).
 
 This wouldn't change anything about Farben itself, just how I'll represent the versions in future CHANGELOG entries or these news headers. Make great things with Farben!
 
