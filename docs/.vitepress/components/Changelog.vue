@@ -62,31 +62,13 @@ const releases = [
             {
                 type: "Added",
                 items: [
-                    "Comprehensive docstrings for all public items across the workspace.",
-                    "Emphasis styles table added to farben lib docstring.",
-                    "docs/index.md updated with new emphasis styles feature.",
+                    "Comprehensive docstrings for all public items across the workspace!",
                 ],
             },
             {
                 type: "Fixed",
                 items: [
-                    "Fixed duplicate Bold variant in EmphasisType enum in lexer.rs.",
-                ],
-            },
-        ],
-    },
-    {
-                type: "Added",
-                items: [
-                    "Comprehensive docstrings for all public items across the workspace.",
-                    "Emphasis styles table added to farben lib docstring.",
-                    "docs/index.md updated with new emphasis styles feature.",
-                ],
-            },
-            {
-                type: "Fixed",
-                items: [
-                    "Fixed duplicate Bold variant in EmphasisType enum in lexer.rs.",
+                    "Fixed bugs",
                 ],
             },
         ],
