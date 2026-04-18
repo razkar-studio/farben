@@ -11,7 +11,7 @@
 use std::fmt::Write;
 
 use crate::errors::LexError;
-use crate::lexer::{EmphasisType, TagType, Token, tokenize};
+use crate::lexer::{tokenize, EmphasisType, TagType, Token};
 
 /// Whether a color applies to the foreground (text) or background.
 #[derive(Debug, PartialEq, Clone)]
@@ -37,10 +37,20 @@ pub struct Style {
     pub italic: bool,
     /// Underlined text (SGR 4).
     pub underline: bool,
+    /// Double-underlined text (SGR 21).
+    pub double_underline: bool,
     /// Crossed-out text (SGR 9).
     pub strikethrough: bool,
     /// Blinking text (SGR 5). Terminal support varies.
     pub blink: bool,
+    /// Overlined text (SGR 53).
+    pub overline: bool,
+    /// Invisible text (SGR 8). Text is hidden but selectable.
+    pub invisible: bool,
+    /// Reverse video (SGR 7). Swaps foreground and background.
+    pub reverse: bool,
+    /// Rapid blinking (SGR 6). Faster than Blink. Terminal support varies.
+    pub rapid_blink: bool,
     /// Full reset. Enabling this option overrides all previous options.
     pub reset: bool,
     /// Optional prefix string prepended before the style's escape sequence.
@@ -110,6 +120,11 @@ impl Style {
                         EmphasisType::Italic => res.italic = true,
                         EmphasisType::Strikethrough => res.strikethrough = true,
                         EmphasisType::Underline => res.underline = true,
+                        EmphasisType::DoubleUnderline => res.double_underline = true,
+                        EmphasisType::Overline => res.overline = true,
+                        EmphasisType::Invisible => res.invisible = true,
+                        EmphasisType::Reverse => res.reverse = true,
+                        EmphasisType::RapidBlink => res.rapid_blink = true,
                     },
                     TagType::Color { color, ground } => match ground {
                         Ground::Background => res.bg = Some(color),
@@ -254,8 +269,13 @@ pub fn emphasis_to_ansi(emphasis: &EmphasisType) -> String {
         EmphasisType::Dim => 2,
         EmphasisType::Italic => 3,
         EmphasisType::Underline => 4,
+        EmphasisType::DoubleUnderline => 21,
         EmphasisType::Blink => 5,
+        EmphasisType::RapidBlink => 6,
+        EmphasisType::Reverse => 7,
+        EmphasisType::Invisible => 8,
         EmphasisType::Strikethrough => 9,
+        EmphasisType::Overline => 53,
     };
     format!("\x1b[{}m", code)
 }
@@ -291,8 +311,13 @@ pub fn style_to_ansi(style: &Style) -> String {
         (style.dim, 2),
         (style.italic, 3),
         (style.underline, 4),
+        (style.double_underline, 21),
         (style.blink, 5),
+        (style.rapid_blink, 6),
+        (style.reverse, 7),
+        (style.invisible, 8),
         (style.strikethrough, 9),
+        (style.overline, 53),
     ] {
         if enabled {
             ansi.push(code);

@@ -54,6 +54,28 @@ function crateClass(crate) {
 
 const releases = [
     {
+        version: "farben-core 0.13.0 / farben 0.17.0",
+        crate: "Global",
+        subtitle: "Expand Macro & New SGR Tags",
+        date: "2026-04-18",
+        sections: [
+            {
+                type: "Added",
+                items: [
+                    "<code>EmphasisType::Overline</code> (SGR 53), <code>EmphasisType::Invisible</code> (SGR 8), <code>EmphasisType::Reverse</code> (SGR 7), <code>EmphasisType::RapidBlink</code> (SGR 6), <code>EmphasisType::DoubleUnderline</code> (SGR 21) — new emphasis variants with corresponding <code>[overline]</code>, <code>[invisible]</code>, <code>[reverse]</code>, <code>[rapid-blink]</code>, <code>[double-underline]</code> tags.",
+                    "<code>debug</code> module in <code>farben-core</code> — <code>tokens_to_markup(tokens)</code> reconstructs a farben markup string from a parsed token slice, collapsing consecutive tags into a single bracket.",
+                    "<code>expand!(markup)</code> in <code>farben</code> — diagnostic macro that prints three lines to stderr: the raw input, the fully expanded markup (registry styles resolved to their constituent tags), and the rendered ANSI escape string.",
+                ],
+            },
+            {
+                type: "Changed",
+                items: [
+                    "<code>farben-core</code> dependency in <code>farben</code> bumped to <code>0.13.0</code>.",
+                ],
+            },
+        ],
+    },
+    {
         version: "farben-core 0.12.1 / farben 0.16.3",
         crate: "Global",
         subtitle: "Bug Fix",

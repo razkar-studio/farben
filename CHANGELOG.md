@@ -1,7 +1,27 @@
 # Changelog
 
 All notable changes to Farben will be documented here.
-farben / farben-core / farben-macros / farben-md
+
+farben, farben-core, farben-macros, farben-build, farben-md.
+
+## [farben-core 0.13.0 / farben 0.17.0] - 2026-04-18 - Expand Macro & New SGR Tags
+### Added
+
+- `EmphasisType::Overline` (SGR 53), `EmphasisType::Invisible` (SGR 8),
+  `EmphasisType::Reverse` (SGR 7), `EmphasisType::RapidBlink` (SGR 6),
+  `EmphasisType::DoubleUnderline` (SGR 21) — new emphasis variants with
+  corresponding `[overline]`, `[invisible]`, `[reverse]`, `[rapid-blink]`,
+  `[double-underline]` tags.
+- `debug` module in `farben-core` — `tokens_to_markup(tokens)` reconstructs
+  a farben markup string from a parsed token slice, collapsing consecutive
+  tags into a single bracket.
+- `expand!(markup)` in `farben` — diagnostic macro that prints three lines to
+  stderr: the raw input, the fully expanded markup (registry styles resolved
+  to their constituent tags), and the rendered ANSI escape string.
+
+### Changed
+
+- `farben-core` dependency in `farben` bumped to `0.13.0`.
 
 ## [farben-core 0.12.1 / farben 0.16.3] - 2026-04-18 - Bug Fix
 ### Fixed

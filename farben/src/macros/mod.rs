@@ -5,6 +5,7 @@
 
 pub mod color;
 pub mod eprint;
+pub mod expand;
 pub mod format;
 pub mod load;
 pub mod markdown;

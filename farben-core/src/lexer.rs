@@ -24,12 +24,22 @@ pub enum EmphasisType {
     Italic,
     /// Underlined text (SGR 4).
     Underline,
+    /// Double-underlined text (SGR 21).
+    DoubleUnderline,
     /// Bold text (SGR 1).
     Bold,
     /// Crossed-out text (SGR 9).
     Strikethrough,
     /// Blinking text (SGR 5). Terminal support varies.
     Blink,
+    /// Overlined text (SGR 53).
+    Overline,
+    /// Invisible text (SGR 8). Text is hidden but selectable.
+    Invisible,
+    /// Reverse video (SGR 7). Swaps foreground and background.
+    Reverse,
+    /// Rapid blinking (SGR 6). Faster than Blink. Terminal support varies.
+    RapidBlink,
 }
 
 /// The kind of styling operation a tag represents.
@@ -66,9 +76,14 @@ impl EmphasisType {
             "dim" => Some(Self::Dim),
             "italic" => Some(Self::Italic),
             "underline" => Some(Self::Underline),
+            "double-underline" => Some(Self::DoubleUnderline),
             "bold" => Some(Self::Bold),
             "strikethrough" => Some(Self::Strikethrough),
             "blink" => Some(Self::Blink),
+            "overline" => Some(Self::Overline),
+            "invisible" => Some(Self::Invisible),
+            "reverse" => Some(Self::Reverse),
+            "rapid-blink" => Some(Self::RapidBlink),
             _ => None,
         }
     }
@@ -100,6 +115,17 @@ fn style_to_tags(style: Arc<Style>) -> Vec<TagType> {
             TagType::Emphasis(EmphasisType::Strikethrough),
         ),
         (style.underline, TagType::Emphasis(EmphasisType::Underline)),
+        (
+            style.double_underline,
+            TagType::Emphasis(EmphasisType::DoubleUnderline),
+        ),
+        (style.overline, TagType::Emphasis(EmphasisType::Overline)),
+        (style.invisible, TagType::Emphasis(EmphasisType::Invisible)),
+        (style.reverse, TagType::Emphasis(EmphasisType::Reverse)),
+        (
+            style.rapid_blink,
+            TagType::Emphasis(EmphasisType::RapidBlink),
+        ),
     ] {
         if enabled {
             res.push(tag);

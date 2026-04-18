@@ -69,12 +69,23 @@ impl From<Style> for anstyle::Style {
         if style.underline {
             effects = effects.insert(anstyle::Effects::UNDERLINE);
         }
+        if style.double_underline {
+            effects = effects.insert(anstyle::Effects::DOUBLE_UNDERLINE);
+        }
         if style.strikethrough {
             effects = effects.insert(anstyle::Effects::STRIKETHROUGH);
         }
         if style.blink {
             effects = effects.insert(anstyle::Effects::BLINK);
         }
+        if style.reverse {
+            effects = effects.insert(anstyle::Effects::INVERT);
+        }
+        if style.invisible {
+            effects = effects.insert(anstyle::Effects::HIDDEN);
+        }
+
+        let _ = (style.overline, style.rapid_blink);
 
         out.effects(effects)
     }
@@ -93,8 +104,13 @@ impl From<anstyle::Style> for Style {
         out.dim = effects.contains(anstyle::Effects::DIMMED);
         out.italic = effects.contains(anstyle::Effects::ITALIC);
         out.underline = effects.contains(anstyle::Effects::UNDERLINE);
+        out.double_underline = effects.contains(anstyle::Effects::DOUBLE_UNDERLINE);
         out.strikethrough = effects.contains(anstyle::Effects::STRIKETHROUGH);
         out.blink = effects.contains(anstyle::Effects::BLINK);
+        out.reverse = effects.contains(anstyle::Effects::INVERT);
+        out.invisible = effects.contains(anstyle::Effects::HIDDEN);
+
+        let _ = (out.overline, out.rapid_blink);
 
         out
     }
