@@ -103,19 +103,29 @@ pub enum LexError {
     UnclosedTag(usize),
     /// The tag name is not a recognized keyword or color form.
     InvalidTag {
+        /// The raw text inside the brackets, e.g. `"floob"` for `[floob]`.
         tag_content: String,
+        /// Byte offset of the opening `[` in the original input.
         position: usize,
     },
     /// A color value function (e.g. `rgb(` or `ansi(`) was opened but never closed.
     UnclosedValue(usize),
     /// A color function received the wrong number of arguments.
     InvalidArgumentCount {
+        /// How many arguments the function requires (e.g. 3 for `rgb`).
         expected: usize,
+        /// How many arguments were actually provided.
         got: usize,
+        /// Byte offset of the function call in the original input.
         position: usize,
     },
     /// An argument could not be parsed into the expected numeric type.
-    InvalidValue { value: String, position: usize },
+    InvalidValue {
+        /// The offending argument as written.
+        value: String,
+        /// Byte offset of the function call in the original input.
+        position: usize,
+    },
     /// A reset tag was given a target that cannot be reset (e.g. `[/reset]` or `[/prefix]`).
     InvalidResetTarget(usize),
 }

@@ -34,8 +34,8 @@ pub fn insert_style(name: impl Into<String>, style: Style) {
 ///
 /// # Errors
 ///
-/// Returns [`LexError::UnknownStyle`] if `name` has not been registered via
-/// [`insert_style`] (or the [`style!`] macro).
+/// Returns [`crate::errors::RegistryError::UnknownStyle`] if `name` has not been registered via
+/// [`insert_style`] (or the `style!` macro from the `farben` crate).
 pub fn set_prefix(name: impl Into<String>, prefix: impl Into<String>) -> Result<(), RegistryError> {
     let name = name.into();
     let prefix = prefix.into();

@@ -55,18 +55,20 @@ pub enum ColorLevel {
 /// Reads `COLORTERM` first. `truecolor` or `24bit` maps to [`ColorLevel::TrueColor`].
 /// If unset or unrecognized, reads `TERM`. A value containing `256color` maps to
 /// [`ColorLevel::Ansi256`]. Anything else returns [`ColorLevel::Basic`].
-/// The result is cached in [`COLOR_LEVEL`] and never recomputed.
+/// The result is cached and never recomputed.
 pub fn color_level() -> &'static ColorLevel {
     COLOR_LEVEL.get_or_init(|| {
         if let Ok(val) = std::env::var("COLORTERM")
-            && (val == "truecolor" || val == "24bit") {
-                return ColorLevel::TrueColor;
-            }
+            && (val == "truecolor" || val == "24bit")
+        {
+            return ColorLevel::TrueColor;
+        }
 
         if let Ok(val) = std::env::var("TERM")
-            && val.contains("256color") {
-                return ColorLevel::Ansi256;
-            }
+            && val.contains("256color")
+        {
+            return ColorLevel::Ansi256;
+        }
 
         ColorLevel::Basic
     })
@@ -75,7 +77,8 @@ pub fn color_level() -> &'static ColorLevel {
 /// Finds the named ANSI color closest to the given RGB triple.
 ///
 /// Computes squared Euclidean distance in RGB space against each entry in
-/// [`NAMED_COLOR_RGB`] and returns the color with the smallest distance.
+/// Compares the input RGB against an internal table of the 16 named ANSI colors
+/// and returns the color with the smallest distance.
 pub fn nearest_named(r: u8, g: u8, b: u8) -> NamedColor {
     let mut best = &NAMED_COLOR_RGB[0];
     let mut best_dist = u32::MAX;
@@ -107,7 +110,7 @@ pub fn nearest_ansi256(r: u8, g: u8, b: u8) -> u8 {
 
 /// Reverse-maps an ANSI 256-palette index to approximate RGB.
 ///
-/// Handles three ranges: `0..=15` looks up [`NAMED_COLOR_RGB`], `16..=231` decodes
+/// Handles three ranges: `0..=15` looks up the named color table, `16..=231` decodes
 /// the 6x6x6 color cube, and `232..=255` decodes the 24-step grayscale ramp.
 pub fn ansi256_to_rgb(n: u8) -> (u8, u8, u8) {
     match n {

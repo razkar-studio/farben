@@ -64,6 +64,7 @@ pub fn color_runtime(input: impl Into<String>, bleed: bool) -> String {
     let mut res = parser::render(tokens);
     if !bleed {
         res.push_str("\x1b[0m");
+        farben_core::clear_active_stack();
     }
     res
 }

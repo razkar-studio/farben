@@ -9,13 +9,14 @@ use crate::{
     ansi::{color_to_ansi, emphasis_to_ansi},
     env::color_enabled,
     lexer::{TagType, Token},
+    state::{active_stack, set_active_stack},
 };
 
 /// Renders a token stream into a raw ANSI-escaped string.
 ///
 /// Text tokens are appended as-is. Tag tokens are converted to their corresponding
-/// ANSI escape sequences. Does not append a trailing reset; callers are responsible
-/// for that if needed.
+/// ANSI escape sequences. The active style stack persists across calls via thread-local state
+/// callers using non-bleed semantics should call clear_active_stack() after their reset.
 ///
 /// # Example
 ///
@@ -36,7 +37,7 @@ pub fn render(tokens: Vec<Token>) -> String {
             .collect();
     }
     let mut result = String::with_capacity(tokens.len() * 16);
-    let mut active: Vec<TagType> = Vec::new();
+    let mut active: Vec<TagType> = active_stack();
     for t in tokens {
         match t {
             Token::Text(s) => result.push_str(&s),
@@ -70,6 +71,7 @@ pub fn render(tokens: Vec<Token>) -> String {
             }
         }
     }
+    set_active_stack(active);
     result
 }
 
@@ -93,7 +95,9 @@ mod tests {
     }
     #[test]
     fn test_render_named_color_tag() {
-        if !color_enabled() { return; }
+        if !color_enabled() {
+            return;
+        }
         let result = render(vec![Token::Tag(TagType::Color {
             color: Color::Named(NamedColor::Red),
             ground: Ground::Foreground,
@@ -102,19 +106,25 @@ mod tests {
     }
     #[test]
     fn test_render_emphasis_tag_bold() {
-        if !color_enabled() { return; }
+        if !color_enabled() {
+            return;
+        }
         let result = render(vec![Token::Tag(TagType::Emphasis(EmphasisType::Bold))]);
         assert_eq!(result, "\x1b[1m");
     }
     #[test]
     fn test_render_reset_tag() {
-        if !color_enabled() { return; }
+        if !color_enabled() {
+            return;
+        }
         let result = render(vec![Token::Tag(TagType::ResetAll)]);
         assert_eq!(result, "\x1b[0m");
     }
     #[test]
     fn test_render_color_then_text() {
-        if !color_enabled() { return; }
+        if !color_enabled() {
+            return;
+        }
         let result = render(vec![
             Token::Tag(TagType::Color {
                 color: Color::Named(NamedColor::Red),
@@ -126,7 +136,9 @@ mod tests {
     }
     #[test]
     fn test_render_color_text_reset() {
-        if !color_enabled() { return; }
+        if !color_enabled() {
+            return;
+        }
         let result = render(vec![
             Token::Tag(TagType::Color {
                 color: Color::Named(NamedColor::Green),
@@ -144,7 +156,9 @@ mod tests {
     }
     #[test]
     fn test_render_ansi256_color_tag() {
-        if !color_enabled() { return; }
+        if !color_enabled() {
+            return;
+        }
         let result = render(vec![Token::Tag(TagType::Color {
             color: Color::Ansi256(21),
             ground: Ground::Foreground,
@@ -153,7 +167,9 @@ mod tests {
     }
     #[test]
     fn test_render_rgb_color_tag() {
-        if !color_enabled() { return; }
+        if !color_enabled() {
+            return;
+        }
         let result = render(vec![Token::Tag(TagType::Color {
             color: Color::Rgb(255, 0, 0),
             ground: Ground::Foreground,
@@ -167,7 +183,9 @@ mod tests {
     }
     #[test]
     fn test_render_named_color_background() {
-        if !color_enabled() { return; }
+        if !color_enabled() {
+            return;
+        }
         let result = render(vec![Token::Tag(TagType::Color {
             color: Color::Named(NamedColor::Red),
             ground: Ground::Background,
@@ -176,7 +194,9 @@ mod tests {
     }
     #[test]
     fn test_render_ansi256_background() {
-        if !color_enabled() { return; }
+        if !color_enabled() {
+            return;
+        }
         let result = render(vec![Token::Tag(TagType::Color {
             color: Color::Ansi256(21),
             ground: Ground::Background,
@@ -185,7 +205,9 @@ mod tests {
     }
     #[test]
     fn test_render_rgb_background() {
-        if !color_enabled() { return; }
+        if !color_enabled() {
+            return;
+        }
         let result = render(vec![Token::Tag(TagType::Color {
             color: Color::Rgb(255, 0, 0),
             ground: Ground::Background,
@@ -194,7 +216,9 @@ mod tests {
     }
     #[test]
     fn test_render_fg_and_bg_together() {
-        if !color_enabled() { return; }
+        if !color_enabled() {
+            return;
+        }
         let result = render(vec![
             Token::Tag(TagType::Color {
                 color: Color::Named(NamedColor::White),
@@ -213,7 +237,9 @@ mod tests {
 
     #[test]
     fn test_render_no_color_strips_tag_tokens() {
-        if color_enabled() { return; }
+        if color_enabled() {
+            return;
+        }
         let result = render(vec![
             Token::Tag(TagType::Color {
                 color: Color::Named(NamedColor::Red),
@@ -226,7 +252,9 @@ mod tests {
     }
     #[test]
     fn test_render_no_color_preserves_text_and_prefix() {
-        if color_enabled() { return; }
+        if color_enabled() {
+            return;
+        }
         let result = render(vec![
             Token::Tag(TagType::Prefix(">>".to_string())),
             Token::Text(" world".into()),
@@ -235,7 +263,9 @@ mod tests {
     }
     #[test]
     fn test_render_no_color_pure_tags_produce_empty_string() {
-        if color_enabled() { return; }
+        if color_enabled() {
+            return;
+        }
         let result = render(vec![
             Token::Tag(TagType::Emphasis(EmphasisType::Bold)),
             Token::Tag(TagType::ResetAll),
@@ -244,7 +274,9 @@ mod tests {
     }
     #[test]
     fn test_render_no_color_reset_one_stripped() {
-        if color_enabled() { return; }
+        if color_enabled() {
+            return;
+        }
         let result = render(vec![
             Token::Tag(TagType::ResetOne(Box::new(TagType::Emphasis(
                 EmphasisType::Bold,
@@ -252,6 +284,62 @@ mod tests {
             Token::Text("plain".into()),
         ]);
         assert_eq!(result, "plain");
+    }
+    #[test]
+    fn test_render_resumes_persisted_stack() {
+        if !color_enabled() {
+            return;
+        }
+        crate::clear_active_stack();
+
+        let _ = render(vec![
+            Token::Tag(TagType::Emphasis(EmphasisType::Bold)),
+            Token::Tag(TagType::Color {
+                color: Color::Named(NamedColor::Red),
+                ground: Ground::Foreground,
+            }),
+        ]);
+
+        let result = render(vec![
+            Token::Tag(TagType::ResetOne(Box::new(TagType::Color {
+                color: Color::Named(NamedColor::Red),
+                ground: Ground::Foreground,
+            }))),
+            Token::Text("ok".into()),
+        ]);
+        assert_eq!(result, "\x1b[0m\x1b[1mok");
+
+        crate::clear_active_stack();
+    }
+
+    #[test]
+    fn test_render_persists_active_stack() {
+        if !color_enabled() {
+            return;
+        }
+        crate::clear_active_stack();
+
+        let _ = render(vec![Token::Tag(TagType::Emphasis(EmphasisType::Bold))]);
+        assert_eq!(
+            crate::active_stack(),
+            vec![TagType::Emphasis(EmphasisType::Bold)]
+        );
+
+        crate::clear_active_stack();
+    }
+
+    #[test]
+    fn test_render_reset_all_clears_persisted_stack() {
+        if !color_enabled() {
+            return;
+        }
+        crate::clear_active_stack();
+
+        let _ = render(vec![
+            Token::Tag(TagType::Emphasis(EmphasisType::Bold)),
+            Token::Tag(TagType::ResetAll),
+        ]);
+        assert!(crate::active_stack().is_empty());
     }
 }
 // Skipped (side effects): none: render() is a pure function.

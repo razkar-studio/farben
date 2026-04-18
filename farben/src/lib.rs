@@ -83,6 +83,7 @@
 //! mdprintln!("**bold**, *italic*, `code`, ~~strikethrough~~");
 //! ```
 //!
+#![warn(missing_docs)]
 
 #[cfg(feature = "compile")]
 pub use farben_macros::{color, colorb, validate_color};

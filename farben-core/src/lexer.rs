@@ -4,7 +4,7 @@
 //! [`Token`] values. Each token is either a [`Token::Tag`] carrying styling information
 //! or a [`Token::Text`] carrying a run of literal characters.
 //!
-//! The main entry point is [`tokenize`]. The lower-level [`parse_tag`] and [`parse_part`]
+//! The main entry point is [`tokenize`]. The lower-level `parse_tag` and `parse_part`
 //! functions handle individual tag strings and are not part of the public API.
 
 use std::{borrow::Cow, sync::Arc};

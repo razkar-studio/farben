@@ -260,7 +260,7 @@ macro_rules! cprintbln {
 ///
 /// ```
 /// use farben::prelude::*;
-/// use std::io::Cursor;
+/// use std::io::{Cursor, Write};
 ///
 /// let mut buf = Cursor::new(Vec::new());
 /// cwrite!(buf, "[red]Error: [/]{}", "something went wrong");
@@ -286,7 +286,7 @@ macro_rules! cwrite {
 ///
 /// ```
 /// use farben::prelude::*;
-/// use std::io::Cursor;
+/// use std::io::{Write, Cursor};
 ///
 /// let mut buf = Cursor::new(Vec::new());
 /// cwrite!(buf, "[red]Error: [/]{}", "something went wrong");
@@ -315,7 +315,7 @@ macro_rules! cwrite {
 ///
 /// ```
 /// use farben::prelude::*;
-/// use std::io::Cursor;
+/// use std::io::{Write, Cursor};
 ///
 /// let mut buf = Cursor::new(Vec::new());
 /// cwriteln!(buf, "[green]Success: [/]{}", "all done");
@@ -341,7 +341,7 @@ macro_rules! cwriteln {
 ///
 /// ```
 /// use farben::prelude::*;
-/// use std::io::Cursor;
+/// use std::io::{Write, Cursor};
 ///
 /// let mut buf = Cursor::new(Vec::new());
 /// cwriteln!(buf, "[green]Success: [/]{}", "all done");
@@ -370,7 +370,7 @@ macro_rules! cwriteln {
 ///
 /// ```
 /// use farben::prelude::*;
-/// use std::io::Cursor;
+/// use std::io::{Write, Cursor};
 ///
 /// let mut buf = Cursor::new(Vec::new());
 /// cwriteb!(buf, "[red]Error: ");
@@ -415,7 +415,7 @@ macro_rules! cwriteb {
 ///
 /// ```
 /// use farben::prelude::*;
-/// use std::io::Cursor;
+/// use std::io::{Write, Cursor};
 ///
 /// let mut buf = Cursor::new(Vec::new());
 /// cwritebln!(buf, "[bold red]Fatal error");

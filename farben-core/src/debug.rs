@@ -1,3 +1,8 @@
+//! Inverse rendering: turn parsed tokens back into farben markup syntax.
+//!
+//! Powers the `expand!` macro and other debugging utilities by round-tripping
+//! tokens through a human-readable representation.
+
 use crate::{
     ansi::{Color, Ground, NamedColor},
     lexer::{EmphasisType, TagType, Token},

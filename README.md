@@ -29,6 +29,10 @@ Farben is a color library that uses markup-like syntax. Color your terminal with
 - **API Reference**: [https://docs.rs/farben](https://docs.rs/farben)
 - **Changelog**: [CHANGELOG.md](./CHANGELOG.md)
 
+
+> [!NOTE]
+> Pre-1.0 versions have iterated quickly. Most minor bumps reflect internal changes; the public macro API (cprint!, cprintln!, style!, etc.) has been stable since 0.10. I am for 1.0 once the API fully stabilizes with Farben having complete features, or I just get bored developing it.
+
 ## Usage
 
 ```rust

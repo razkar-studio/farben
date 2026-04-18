@@ -2,6 +2,9 @@
 //!
 //! This crate is used by `build.rs` scripts to compile farben style definitions
 //! into the binary at build time.
+#![warn(missing_docs)]
+#![deny(rustdoc::broken_intra_doc_links)]
+#![warn(rustdoc::private_intra_doc_links)]
 
 mod parser;
 
@@ -16,6 +19,10 @@ pub fn run() {
 pub fn run_with(paths: &[&str]) {
     let out_dir = std::env::var("OUT_DIR").unwrap();
     let dest = Path::new(&out_dir).join("farben_styles.rs");
+
+    for path in paths {
+        println!("cargo:rerun-if-changed={path}");
+    }
 
     let mut all_styles: HashMap<String, String> = HashMap::new();
     let mut all_prefixes: HashMap<String, String> = HashMap::new();
@@ -48,13 +55,14 @@ pub fn run_with(paths: &[&str]) {
 
     for (key, value) in &all_styles {
         code.push_str(&format!(
-            "    farben::insert_style(\"{key}\", farben::Style::parse(\"[{value}]\").unwrap_or_else(|e| panic!(\"{{e}}\")));\n"
+            "    farben::insert_style({key:?}, farben::Style::parse({markup:?}).unwrap_or_else(|e| panic!(\"{{e}}\")));\n",
+            markup = format!("[{value}]")
         ));
     }
 
     for (key, value) in &all_prefixes {
         code.push_str(&format!(
-            "    farben::set_prefix(\"{key}\", \"{value}\").unwrap_or_else(|e| panic!(\"{{e}}\"));\n"
+            "    farben::set_prefix({key:?}, {value:?}).unwrap_or_else(|e| panic!(\"{{e}}\"));\n"
         ));
     }
 
