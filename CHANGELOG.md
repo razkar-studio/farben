@@ -6,6 +6,12 @@ farben, farben-core, farben-macros, farben-build, farben-md.
 as
 frb / v, core, macros, build, md
 
+## build0.1.3 — 2026-04-19
+
+### Added
+* `core` module, exposing some library internals for users that want to use them.
+* Documentation
+
 ## core0.13.3 / frb0.17.3 — 2026-04-18
 
 ### LexError::display

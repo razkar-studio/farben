@@ -55,6 +55,20 @@ function crateClass(crate) {
 
 const releases = [
     {
+        version: "build0.1.3",
+        crate: "farben-build",
+        date: "2026-04-19",
+        sections: [
+            {
+                type: "Added",
+                items: [
+                    "<code>core</code> module, exposing some library internals for users that want to use them",
+                    "Documentation",
+                ],
+            },
+        ],
+    },
+    {
         version: "core0.13.3 / frb0.17.3",
         crate: "Global",
         subtitle: "LexError::display",

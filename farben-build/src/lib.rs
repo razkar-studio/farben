@@ -6,6 +6,7 @@
 #![deny(rustdoc::broken_intra_doc_links)]
 #![warn(rustdoc::private_intra_doc_links)]
 
+pub mod core;
 mod parser;
 
 use std::{collections::HashMap, fs, path::Path};

@@ -12,7 +12,9 @@ use std::collections::HashMap;
 /// `styles` maps tag names (optionally namespaced as `namespace:key`) to farben
 /// markup strings. `prefixes` maps tag names to prefix strings.
 pub struct FrbConfig {
+    /// Contains the styles
     pub styles: HashMap<String, String>,
+    /// Contains prefixes for styles
     pub prefixes: HashMap<String, String>,
 }
 
