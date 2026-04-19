@@ -39,6 +39,7 @@ function sharedSidebar() {
       link: "/styles/",
       items: [
         { text: "Styles-toml", link: "/styles/styles-toml/" },
+        { text: ".frb.toml's Ruleset", link: "/styles/rulez/" },
         { text: "Under The Hood", link: "/styles/advanced/" },
       ],
     },
