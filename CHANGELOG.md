@@ -12,6 +12,9 @@ Minor README update
 
 ## core0.13.4 / macros0.6.0 / frb0.18.0 / build0.1.4 — 2026-04-20
 
+> [!NOTE]
+> This implementation was suggested by redditor `u/manpacket` on the `r/Rust` subreddit. The post can be seen [here](https://www.reddit.com/r/rust/comments/1sol4b5/farben_my_terminal_coloring_library_using_markup/). Thank you `manpacket`!
+
 ### Compile-time Runtime Detection
 
 > [!IMPORTANT]
