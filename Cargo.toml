@@ -11,6 +11,6 @@ codegen-units = 1
 opt-level = 3
 
 [workspace.dependencies]
-farben-core = { path = "farben-core", version = "0.13.4" }
-farben-macros = { path = "farben-macros", version = "0.6.0" }
+farben-core = { path = "farben-core", version = "0.14.0-alpha.1" }
+farben-macros = { path = "farben-macros", version = "0.7.0-alpha.1" }
 farben-md = { path = "farben-md", version = "0.2.2" }

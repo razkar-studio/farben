@@ -1,6 +1,6 @@
 [package]
 name = "farben"
-version = "0.18.1"
+version = "0.19.0-alpha.1"
 edition = "2024"
 description = "Markup for the Terminal, but safer and faster."
 license = "MIT OR Apache-2.0"
