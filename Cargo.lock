@@ -196,7 +196,7 @@ dependencies = [
 
 [[package]]
 name = "farben-macros"
-version = "0.5.2"
+version = "0.6.0"
 dependencies = [
  "farben-core",
  "farben-md",

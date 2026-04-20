@@ -12,5 +12,5 @@ opt-level = 3
 
 [workspace.dependencies]
 farben-core = { path = "farben-core", version = "0.13.4" }
-farben-macros = { path = "farben-macros", version = "0.5.2" }
+farben-macros = { path = "farben-macros", version = "0.6.0" }
 farben-md = { path = "farben-md", version = "0.2.2" }
