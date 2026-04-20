@@ -6,6 +6,10 @@ farben, farben-core, farben-macros, farben-build, farben-md.
 as
 frb / v, core, macros, build, md
 
+## v0.18.1 — 2026-04-20
+
+Minor README update
+
 ## core0.13.4 / macros0.6.0 / frb0.18.0 / build0.1.4 — 2026-04-20
 
 ### Compile-time Runtime Detection
