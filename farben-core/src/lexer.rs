@@ -281,9 +281,9 @@ fn parse_tag(raw_tag: &str, tag_start: usize) -> Result<Vec<TagType>, LexError> 
 
 /// Tokenizes a farben markup string into a sequence of `Token`s.
 ///
-/// Tags are delimited by `[` and `]`. A `[` preceded by `\` is treated as a literal
-/// bracket rather than the start of a tag. Text between tags is emitted as
-/// [`Token::Text`]; tags are parsed and emitted as [`Token::Tag`].
+/// Tags are delimited by `[` and `]`. Use `[[` to emit a literal `[` and `]]` to emit
+/// a literal `]`. Text between tags is emitted as [`Token::Text`]; tags are parsed and
+/// emitted as [`Token::Tag`].
 ///
 /// # Errors
 ///
@@ -302,24 +302,37 @@ pub fn tokenize(input: impl Into<String>) -> Result<Vec<Token>, LexError> {
     let mut tokens: Vec<Token> = Vec::with_capacity(input.len() / 4);
     let mut pos = 0;
     loop {
-        let Some(starting) = input[pos..].find('[') else {
+        let next = [
+            input[pos..].find('[').map(|i| (i, b'[')),
+            input[pos..].find(']').map(|i| (i, b']')),
+        ]
+        .into_iter()
+        .flatten()
+        .min_by_key(|(i, _)| *i);
+
+        let Some((starting, kind)) = next else {
             if pos < input.len() {
                 tokens.push(Token::Text(Cow::Owned(input[pos..].to_string())));
             }
             break;
         };
         let abs_starting = starting + pos;
-        // wtf does this mean
-        if abs_starting > 0 && input.as_bytes().get(abs_starting.wrapping_sub(1)) == Some(&b'\\') {
-            let before = &input[pos..abs_starting - 1];
-            if !before.is_empty() {
-                tokens.push(Token::Text(Cow::Owned(before.to_string())));
+
+        if kind == b']' {
+            if pos != abs_starting {
+                tokens.push(Token::Text(Cow::Owned(input[pos..abs_starting].to_string())));
             }
-            tokens.push(Token::Text(Cow::Borrowed("[")));
-            pos = abs_starting + 1;
+            if input.as_bytes().get(abs_starting + 1) == Some(&b']') {
+                tokens.push(Token::Text(Cow::Borrowed("]")));
+                pos = abs_starting + 2;
+            } else {
+                tokens.push(Token::Text(Cow::Borrowed("]")));
+                pos = abs_starting + 1;
+            }
             continue;
         }
 
+        // kind == b'['
         if abs_starting > 0 && input.as_bytes().get(abs_starting.wrapping_sub(1)) == Some(&b'\x1b')
         {
             tokens.push(Token::Text(Cow::Owned(
@@ -329,10 +342,18 @@ pub fn tokenize(input: impl Into<String>) -> Result<Vec<Token>, LexError> {
             continue;
         }
 
+        if input.as_bytes().get(abs_starting + 1) == Some(&b'[') {
+            let before = &input[pos..abs_starting];
+            if !before.is_empty() {
+                tokens.push(Token::Text(Cow::Owned(before.to_string())));
+            }
+            tokens.push(Token::Text(Cow::Borrowed("[")));
+            pos = abs_starting + 2;
+            continue;
+        }
+
         if pos != abs_starting {
-            tokens.push(Token::Text(Cow::Owned(
-                input[pos..abs_starting].to_string(),
-            )));
+            tokens.push(Token::Text(Cow::Owned(input[pos..abs_starting].to_string())));
         }
 
         let Some(closing) = input[abs_starting..].find(']') else {
@@ -607,25 +628,68 @@ mod tests {
     }
 
     #[test]
-    fn test_tokenize_escaped_bracket_at_start() {
-        let tokens = tokenize("\\[not a tag]").unwrap();
+    fn test_tokenize_double_bracket_escape() {
+        let tokens = tokenize("[[not a tag]").unwrap();
         assert_eq!(
             tokens,
-            vec![Token::Text("[".into()), Token::Text("not a tag]".into()),]
+            vec![
+                Token::Text("[".into()),
+                Token::Text("not a tag".into()),
+                Token::Text("]".into()),
+            ]
         );
     }
 
     #[test]
-    fn test_tokenize_escaped_bracket_with_prefix() {
-        let tokens = tokenize("before\\[not a tag]").unwrap();
+    fn test_tokenize_double_bracket_escape_with_prefix() {
+        let tokens = tokenize("before[[not a tag]").unwrap();
         assert_eq!(
             tokens,
             vec![
                 Token::Text("before".into()),
                 Token::Text("[".into()),
-                Token::Text("not a tag]".into()),
+                Token::Text("not a tag".into()),
+                Token::Text("]".into()),
             ]
         );
+    }
+
+    #[test]
+    fn test_tokenize_double_bracket_symmetric() {
+        let tokens = tokenize("[[thing]]").unwrap();
+        assert_eq!(
+            tokens,
+            vec![
+                Token::Text("[".into()),
+                Token::Text("thing".into()),
+                Token::Text("]".into()),
+            ]
+        );
+    }
+
+    #[test]
+    fn test_tokenize_bare_close_bracket_is_text() {
+        let tokens = tokenize("hello]world").unwrap();
+        assert_eq!(
+            tokens,
+            vec![
+                Token::Text("hello".into()),
+                Token::Text("]".into()),
+                Token::Text("world".into()),
+            ]
+        );
+    }
+
+    #[test]
+    fn test_tokenize_double_close_bracket_emits_one() {
+        let tokens = tokenize("]]").unwrap();
+        assert_eq!(tokens, vec![Token::Text("]".into())]);
+    }
+
+    #[test]
+    fn test_tokenize_triple_close_bracket_emits_two() {
+        let tokens = tokenize("]]]").unwrap();
+        assert_eq!(tokens, vec![Token::Text("]".into()), Token::Text("]".into())]);
     }
 
     #[test]

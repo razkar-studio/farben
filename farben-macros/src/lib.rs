@@ -37,7 +37,8 @@ fn load_registry() {
                 key,
                 farben_core::ansi::Style::parse(format!("[{value}]"))
                     .unwrap_or_else(|e| panic!("farben: invalid style in registry '{key}': {e}")),
-            );
+            )
+            .unwrap_or_else(|e| panic!("farben: invalid style name in registry '{key}': {e}"));
         }
 
         for line in prefixes_section.lines() {

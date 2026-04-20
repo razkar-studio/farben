@@ -13,12 +13,18 @@
 pub enum RegistryError {
     /// The `prefix!` macro was called with a style name that has not been registered.
     UnknownStyle(String),
+    /// A style name was registered that contains `[` or `]`, which are reserved as tag delimiters.
+    InvalidName(String),
 }
 
 impl std::fmt::Display for RegistryError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::UnknownStyle(s) => write!(f, "unknown style: '{s}' has not been registered"),
+            Self::InvalidName(s) => write!(
+                f,
+                "invalid style name '{s}': '[' and ']' are not allowed in style names"
+            ),
         }
     }
 }

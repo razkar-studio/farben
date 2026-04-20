@@ -19,12 +19,21 @@ static REGISTRY: OnceLock<Mutex<HashMap<String, Arc<Style>>>> = OnceLock::new();
 /// Registers a named style in the global registry.
 ///
 /// If a style with `name` already exists, it is replaced.
-pub fn insert_style(name: impl Into<String>, style: Style) {
+///
+/// # Errors
+///
+/// Returns [`RegistryError::InvalidName`] if `name` contains `[` or `]`.
+pub fn insert_style(name: impl Into<String>, style: Style) -> Result<(), RegistryError> {
+    let name = name.into();
+    if name.contains('[') || name.contains(']') {
+        return Err(RegistryError::InvalidName(name));
+    }
     REGISTRY
         .get_or_init(|| Mutex::new(HashMap::new()))
         .lock()
         .unwrap()
-        .insert(name.into(), Arc::new(style));
+        .insert(name, Arc::new(style));
+    Ok(())
 }
 
 /// Sets the prefix string for an already-registered named style.

@@ -6,6 +6,37 @@ farben, farben-core, farben-macros, farben-build, farben-md.
 as
 frb / v, core, macros, build, md
 
+## Unreleased
+
+### Changed
+- Escape syntax changed from `\[` to `[[` for consistency with Rust's `{{`/`}}` format string escaping. `\[` is removed.
+- `]]` now produces a literal `]`. Multiple consecutive brackets follow greedy left-to-right pairing: `]]]` produces `]]`.
+- `insert_style` now returns `Result<(), RegistryError>` instead of `()`. Style names containing `[` or `]` are rejected with `RegistryError::InvalidName`.
+
+### Breaking
+- `\[` no longer escapes brackets. Replace with `[[`.
+- `insert_style` signature changed from `fn(name, style)` to `fn(name, style) -> Result<(), RegistryError>`. Callers using `farben-core` directly must handle the result. The `style!()` macro is unaffected.
+
+### Migrating
+* If you never used `\\[` in markup strings and never called `insert_style` directly, you are safe. No changes needed.
+* Otherwise:
+1. Replace every `\\[` in farben markup strings with `[[`.
+```rust
+// Before
+cprintln!("Use \\[red] for red text.");
+// After
+cprintln!("Use [[red] for red text.");
+```
+2. If you call `insert_style` directly from `farben-core`, handle the returned `Result`.
+```rust
+// Before
+farben_core::registry::insert_style("danger", style);
+// After
+farben_core::registry::insert_style("danger", style)
+    .unwrap_or_else(|e| panic!("{e}"));
+```
+3. The `style!()` macro is unchanged.
+
 ## v0.18.1 — 2026-04-20
 
 Minor README update
@@ -813,7 +844,7 @@ Public Farben Update. Changes to `farben-core`, `farben`, and `farben-macros` is
 - Emphasis tags: `[bold]`, `[dim]`, `[italic]`, `[underline]`, `[blink]`, `[strikethrough]`
 - Multi-tag brackets: `[bold red]`, `[italic rgb(255,0,0)]`
 - Reset tag `[/]` to clear all active styles
-- Escape sequence `\[` to treat `[` as a literal character
+- Escape sequence `\[` to treat `[` as a literal character (replaced by `[[` in v0.18.2)
 - `LexError` with variants `UnclosedTag`, `InvalidTag`, `InvalidValue`, `InvalidArgumentCount`
 - Foreground and background color support via `Ground` enum
 - Automatic reset appended to all `color()` and `try_color()` output

@@ -21,7 +21,8 @@
 #[macro_export]
 macro_rules! style {
     ($name:expr, $markup:expr) => {
-        $crate::insert_style($name, $crate::Style::parse($markup).unwrap());
+        $crate::insert_style($name, $crate::Style::parse($markup).unwrap())
+            .unwrap_or_else(|e| panic!("{}", e));
     };
 }
 

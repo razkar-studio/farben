@@ -69,7 +69,7 @@ fn test_try_color_bold_and_named_color() {
 #[test]
 fn test_try_color_escaped_bracket() {
     unsafe { std::env::set_var("FORCE_COLOR", "1") };
-    let result = try_color("\\[not a tag]");
+    let result = try_color("[[not a tag]");
     assert!(result.is_ok());
     assert!(result.unwrap().starts_with('['));
 }
