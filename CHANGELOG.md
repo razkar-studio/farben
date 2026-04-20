@@ -12,10 +12,11 @@ frb / v, core, macros, build, md
 - Escape syntax changed from `\[` to `[[` for consistency with Rust's `{{`/`}}` format string escaping. `\[` is removed.
 - `]]` now produces a literal `]`. Multiple consecutive brackets follow greedy left-to-right pairing: `]]]` produces `]]`.
 - `insert_style` now returns `Result<(), RegistryError>` instead of `()`. Style names containing `[` or `]` are rejected with `RegistryError::InvalidName`.
+- `farben`'s prelude and `lib.rs` now exposes the `RegistryError` error
 
 ### Breaking
 - `\[` no longer escapes brackets. Replace with `[[`.
-- `insert_style` signature changed from `fn(name, style)` to `fn(name, style) -> Result<(), RegistryError>`. Callers using `farben-core` directly must handle the result. The `style!()` macro is unaffected.
+- `insert_style` signature changed from `fn(name, style)` to `fn(name, style) -> Result<(), RegistryError>`. Callers using `farben-core` directlFarben y must handle the result. The `style!()` macro is unaffected.
 
 ### Migrating
 * If you never used `\\[` in markup strings and never called `insert_style` directly, you are safe. No changes needed.
