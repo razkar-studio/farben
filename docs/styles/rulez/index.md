@@ -61,7 +61,7 @@ When calling `farben_build::core::parse()` directly (for example, to power your 
 error = "[bold red]"
 ```
 
-::: note
+::: info
 It is generally safer to always write values with explicit brackets and adjust the consumer accordingly. This avoids ambiguity when switching between `farben-build` codegen and direct `core::parse()` usage.
 :::
 
