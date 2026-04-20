@@ -65,7 +65,7 @@ pub fn run_with(paths: &[&str]) {
 
     for (key, value) in &all_styles {
         code.push_str(&format!(
-            "    farben::insert_style({key:?}, farben::Style::parse({markup:?}).unwrap_or_else(|e| panic!(\"{{e}}\")));\n",
+            "    farben::insert_style({key:?}, farben::Style::parse({markup:?}).unwrap_or_else(|e| panic!(\"{{e}}\"))).unwrap_or_else(|e| panic!(\"{{e}}\"));\n",
             markup = format!("[{value}]")
         ));
     }
