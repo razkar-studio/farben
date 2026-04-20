@@ -4,6 +4,24 @@
 //! [`cwrite!`], [`cwriteln!`], [`cwriteb!`], [`cwritebln!`]. Each macro has two implementations
 //! selected by `#[cfg]`: a runtime variant and a compile-time variant activated by the `compile` feature.
 
+/// Deprecated in favor of `cformat!`.
+///
+/// Parses and renders a farben markup string with format arguments, appending a final SGR reset.
+///
+/// Behaves like [`format!`] but processes farben markup tags in the resulting string.
+///
+/// # Panics
+///
+/// Panics if the input is not valid farben markup.
+#[cfg(not(feature = "compile"))]
+#[deprecated = "in favor of cformat"]
+#[macro_export]
+macro_rules! color_fmt {
+    ($($arg:tt)*) => {
+        $crate::cformat!($($arg)*)
+    };
+}
+
 /// Parses and renders a farben markup string with format arguments, appending a final SGR reset.
 ///
 /// Behaves like [`format!`] but processes farben markup tags in the resulting string.
@@ -13,9 +31,28 @@
 /// Panics if the input is not valid farben markup.
 #[cfg(not(feature = "compile"))]
 #[macro_export]
-macro_rules! color_fmt {
+macro_rules! cformat {
     ($($arg:tt)*) => {
 $crate::color_runtime(format!($($arg)*), false)
+    };
+}
+
+/// Deprecated in favor of `cformat!`
+///
+/// Parses and renders a farben markup string with format arguments, appending a final SGR reset.
+///
+/// Behaves like [`format!`] but processes farben markup tags in the resulting string.
+/// The format string is validated at compile time.
+///
+/// # Panics
+///
+/// Panics if the input is not valid farben markup.
+#[cfg(feature = "compile")]
+#[deprecated = "in favor of cformat"]
+#[macro_export]
+macro_rules! color_fmt {
+    ($fmt:literal $(, $arg:expr)*) => {
+        $crate::color_runtime(format!($crate::validate_color!($fmt) $(, $arg)*), false)
     };
 }
 
@@ -29,9 +66,40 @@ $crate::color_runtime(format!($($arg)*), false)
 /// Panics if the input is not valid farben markup.
 #[cfg(feature = "compile")]
 #[macro_export]
-macro_rules! color_fmt {
+macro_rules! cformat {
     ($fmt:literal $(, $arg:expr)*) => {
         $crate::color_runtime(format!($crate::validate_color!($fmt) $(, $arg)*), false)
+    };
+}
+
+/// Parses and renders a farben markup string with format arguments, without appending a reset.
+///
+/// Like [`cformat!`] but styles bleed into subsequent output.
+///
+/// # Panics
+///
+/// Panics if the input is not valid farben markup.
+#[cfg(not(feature = "compile"))]
+#[macro_export]
+macro_rules! cformatb {
+    ($($arg:tt)*) => {
+        $crate::color_runtime(format!($($arg)*), true)
+    };
+}
+
+/// Parses and renders a farben markup string with format arguments, without appending a reset.
+///
+/// Like [`cformat!`] but styles bleed into subsequent output.
+/// The format string is validated at compile time.
+///
+/// # Panics
+///
+/// Panics if the input is not valid farben markup.
+#[cfg(feature = "compile")]
+#[macro_export]
+macro_rules! cformatb {
+    ($fmt:literal $(, $arg:expr)*) => {
+        $crate::color_runtime(format!($crate::validate_color!($fmt) $(, $arg)*), true)
     };
 }
 

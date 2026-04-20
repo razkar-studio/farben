@@ -11,36 +11,21 @@
 //! ```rust
 //! use farben::prelude::*;
 //!
-//! // try_color returns Result<String, LexError>; LexError is re-exported
-//! // here so callers can pattern-match without a separate import.
-//! match try_color("[red]Hello[/]") {
-//!     Ok(s) => print!("{s}"),
-//!     Err(e) => eprintln!("parse error: {e}"),
-//! }
+//! cprintln!("[bold green]Done![/] All tests passed.");
 //! ```
 //!
 //! # What is included
 //!
 //! | Item | Condition |
 //! |------|-----------|
-//! | [`try_color`], [`strip_ansi`] | always |
-//! | [`color`], [`colorb`] | always (function without `compile`; proc-macro with `compile`) |
-//! | [`markdown`] | `markdown` or `markdown-compile` feature |
-//! | [`LexError`] | always (needed to match on [`try_color`] results) |
-//! | [`color_fmt!`], [`cprint!`], [`cprintln!`], [`cprintb!`], [`cprintbln!`], [`cwrite!`], [`cwriteln!`], [`cwriteb!`], [`cwritebln!`] | always |
+//! | [`color`], [`colorb`] | always |
+//! | [`LexError`] | always |
+//! | [`cformat!`], [`cprint!`], [`cprintln!`], [`cprintb!`], [`cprintbln!`] | always |
+//! | [`cwrite!`], [`cwriteln!`], [`cwriteb!`], [`cwritebln!`] | always |
 //! | [`ceprint!`], [`ceprintln!`], [`ceprintb!`], [`ceprintbln!`] | always |
-//! | [`ansi_strip!`] | always |
-//! | [`markup_strip!`] | always |
-//! | [`md_fmt!`], [`mdprint!`], [`mdprintln!`], [`mdeprint!`], [`mdeprintln!`] | `markdown` or `markdown-compile` feature |
+//! | [`ansi_strip!`], [`markup_strip!`] | always |
+//! | [`expand!`] | always |
 //! | [`style!`], [`prefix!`] | `format` feature |
-//! | [`Style`], [`insert_style`], [`set_prefix`] | `format` feature |
-//!
-//! `color_runtime` and `validate_color` are excluded. Both are `pub` only so
-//! that Farben's procedural macros can call them; they carry no stability
-//! guarantees and are not part of the user-facing API.
-
-pub use crate::strip_ansi;
-pub use crate::try_color;
 
 #[cfg(not(feature = "compile"))]
 pub use crate::{color, colorb};
@@ -48,13 +33,13 @@ pub use crate::{color, colorb};
 #[cfg(feature = "compile")]
 pub use crate::{color, colorb};
 
-#[cfg(any(feature = "markdown", feature = "markdown-compile"))]
-pub use crate::markdown;
+pub use farben_core::errors::LexError;
 
-pub use farben_core::errors::{LexError, RegistryError};
+#[allow(deprecated)]
+pub use crate::color_fmt;
 
 pub use crate::{
-    color_fmt, cprint, cprintb, cprintbln, cprintln, cwrite, cwriteb, cwritebln, cwriteln,
+    cformat, cformatb, cprint, cprintb, cprintbln, cprintln, cwrite, cwriteb, cwritebln, cwriteln,
 };
 
 pub use crate::{ceprint, ceprintb, ceprintbln, ceprintln};
@@ -63,11 +48,8 @@ pub use crate::expand;
 
 pub use crate::{ansi_strip, markup_strip};
 
-#[cfg(any(feature = "markdown", feature = "markdown-compile"))]
-pub use crate::{md_fmt, mdeprint, mdeprintln, mdprint, mdprintln};
-
-#[cfg(feature = "format")]
-pub use crate::{insert_style, set_prefix};
-
 #[cfg(feature = "format")]
 pub use crate::{prefix, style};
+
+#[cfg(any(feature = "markdown", feature = "markdown-compile"))]
+pub use crate::{md_fmt, mdeprint, mdeprintln, mdprint, mdprintln};

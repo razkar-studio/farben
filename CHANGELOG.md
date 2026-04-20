@@ -6,7 +6,24 @@ farben, farben-core, farben-macros, farben-build, farben-md.
 as
 frb / v, core, macros, build, md
 
-## Unreleased
+## [Unreleased]
+
+v0.19.0-alpha.2
+
+### Added
+- `cformat!` and `cformatb!` macros as the new standard formatting interface, deprecated `color_fmt!`
+- Expression match arms to `ansi_strip!` and `markup_strip!`
+
+### Changed
+- Prelude trimmed down: removed `try_color`, `strip_ansi`, `RegistryError`, `Style`, `insert_style`, `set_prefix`, and `color_fmt!`. These remain accessible via explicit imports.
+- `md_fmt!`, `mdprint!`, `mdprintln!`, `mdeprint!`, `mdeprintln!`, `farben-md` will be removed after 0.19 stable.
+
+### Deprecated
+- `color_fmt!`, use `cformat!` instead.
+
+## [Unreleased]
+
+v0.19.0-alpha.1
 
 ### Changed
 - Escape syntax changed from `\[` to `[[` for consistency with Rust's `{{`/`}}` format string escaping. `\[` is removed.

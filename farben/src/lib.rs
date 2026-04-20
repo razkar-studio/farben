@@ -20,7 +20,7 @@
 //!
 //! | Feature | What it adds |
 //! |---|---|
-//! | *(default)* | Runtime coloring: [`color`], [`colorb`], [`try_color`], [`cprint!`], [`cprintln!`], [`cprintb!`], [`cprintbln!`], [`cwrite!`], [`cwriteln!`], [`cwriteb!`], [`cwritebln!`], [`color_fmt!`] |
+//! | *(default)* | Runtime coloring: [`color`], [`colorb`], [`cformat!`], [`cprint!`], [`cprintln!`], [`cprintb!`], [`cprintbln!`], [`cwrite!`], [`cwriteln!`], [`cwriteb!`], [`cwritebln!`] |
 //! | `compile` | Compile-time validation of markup strings via proc macros |
 //! | `format` | Named style registry: [`style!`], [`prefix!`] |
 //! | `markdown` | Runtime inline markdown rendering: [`markdown`], [`md_fmt!`], [`mdprint!`], [`mdprintln!`] |

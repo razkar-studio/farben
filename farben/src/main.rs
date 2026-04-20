@@ -1,6 +1,7 @@
 //! Demo binary showcasing the full farben feature set.
 
 use farben::prelude::*;
+use farben::try_color;
 
 fn main() {
     cprintln!("[rgb(128,0,255)]RGB purple");
@@ -77,7 +78,7 @@ fn showcase() {
         version
     );
     let pct = 91u8;
-    println!("{}", color_fmt!("Disk usage: [bold red]{}%[/]", pct));
+    println!("{}", cformat!("Disk usage: [bold red]{}%[/]", pct));
 
     section("color() and try_color()");
     println!(
@@ -123,7 +124,7 @@ fn showcase() {
 
     section("ANSI Stripping");
     let colored = color("[bold red]this is colored[/]");
-    let plain = strip_ansi(&colored);
+    let plain = ansi_strip!(&colored);
     println!("colored  : {colored}");
     println!("stripped : {plain}");
     let stripped_fmt = ansi_strip!("{}", color("[rgb(255,128,0)]formatted and stripped[/]"));
