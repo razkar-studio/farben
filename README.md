@@ -149,7 +149,7 @@ match try_color("[invalid]oops") {
 
 ## Known Limitations
 
-The `compile` feature processes markup at build time and bakes ANSI codes directly into the binary. As a result, `NO_COLOR`, `FORCE_COLOR`, and TTY detection are only respected at build time, not at end-user runtime. They are fundamentally different, and I cannot solve this. Use the runtime macros (default features) if you need full environment awareness.
+None at the moment! :tada:
 
 ## Contributing
 

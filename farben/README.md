@@ -75,14 +75,7 @@ cprintln!("into this.");
 
 # Known Limitations
 
-**Custom named tags are not validated at compile time.** The `compile` feature validates
-markup strings via proc macros, but it has no visibility into styles registered at runtime
-via [`style!`]. Using a custom tag like `[warn]` with `compile` active will fail to compile
-even if the style is registered before use. Stick to runtime macros (`cprintln!` without
-`compile`) when working with custom tags.
-
-This feature is a work in progress and I am currently working towards building it.
-Make awesome things with Farben.
+None at the moment! :tada:
 
 ## Syntax
 
