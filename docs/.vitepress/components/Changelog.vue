@@ -55,6 +55,40 @@ function crateClass(crate) {
 
 const releases = [
     {
+        version: "core0.13.4 / macros0.6.0 / frb0.18.0 / build0.1.4",
+        crate: "Global",
+        subtitle: "Compile-time Runtime Detection",
+        date: "2026-04-20",
+        sections: [
+            {
+                type: "Added",
+                items: [
+                    "<code>strip_markup(input: &str) -> String</code> in <code>farben-core::strip</code>: strips farben markup tags from a string, returning plain text. Re-exported from <code>farben</code> as <code>farben::strip_markup</code>.",
+                    "<code>markup_strip!</code> macro that behaves the same as <code>ansi_strip!</code> but uses <code>strip_markup</code>",
+                    "<code>render_forced(tokens: Vec&lt;Token&gt;) -> String</code> in <code>farben-core::parser</code>: renders tokens to ANSI unconditionally, bypassing <code>color_enabled()</code>. Used internally by <code>color!</code> and <code>colorb!</code> to ensure the styled variant is always baked in regardless of the build environment.",
+                    "<code>FarbenStr</code> in <code>farben</code>: a compile-time string pair holding both a styled and plain <code>&'static str</code> variant. Resolved at the end user's runtime via <code>FarbenStr::resolve()</code> and <code>Display</code>.",
+                    "<code>color_enabled()</code> re-exported from <code>farben</code>: previously only accessible via <code>farben_core</code> directly.",
+                    "Doc comments in <code>init_styles()</code> of <code>farben_build</code>.",
+                ],
+            },
+            {
+                type: "Changed",
+                items: [
+                    "<code>color!</code> and <code>colorb!</code> now emit a <code>FarbenStr</code> instead of a bare <code>&'static str</code>, baking both ANSI and plain variants into the binary and deferring <code>NO_COLOR</code>/<code>FORCE_COLOR</code>/TTY detection to the end user's runtime.",
+                    "<code>render()</code> now delegates its ANSI rendering path to <code>render_forced()</code>.",
+                    "The <code>FORCE_COLOR</code> build-time hack in <code>color!</code> and <code>colorb!</code> has been removed.",
+                ],
+            },
+            {
+                type: "Breaking",
+                items: [
+                    "<code>color!</code> and <code>colorb!</code> no longer return <code>&'static str</code>. Code storing the result directly as <code>&str</code> must call <code>.resolve()</code> explicitly. Usage inside <code>cprintln!</code>, <code>cprint!</code>, <code>cwrite!</code>, and all other print/write macros is unaffected.",
+                    "Migration guides are in the repo's CHANGELOG.",
+                ],
+            },
+        ],
+    },
+    {
         version: "build0.1.3",
         crate: "farben-build",
         date: "2026-04-19",
@@ -1129,6 +1163,11 @@ const releases = [
 .section-badge.fixed {
     background-color: var(--vp-c-red-soft);
     color: var(--vp-c-red-1);
+}
+
+.section-badge.breaking {
+    background-color: var(--vp-c-danger-soft);
+    color: var(--vp-c-danger-1);
 }
 
 .section-items {

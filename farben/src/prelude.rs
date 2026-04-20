@@ -30,6 +30,7 @@
 //! | [`color_fmt!`], [`cprint!`], [`cprintln!`], [`cprintb!`], [`cprintbln!`], [`cwrite!`], [`cwriteln!`], [`cwriteb!`], [`cwritebln!`] | always |
 //! | [`ceprint!`], [`ceprintln!`], [`ceprintb!`], [`ceprintbln!`] | always |
 //! | [`ansi_strip!`] | always |
+//! | [`markup_strip!`] | always |
 //! | [`md_fmt!`], [`mdprint!`], [`mdprintln!`], [`mdeprint!`], [`mdeprintln!`] | `markdown` or `markdown-compile` feature |
 //! | [`style!`], [`prefix!`] | `format` feature |
 //! | [`Style`], [`insert_style`], [`set_prefix`] | `format` feature |
@@ -60,7 +61,7 @@ pub use crate::{ceprint, ceprintb, ceprintbln, ceprintln};
 
 pub use crate::expand;
 
-pub use crate::ansi_strip;
+pub use crate::{ansi_strip, markup_strip};
 
 #[cfg(any(feature = "markdown", feature = "markdown-compile"))]
 pub use crate::{md_fmt, mdeprint, mdeprintln, mdprint, mdprintln};

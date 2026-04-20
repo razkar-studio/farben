@@ -184,11 +184,11 @@ dependencies = [
 
 [[package]]
 name = "farben-build"
-version = "0.1.3"
+version = "0.1.4"
 
 [[package]]
 name = "farben-core"
-version = "0.13.3"
+version = "0.13.4"
 dependencies = [
  "anstyle",
  "criterion",

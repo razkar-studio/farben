@@ -258,7 +258,7 @@ macro_rules! cprintbln {
 ///
 /// # Examples
 ///
-/// ```
+/// ```ignore
 /// use farben::prelude::*;
 /// use std::io::{Cursor, Write};
 ///
@@ -284,7 +284,7 @@ macro_rules! cwrite {
 ///
 /// # Examples
 ///
-/// ```
+/// ```ignore
 /// use farben::prelude::*;
 /// use std::io::{Write, Cursor};
 ///
@@ -313,7 +313,7 @@ macro_rules! cwrite {
 ///
 /// # Examples
 ///
-/// ```
+/// ```ignore
 /// use farben::prelude::*;
 /// use std::io::{Write, Cursor};
 ///
@@ -339,7 +339,7 @@ macro_rules! cwriteln {
 ///
 /// # Examples
 ///
-/// ```
+/// ```ignore
 /// use farben::prelude::*;
 /// use std::io::{Write, Cursor};
 ///

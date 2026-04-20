@@ -4,36 +4,6 @@
 //! used by SGR color codes (e.g. `\x1b[31m`, `\x1b[0m`). OSC, DCS, and
 //! other escape sequence types are passed through unchanged.
 
-/// Remove all CSI ANSI escape sequences from `input` and return the plain text.
-///
-/// Scans `input` character by character. Any sequence matching `ESC [ <params> <letter>`
-/// is consumed and dropped. All other characters, including bare `ESC` bytes that are
-/// not followed by `[`, are passed through as-is.
-///
-/// Typical uses: measuring display width of colored strings, writing plain-text
-/// log lines from pre-colored output, or feeding output to tools that do not
-/// interpret ANSI codes.
-///
-/// # Arguments
-///
-/// * `input` - A string slice that may contain CSI ANSI escape sequences.
-///
-/// # Returns
-///
-/// A new [`String`] with all CSI sequences removed and all other content preserved.
-///
-/// # Examples
-///
-/// ```
-/// use farben_core::strip::strip_ansi;
-///
-/// let colored = "\x1b[31mred text\x1b[0m";
-/// assert_eq!(strip_ansi(colored), "red text");
-///
-/// // Bare ESC bytes not followed by '[' are preserved.
-/// let bare_esc = "\x1bhello";
-/// assert_eq!(strip_ansi(bare_esc), "\x1bhello");
-/// ```
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -87,10 +57,36 @@ mod tests {
     }
 }
 
-/// Removes all ANSI escape sequences from the input string.
+/// Remove all CSI ANSI escape sequences from `input` and return the plain text.
 ///
-/// Strips CSI sequences (SGR color codes). Other escape sequences
-/// like OSC or DCS are passed through. Returns plain text.
+/// Scans `input` character by character. Any sequence matching `ESC [ <params> <letter>`
+/// is consumed and dropped. All other characters, including bare `ESC` bytes that are
+/// not followed by `[`, are passed through as-is.
+///
+/// Typical uses: measuring display width of colored strings, writing plain-text
+/// log lines from pre-colored output, or feeding output to tools that do not
+/// interpret ANSI codes.
+///
+/// # Arguments
+///
+/// * `input` - A string slice that may contain CSI ANSI escape sequences.
+///
+/// # Returns
+///
+/// A new [`String`] with all CSI sequences removed and all other content preserved.
+///
+/// # Examples
+///
+/// ```
+/// use farben_core::strip::strip_ansi;
+///
+/// let colored = "\x1b[31mred text\x1b[0m";
+/// assert_eq!(strip_ansi(colored), "red text");
+///
+/// // Bare ESC bytes not followed by '[' are preserved.
+/// let bare_esc = "\x1bhello";
+/// assert_eq!(strip_ansi(bare_esc), "\x1bhello");
+/// ```
 pub fn strip_ansi(input: &str) -> String {
     let mut output = String::new();
     let mut chars = input.chars();
@@ -117,4 +113,32 @@ pub fn strip_ansi(input: &str) -> String {
         }
     }
     output
+}
+
+/// Strips farben markup tags from a string, returning plain text only.
+///
+/// Tokenizes `input` and strips all tokens recognized as tags. Invalid tags are left as-is without panicking.
+///
+/// # Example
+/// ```
+/// use farben_core::strip::strip_markup;
+///
+/// let stripped = strip_markup("[bold red]Just the text");
+/// assert_eq!("Just the text", stripped);
+///
+/// let invalid = strip_markup("[I'm unclosed");
+/// assert_eq!("[I'm unclosed", invalid);
+/// ```
+pub fn strip_markup(input: &str) -> String {
+    match crate::lexer::tokenize(input) {
+        Ok(tokens) => tokens
+            .into_iter()
+            .filter_map(|t| match t {
+                crate::lexer::Token::Text(s) => Some(s.into_owned()),
+                crate::lexer::Token::Tag(crate::lexer::TagType::Prefix(s)) => Some(s),
+                _ => None,
+            })
+            .collect(),
+        Err(_) => input.to_owned(),
+    }
 }

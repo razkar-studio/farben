@@ -103,7 +103,7 @@ pub use functions::*;
 
 pub mod prelude;
 
-pub use farben_core::strip::strip_ansi;
+pub use farben_core::strip::{strip_ansi, strip_markup};
 
 mod macros;
 
@@ -111,3 +111,32 @@ pub mod core;
 
 #[cfg(test)]
 mod tests;
+
+pub use farben_core::env::color_enabled;
+
+/// A compile-time colored string with both styled and plain variants.
+/// Resolved at runtime based on environment and TTY detection.
+pub struct FarbenStr {
+    /// The string, when it is styled
+    pub styled: &'static str,
+    /// The string, without styling
+    pub plain: &'static str,
+}
+
+impl FarbenStr {
+    /// Returns the styled string if color is enabled, otherwise the plain string.
+    #[inline]
+    pub fn resolve(&self) -> &'static str {
+        if color_enabled() {
+            self.styled
+        } else {
+            self.plain
+        }
+    }
+}
+
+impl std::fmt::Display for FarbenStr {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.resolve())
+    }
+}

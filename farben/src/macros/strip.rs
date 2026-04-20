@@ -36,3 +36,31 @@ macro_rules! ansi_strip {
         $crate::strip_ansi(&format!($($arg)*))
     }};
 }
+
+/// Formats a string and strips all Farben markup tags from the result.
+///
+/// Accepts the same arguments as [`format!`]. After formatting, every sequence of the form of
+/// Farben markup, `[tag]` is removed. Invalid tags are left as-is without panic.
+///
+/// The return type is `String`
+///
+/// # Example
+/// ```
+/// use farben::prelude::markup_strip;
+///
+/// let stripped = markup_strip!("[bold red]Just the text");
+/// assert_eq!("Just the text", stripped);
+///
+/// let invalid = markup_strip!("[I'm unclosed");
+/// assert_eq!("[I'm unclosed", invalid);
+///
+/// let text = "hey!";
+/// let formatted = markup_strip!("[bold red]{text}");
+/// assert_eq!("hey!", formatted);
+/// ```
+#[macro_export]
+macro_rules! markup_strip {
+    ($($arg:tt)*) => {{
+        $crate::strip_markup(&format!($($arg)*))
+    }};
+}

@@ -12,7 +12,7 @@
 
 use proc_macro::TokenStream;
 use quote::quote;
-use syn::{parse_macro_input, LitStr};
+use syn::{LitStr, parse_macro_input};
 
 /// Reads `farben_registry.lsv` from `OUT_DIR` and pre-populates the compile-time registry.
 ///
@@ -70,11 +70,6 @@ fn load_registry() {
 #[proc_macro]
 pub fn color(input: TokenStream) -> TokenStream {
     load_registry();
-    if std::env::var("NO_COLOR").is_err() {
-        unsafe {
-            std::env::set_var("FORCE_COLOR", "1");
-        }
-    }
 
     let input = parse_macro_input!(input as LitStr);
     let value = input.value();
@@ -87,8 +82,12 @@ pub fn color(input: TokenStream) -> TokenStream {
                 .into();
         }
     };
-    let result = format!("{}\x1b[0m", farben_core::parser::render(tokens));
-    quote! { #result }.into()
+    let styled = format!("{}\x1b[0m", farben_core::parser::render_forced(tokens));
+    let plain = farben_core::strip::strip_markup(&input.value());
+    quote! {
+        ::farben::FarbenStr { styled: #styled, plain: #plain }
+    }
+    .into()
 }
 
 /// Parses and colorizes a farben markup string at compile time, without appending a
@@ -112,11 +111,6 @@ pub fn color(input: TokenStream) -> TokenStream {
 #[proc_macro]
 pub fn colorb(input: TokenStream) -> TokenStream {
     load_registry();
-    if std::env::var("NO_COLOR").is_err() {
-        unsafe {
-            std::env::set_var("FORCE_COLOR", "1");
-        }
-    }
 
     let input = parse_macro_input!(input as LitStr);
     let value = input.value();
@@ -129,8 +123,12 @@ pub fn colorb(input: TokenStream) -> TokenStream {
                 .into();
         }
     };
-    let result = farben_core::parser::render(tokens);
-    quote! { #result }.into()
+    let styled = farben_core::parser::render_forced(tokens);
+    let plain = farben_core::strip::strip_markup(&input.value());
+    quote! {
+        ::farben::FarbenStr { styled: #styled, plain: #plain }
+    }
+    .into()
 }
 
 /// Validates farben markup at compile time and returns the original string literal unchanged.

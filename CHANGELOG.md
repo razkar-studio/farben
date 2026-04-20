@@ -6,6 +6,58 @@ farben, farben-core, farben-macros, farben-build, farben-md.
 as
 frb / v, core, macros, build, md
 
+## core0.13.4 / macros0.6.0 / frb0.18.0 / build0.1.4 — 2026-04-20
+
+### Compile-time Runtime Detection
+
+> [!IMPORTANT]
+> **This update introduces breaking changes to `compile` users**. See the Breaking section down below and the migration guide.
+
+#### Added
+- `strip_markup(input: &str) -> String` in `farben-core::strip`: strips farben
+  markup tags from a string, returning plain text. Re-exported from `farben` as
+  `farben::strip_markup`.
+- `markup_strip!` macro that behaves the same as `ansi_strip!` but uses `strip_markup`
+- `render_forced(tokens: Vec<Token>) -> String` in `farben-core::parser`: renders
+  tokens to ANSI unconditionally, bypassing `color_enabled()`. Used internally by
+  the `color!` and `colorb!` proc macros to ensure the styled variant is always
+  baked in regardless of the build environment.
+- `FarbenStr` in `farben`: a compile-time string pair holding both a styled
+  (`&'static str`) and plain (`&'static str`) variant, resolved at the user's
+  runtime via `FarbenStr::resolve()` and `Display`.
+- `color_enabled()` re-exported from `farben`: previously only accessible via
+  `farben_core`.
+- Doc comments of `init_styles()` of `farben-build`.
+
+#### Changed
+- `color!` and `colorb!` now emit a `FarbenStr` instead of a bare `&'static str`,
+  baking both ANSI and plain variants into the binary and deferring the
+  `NO_COLOR`/`FORCE_COLOR`/TTY decision to the end user's runtime.
+- `render()` now delegates its ANSI rendering path to `render_forced()`.
+
+### Breaking
+- `color!` and `colorb!` no longer return `&'static str`. Code storing the result
+  as `&str` must call `.resolve()` explicitly. Usage inside `cprintln!`, `cprint!`,
+  `cwrite!`, and all other print/write macros is unaffected as they go through
+  `Display`.
+
+### Migrating (`compile` users)
+* If you only use `cprintln!`, `cprint!`, etc, then you are safe. No changes needed.
+* But when you directly use `color!` and/or `colorb!`, then follow the steps:
+1. `color!` and `colorb!` no longer return `&'static str`.
+2. Change calls that use `color!`, `colorb!` as an expression of `&'static str` to use `.resolve()`
+3. Example:
+```rust
+use farben::prelude::*;
+
+// change this
+let previous: &str = color!("[bold red]Hi");
+
+// to be
+let new: &str = color!("[bold red]Hi").resolve();
+```
+4. Why? See changes above. The `color!`, `colorb!` procedural macros now return a special `FarbenStr` instead of a `&str`.
+
 ## build0.1.3 — 2026-04-19
 
 ### Added

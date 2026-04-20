@@ -36,6 +36,13 @@ pub fn render(tokens: Vec<Token>) -> String {
             })
             .collect();
     }
+    render_forced(tokens)
+}
+
+/// The same as [`render`], but bypasses the `color_enabled` check.
+///
+/// This means that this function renders directly without checking if color should be enabled.
+pub fn render_forced(tokens: Vec<Token>) -> String {
     let mut result = String::with_capacity(tokens.len() * 16);
     let mut active: Vec<TagType> = active_stack();
     for t in tokens {
