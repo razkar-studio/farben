@@ -756,7 +756,7 @@ mod tests {
 
     #[test]
     fn test_parse_part_custom_style_from_registry() {
-        crate::registry::insert_style("danger", crate::ansi::Style::parse("[bold red]").unwrap());
+        crate::registry::insert_style("danger", crate::ansi::Style::parse("[bold red]").unwrap()).unwrap();
         let result = parse_part("danger", 0).unwrap();
         assert_eq!(
             result,

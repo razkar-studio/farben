@@ -37,6 +37,35 @@ farben_core::registry::insert_style("danger", style)
 ```
 3. The `style!()` macro is unchanged.
 
+### Performance
+
+Measured on the current alpha with Criterion. No v0.18 comparison is available for the new escape cases (they are new functionality); existing cases are compared against stored criterion baselines.
+
+| Benchmark | Time | vs baseline |
+|---|---|---|
+| tokenize plain | 63.9 ns | +2.6% (extra `]` scan per loop) |
+| tokenize complex | 1.085 µs | within noise |
+| render | 211 ns | -1.4% |
+| pipeline (tokenize + render) | 1.361 µs | -10.0% |
+| emphasis_to_ansi | 61.3 ns | -2.2% |
+| color_to_ansi named | 65.5 ns | no change |
+| color_to_ansi rgb | 269 ns | baseline |
+| registry lookup via tokenize | 470 ns | baseline |
+
+New escape baselines (no prior equivalent):
+
+| Benchmark | Time |
+|---|---|
+| tokenize `[[` escape | 175 ns |
+| tokenize `[[...]]` symmetric | 200 ns |
+| tokenize mixed escapes + tags | 705 ns |
+| tokenize bare `]` in text | 197 ns |
+| tokenize `]]` escape | 132 ns |
+
+The only measurable cost from the `]]` scanning addition is the +2.6% overhead on plain strings (no brackets). Strings with markup are unaffected within noise.
+
+I'll try to increase the performance once this version is out of alpha.
+
 ## v0.18.1 — 2026-04-20
 
 Minor README update

@@ -100,12 +100,45 @@ fn bench_color_to_ansi_rgb(c: &mut Criterion) {
 
 fn bench_registry_via_tokenize(c: &mut Criterion) {
     use farben_core::ansi::Style;
-    insert_style(
-        "bench_danger",
-        Style::parse("[bold red]").unwrap(),
-    );
+    insert_style("bench_danger", Style::parse("[bold red]").unwrap()).unwrap();
     c.bench_function("registry lookup via tokenize", |b| {
         b.iter(|| tokenize(black_box("[bench_danger]text")))
+    });
+}
+
+// --- escape sequences ---
+
+fn bench_tokenize_escape_open(c: &mut Criterion) {
+    c.bench_function("tokenize [[ escape", |b| {
+        b.iter(|| tokenize(black_box("use [[bold] to make text bold")))
+    });
+}
+
+fn bench_tokenize_escape_symmetric(c: &mut Criterion) {
+    c.bench_function("tokenize [[...]] symmetric escape", |b| {
+        b.iter(|| tokenize(black_box("[[bold]]")))
+    });
+}
+
+fn bench_tokenize_escape_mixed(c: &mut Criterion) {
+    c.bench_function("tokenize mixed escapes and tags", |b| {
+        b.iter(|| {
+            tokenize(black_box(
+                "[bold red]error:[/] use [[red] for red, [[bold] for bold",
+            ))
+        })
+    });
+}
+
+fn bench_tokenize_bare_close_bracket(c: &mut Criterion) {
+    c.bench_function("tokenize bare ] in text", |b| {
+        b.iter(|| tokenize(black_box("result[0] = value")))
+    });
+}
+
+fn bench_tokenize_double_close_bracket(c: &mut Criterion) {
+    c.bench_function("tokenize ]] escape", |b| {
+        b.iter(|| tokenize(black_box("array syntax: [[0]]")))
     });
 }
 
@@ -119,5 +152,10 @@ criterion_group!(
     bench_color_to_ansi_named,
     bench_color_to_ansi_rgb,
     bench_registry_via_tokenize,
+    bench_tokenize_escape_open,
+    bench_tokenize_escape_symmetric,
+    bench_tokenize_escape_mixed,
+    bench_tokenize_bare_close_bracket,
+    bench_tokenize_double_close_bracket,
 );
 criterion_main!(benches);

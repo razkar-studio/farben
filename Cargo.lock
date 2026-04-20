@@ -184,7 +184,7 @@ dependencies = [
 
 [[package]]
 name = "farben-build"
-version = "0.1.4"
+version = "0.1.5-alpha.1"
 
 [[package]]
 name = "farben-core"

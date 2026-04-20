@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2024"
 
 [build-dependencies]
-farben-build = { path = "../farben-build", version = "0.1.0" }
+farben-build = { path = "../farben-build", version = "0.1.5-alpha.1" }
 
 [dependencies]
 farben = { path = "../farben" }

@@ -80,3 +80,46 @@ pub(crate) fn search_registry(query: impl Into<String>) -> Result<Arc<Style>, Re
         None => Err(RegistryError::UnknownStyle(query)),
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::ansi::Style;
+
+    fn dummy_style() -> Style {
+        Style::parse("[bold]").unwrap()
+    }
+
+    #[test]
+    fn test_insert_style_valid_name_succeeds() {
+        assert!(insert_style("mytest-style", dummy_style()).is_ok());
+    }
+
+    #[test]
+    fn test_insert_style_bracket_in_name_rejected() {
+        assert!(insert_style("[danger]", dummy_style()).is_err());
+    }
+
+    #[test]
+    fn test_insert_style_open_bracket_rejected() {
+        let err = insert_style("bad[name", dummy_style()).unwrap_err();
+        assert!(matches!(err, RegistryError::InvalidName(_)));
+    }
+
+    #[test]
+    fn test_insert_style_close_bracket_rejected() {
+        let err = insert_style("bad]name", dummy_style()).unwrap_err();
+        assert!(matches!(err, RegistryError::InvalidName(_)));
+    }
+
+    #[test]
+    fn test_insert_style_registered_and_retrievable() {
+        insert_style("retrieve-test", dummy_style()).unwrap();
+        assert!(search_registry("retrieve-test").is_ok());
+    }
+
+    #[test]
+    fn test_search_registry_unknown_returns_error() {
+        assert!(search_registry("nonexistent-zzzz").is_err());
+    }
+}

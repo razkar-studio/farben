@@ -51,7 +51,7 @@ pub use crate::{color, colorb};
 #[cfg(any(feature = "markdown", feature = "markdown-compile"))]
 pub use crate::markdown;
 
-pub use farben_core::errors::LexError;
+pub use farben_core::errors::{LexError, RegistryError};
 
 pub use crate::{
     color_fmt, cprint, cprintb, cprintbln, cprintln, cwrite, cwriteb, cwritebln, cwriteln,
