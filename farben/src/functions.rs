@@ -3,6 +3,8 @@
 //! Runtime entry points for parsing and rendering farben markup into ANSI escape sequences.
 //! Also exposes the markdown rendering function when the `markdown` feature is enabled.
 
+use std::sync::OnceLock;
+
 use farben_core::*;
 
 /// Parses and renders a farben markup string, appending a final SGR reset.
@@ -42,6 +44,7 @@ pub fn colorb(input: impl Into<String>) -> String {
     color_runtime(input, true)
 }
 
+static CODE_STYLE_INIT: OnceLock<()> = OnceLock::new();
 /// Parses and renders a farben markup string, appending a final SGR reset.
 ///
 /// The runtime fallback used internally by [`color_fmt!`], [`cprint!`], and [`cprintln!`].
@@ -51,7 +54,17 @@ pub fn colorb(input: impl Into<String>) -> String {
 ///
 /// Panics if the input contains invalid farben markup. Use [`try_color`] for error handling.
 pub fn color_runtime(input: impl Into<String>, bleed: bool) -> String {
+    CODE_STYLE_INIT.get_or_init(|| {
+        if registry::search_registry("code").is_err() {
+            let _ = registry::insert_style(
+                "code",
+                ansi::Style::parse("[bg:ansi(238) bright-white]").unwrap(),
+            );
+        }
+    });
     let input = input.into();
+    #[cfg(feature = "inline")]
+    let input = inline::preprocess(input);
     let tokens = lexer::tokenize(&input).unwrap_or_else(|e| {
         panic!(
             "{}",

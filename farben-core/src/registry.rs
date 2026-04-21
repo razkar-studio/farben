@@ -68,7 +68,7 @@ pub fn set_prefix(name: impl Into<String>, prefix: impl Into<String>) -> Result<
 /// # Errors
 ///
 /// Returns `LexError::InvalidTag` if `query` does not match any registered style name.
-pub(crate) fn search_registry(query: impl Into<String>) -> Result<Arc<Style>, RegistryError> {
+pub fn search_registry(query: impl Into<String>) -> Result<Arc<Style>, RegistryError> {
     let map = REGISTRY
         .get_or_init(|| Mutex::new(HashMap::new()))
         .lock()

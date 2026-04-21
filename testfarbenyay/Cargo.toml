@@ -7,5 +7,5 @@ edition = "2024"
 farben-build = { path = "../farben-build", version = "0.1.5-alpha.1" }
 
 [dependencies]
-farben = { path = "../farben" }
+farben = { path = "../farben", features = ["inline"] }
 farben-core.workspace = true

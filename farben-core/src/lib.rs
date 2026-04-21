@@ -24,3 +24,6 @@ pub mod strip;
 
 #[cfg(feature = "anstyle")]
 pub mod anstyle_conv;
+
+#[cfg(feature = "inline")]
+pub mod inline;

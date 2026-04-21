@@ -196,10 +196,23 @@ fn parse_part(part: &str, position: usize) -> Result<Vec<TagType>, LexError> {
                     }
                     _ => Ok(vec![TagType::ResetOne(Box::new(tag.clone()))]),
                 },
-                _ => Err(LexError::InvalidTag {
-                    tag_content: part.to_string(),
-                    position,
-                }),
+                _ => {
+                    let resets: Vec<TagType> = inner
+                        .iter()
+                        .filter(|t| {
+                            !matches!(
+                                t,
+                                TagType::Prefix(_) | TagType::ResetAll | TagType::ResetOne(_)
+                            )
+                        })
+                        .map(|t| TagType::ResetOne(Box::new(t.clone())))
+                        .collect();
+                    if resets.is_empty() {
+                        Err(LexError::InvalidResetTarget(position))
+                    } else {
+                        Ok(resets)
+                    }
+                }
             }
         }
     } else if let Some(color) = NamedColor::from_str(part) {
@@ -320,7 +333,9 @@ pub fn tokenize(input: impl Into<String>) -> Result<Vec<Token>, LexError> {
 
         if kind == b']' {
             if pos != abs_starting {
-                tokens.push(Token::Text(Cow::Owned(input[pos..abs_starting].to_string())));
+                tokens.push(Token::Text(Cow::Owned(
+                    input[pos..abs_starting].to_string(),
+                )));
             }
             if input.as_bytes().get(abs_starting + 1) == Some(&b']') {
                 tokens.push(Token::Text(Cow::Borrowed("]")));
@@ -353,7 +368,9 @@ pub fn tokenize(input: impl Into<String>) -> Result<Vec<Token>, LexError> {
         }
 
         if pos != abs_starting {
-            tokens.push(Token::Text(Cow::Owned(input[pos..abs_starting].to_string())));
+            tokens.push(Token::Text(Cow::Owned(
+                input[pos..abs_starting].to_string(),
+            )));
         }
 
         let Some(closing) = input[abs_starting..].find(']') else {
@@ -689,7 +706,10 @@ mod tests {
     #[test]
     fn test_tokenize_triple_close_bracket_emits_two() {
         let tokens = tokenize("]]]").unwrap();
-        assert_eq!(tokens, vec![Token::Text("]".into()), Token::Text("]".into())]);
+        assert_eq!(
+            tokens,
+            vec![Token::Text("]".into()), Token::Text("]".into())]
+        );
     }
 
     #[test]
@@ -756,7 +776,8 @@ mod tests {
 
     #[test]
     fn test_parse_part_custom_style_from_registry() {
-        crate::registry::insert_style("danger", crate::ansi::Style::parse("[bold red]").unwrap()).unwrap();
+        crate::registry::insert_style("danger", crate::ansi::Style::parse("[bold red]").unwrap())
+            .unwrap();
         let result = parse_part("danger", 0).unwrap();
         assert_eq!(
             result,

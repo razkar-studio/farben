@@ -8,6 +8,23 @@ frb / v, core, macros, build, md
 
 ## [Unreleased]
 
+frb0.19.0-alpha.3
+core0.14.0-alpha.2
+
+### Added
+- New `inline` feature that renders inline markdown-like syntax (backticks for code, underscores for italic, asterisks for bold) using the `c*` family, see [this issue](https://github.com/razkar-studio/farben/issues/5) for more details.
+- To write a literal inline text, double them: `**literal**`, `__literal__`, ``` ``literal`` ```
+
+### Changed
+- Custom style names can now be used as reset targets: `[style_name]` reapplies all previously active styles in reverse order
+- `color_runtime` automatically registers a default "code" style for wrapped text like `` `code` ``
+- `search_registry` is now public in farben-core
+
+### Deprecated
+- The `markdown` feature and related macros are now explicitly deprecated, will be removed after 0.19 stable
+
+## [Unreleased]
+
 v0.19.0-alpha.2
 
 ### Added

@@ -1,3 +1,5 @@
+//! Deprecated. Will be removed at 0.19 stable in favor of the `inline` feature which works inline with the `c*` family.
+//!
 //! Inline markdown print macros.
 //!
 //! [`md_fmt!`], [`mdprint!`], [`mdprintln!`], [`mdeprint!`], and [`mdeprintln!`] render
@@ -18,6 +20,10 @@
 /// let s = md_fmt!("**hello {}**", name);
 /// ```
 #[cfg(feature = "markdown")]
+#[deprecated(
+    since = "0.18.0",
+    note = "use the `inline` feature, it works with the `c*` family. will be deleted at 0.19 stable"
+)]
 #[macro_export]
 macro_rules! md_fmt {
     ($($arg:tt)*) => {
@@ -38,6 +44,10 @@ macro_rules! md_fmt {
 /// mdprint!("**bold** and *italic*");
 /// ```
 #[cfg(all(feature = "markdown", not(feature = "markdown-compile")))]
+#[deprecated(
+    since = "0.18.0",
+    note = "use the `inline` feature, it works with the `c*` family. will be deleted at 0.19 stable"
+)]
 #[macro_export]
 macro_rules! mdprint {
     () => {
@@ -61,6 +71,10 @@ macro_rules! mdprint {
 /// mdprintln!("**bold** and *italic*");
 /// ```
 #[cfg(all(feature = "markdown", not(feature = "markdown-compile")))]
+#[deprecated(
+    since = "0.18.0",
+    note = "use the `inline` feature, it works with the `c*` family. will be deleted at 0.19 stable"
+)]
 #[macro_export]
 macro_rules! mdprintln {
     () => {
@@ -83,6 +97,10 @@ macro_rules! mdprintln {
 /// mdprint!("**bold** and *italic*");
 /// ```
 #[cfg(feature = "markdown-compile")]
+#[deprecated(
+    since = "0.18.0",
+    note = "use the `inline` feature, it works with the `c*` family. will be deleted at 0.19 stable"
+)]
 #[macro_export]
 macro_rules! mdprint {
     () => {
@@ -108,6 +126,10 @@ macro_rules! mdprint {
 /// mdprintln!("**bold** and *italic*");
 /// ```
 #[cfg(feature = "markdown-compile")]
+#[deprecated(
+    since = "0.18.0",
+    note = "use the `inline` feature, it works with the `c*` family. will be deleted at 0.19 stable"
+)]
 #[macro_export]
 macro_rules! mdprintln {
     () => {
@@ -134,6 +156,10 @@ macro_rules! mdprintln {
 /// mdeprint!("**error:** something went wrong");
 /// ```
 #[cfg(all(feature = "markdown", not(feature = "markdown-compile")))]
+#[deprecated(
+    since = "0.18.0",
+    note = "use the `inline` feature, it works with the `c*` family. will be deleted at 0.19 stable"
+)]
 #[macro_export]
 macro_rules! mdeprint {
     () => {
@@ -157,6 +183,10 @@ macro_rules! mdeprint {
 /// mdeprintln!("**error:** something went wrong");
 /// ```
 #[cfg(all(feature = "markdown", not(feature = "markdown-compile")))]
+#[deprecated(
+    since = "0.18.0",
+    note = "use the `inline` feature, it works with the `c*` family. will be deleted at 0.19 stable"
+)]
 #[macro_export]
 macro_rules! mdeprintln {
     () => {
@@ -179,6 +209,10 @@ macro_rules! mdeprintln {
 /// mdeprint!("**error:** something went wrong");
 /// ```
 #[cfg(feature = "markdown-compile")]
+#[deprecated(
+    since = "0.18.0",
+    note = "use the `inline` feature, it works with the `c*` family. will be deleted at 0.19 stable"
+)]
 #[macro_export]
 macro_rules! mdeprint {
     () => {
@@ -204,6 +238,10 @@ macro_rules! mdeprint {
 /// mdeprintln!("**error:** something went wrong");
 /// ```
 #[cfg(feature = "markdown-compile")]
+#[deprecated(
+    since = "0.18.0",
+    note = "use the `inline` feature, it works with the `c*` family. will be deleted at 0.19 stable"
+)]
 #[macro_export]
 macro_rules! mdeprintln {
     () => {

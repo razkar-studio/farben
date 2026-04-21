@@ -51,5 +51,7 @@ pub use crate::{ansi_strip, markup_strip};
 #[cfg(feature = "format")]
 pub use crate::{prefix, style};
 
+#[allow(deprecated)]
 #[cfg(any(feature = "markdown", feature = "markdown-compile"))]
+#[deprecated = "use the `inline` feature, it works with the `c*` family. will be deleted at 0.19 stable"]
 pub use crate::{md_fmt, mdeprint, mdeprintln, mdprint, mdprintln};
