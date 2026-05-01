@@ -209,11 +209,11 @@ macro_rules! cprintln {
     () => {
         println!()
     };
-    ($fmt:literal) => {
-        println!("{}", $crate::color!($fmt))
-    };
     ($fmt:literal $(, $arg:expr)*) => {
         println!("{}", $crate::color_runtime(format!($crate::validate_color!($fmt) $(, $arg)*), false))
+    };
+    ($fmt:literal) => {
+        println!("{}", $crate::color!($fmt))
     };
 }
 

@@ -32,11 +32,11 @@
 /// ```
 #[macro_export]
 macro_rules! ansi_strip {
-    ($s:expr) => {{
-        $crate::strip_ansi(&$s.to_string())
-    }};
     ($fmt:literal $(, $arg:expr)*) => {{
         $crate::strip_ansi(&format!($fmt $(, $arg)*))
+    }};
+    ($s:expr) => {{
+        $crate::strip_ansi(&$s.to_string())
     }};
 }
 
@@ -63,9 +63,6 @@ macro_rules! ansi_strip {
 /// ```
 #[macro_export]
 macro_rules! markup_strip {
-    ($s:expr) => {{
-        $crate::strip_markup(&$s.to_string())
-    }};
     ($($arg:tt)*) => {{
         $crate::strip_markup(&format!($($arg)*))
     }};

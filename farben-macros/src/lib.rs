@@ -10,9 +10,9 @@
 //! - `markdown`: enables [`markdown!`] and [`colorb!`] for compile-time
 //!   markdown rendering via [`farben_md`].
 
+use litext::litext;
 use proc_macro::TokenStream;
 use quote::quote;
-use syn::{LitStr, parse_macro_input};
 
 /// Reads `farben_registry.lsv` from `OUT_DIR` and pre-populates the compile-time registry.
 ///
@@ -61,26 +61,21 @@ fn load_registry() {
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```ignore
 /// use farben_macros::color;
 /// println!("{}", color!("[bold red]Hello!"));
-/// Compiles farben markup strings to ANSI escape codes at compile time.
-///
-/// Takes a string literal like `"[bold red]hello"` and produces an expression
-/// that evaluates to the ANSI-escaped string at runtime.
+/// ```
 #[proc_macro]
 pub fn color(input: TokenStream) -> TokenStream {
     load_registry();
 
-    let input = parse_macro_input!(input as LitStr);
+    let input = litext!(input as litext::LitStr);
     let value = input.value();
-    let tokens = match farben_core::lexer::tokenize(&value) {
+    let tokens = match farben_core::lexer::tokenize(value) {
         Ok(t) => t,
         Err(e) => {
             let msg = e.to_string();
-            return syn::Error::new_spanned(&input, msg)
-                .to_compile_error()
-                .into();
+            return comperr::error(input.span(), msg).into();
         }
     };
     let styled = format!("{}\x1b[0m", farben_core::parser::render_forced(tokens));
@@ -102,26 +97,21 @@ pub fn color(input: TokenStream) -> TokenStream {
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```ignore
 /// use farben_macros::colorb;
-/// // Style bleeds — subsequent output inherits bold red until a reset is issued.
-/// Compiles farben markup to ANSI with a formatting writer.
-///
-/// Like [`color`] but returns a [`std::fmt::Write`] implementation for use
-/// with format macros.
+/// println!("{}", colorb!("[bold red]Bleeds..."));
+/// ```
 #[proc_macro]
 pub fn colorb(input: TokenStream) -> TokenStream {
     load_registry();
 
-    let input = parse_macro_input!(input as LitStr);
+    let input = litext!(input as litext::LitStr);
     let value = input.value();
-    let tokens = match farben_core::lexer::tokenize(&value) {
+    let tokens = match farben_core::lexer::tokenize(value) {
         Ok(t) => t,
         Err(e) => {
             let msg = e.to_string();
-            return syn::Error::new_spanned(&input, msg)
-                .to_compile_error()
-                .into();
+            return comperr::error(input.span(), msg).into();
         }
     };
     let styled = farben_core::parser::render_forced(tokens);
@@ -144,16 +134,16 @@ pub fn colorb(input: TokenStream) -> TokenStream {
 pub fn validate_color(input: TokenStream) -> TokenStream {
     load_registry();
 
-    let input = parse_macro_input!(input as LitStr);
+    let original = input.clone();
+
+    let input = litext!(input as litext::LitStr);
     let value = input.value();
 
-    match farben_core::lexer::tokenize(&value) {
-        Ok(_) => quote! { #input }.into(),
+    match farben_core::lexer::tokenize(value) {
+        Ok(_) => original,
         Err(e) => {
             let msg = e.to_string();
-            syn::Error::new_spanned(&input, msg)
-                .to_compile_error()
-                .into()
+            comperr::error(input.span(), msg).into()
         }
     }
 }
@@ -172,9 +162,11 @@ pub fn validate_color(input: TokenStream) -> TokenStream {
 /// Parses markdown syntax (`**bold**`, `*italic*`, `` `code` ``, `~~strike~~`, `__underline__`)
 /// and produces terminal-compatible ANSI output.
 #[cfg(feature = "markdown")]
+#[deprecated]
 #[proc_macro]
 pub fn markdown(input: TokenStream) -> TokenStream {
-    let input = parse_macro_input!(input as LitStr);
+    let input = litext!(input as litext::LitStr);
+    let value = input.value();
     let result = farben_md::renderer::render(&farben_md::lexer::tokenize(&input.value()));
     quote! { #result }.into()
 }

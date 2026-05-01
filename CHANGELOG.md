@@ -8,6 +8,15 @@ frb / v, core, macros, build, md
 
 ## [Unreleased]
 
+frb0.19.0-alpha.4
+macros0.7.0-alpha.3
+
+### Changed
+* Removed the `syn` dependency and replaced it with `litext` and `comperr`
+* Fixed bugs regarding the coloring, and ansi/markup stripping macros
+
+## [Unreleased]
+
 frb0.19.0-alpha.3
 core0.14.0-alpha.2
 

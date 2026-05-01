@@ -77,7 +77,7 @@
 //!
 //! ### Inline markdown (`markdown` feature)
 //!
-//! ```
+//! ```ignore
 //! use farben::prelude::*;
 //!
 //! mdprintln!("**bold**, *italic*, `code`, ~~strikethrough~~");

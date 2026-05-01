@@ -1,6 +1,6 @@
 [package]
 name = "farben-macros"
-version = "0.7.0-alpha.1"
+version = "0.7.0-alpha.3"
 edition = "2024"
 description = "Procedural macros for Farben"
 license = "MIT OR Apache-2.0"
@@ -17,9 +17,11 @@ proc-macro = true
 [dependencies]
 farben-core = { workspace = true }
 farben-md = { workspace = true, optional = true }
-syn = "2"
+litext = "1.3"
+comperr = "1"
 quote = "1"
 proc-macro2 = "1"
 
 [features]
+# Deprecated
 markdown = ["farben-md"]
