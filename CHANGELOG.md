@@ -8,6 +8,23 @@ frb / v, core, macros, build, md
 
 ## [Unreleased]
 
+frb0.19.0-alpha.5
+core0.14.0-alpha.3
+
+### Breaking (?) Changes
+- To `inline`: Slashes `/` now act as the inline formatter for italics.
+- \>>> Now `_` is for underlines.
+- Changed documentation
+
+> [!NOTE]
+> Not really 'breaking' in the sense of not compiling. Just something that doesn't look the same anymore for old projects.
+
+### Added
+- Lots of bugs
+- Announcement: <https://razkar-studio.github.io/farben/news>
+
+## [Unreleased]
+
 frb0.19.0-alpha.4
 macros0.7.0-alpha.3
 

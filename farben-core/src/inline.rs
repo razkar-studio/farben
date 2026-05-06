@@ -3,16 +3,17 @@
 //! Transforms shorthand emphasis syntax into farben markup tags before tokenization.
 //! This runs as a pure `String → String` pass; the farben pipeline is unchanged.
 //!
-//! | Syntax | Output |
-//! |--------|--------|
-//! | `*bold*` | `[bold]bold[/]` |
-//! | `_italic_` | `[italic]italic[/]` |
-//! | `` `code` `` | `[code]code[/]` |
-//! | `~strikethrough~` | `[strikethrough]strikethrough[/]` |
-//! | `**` | `*` (escaped literal) |
-//! | `__` | `_` (escaped literal) |
-//! | content inside `[...]` | passed through untouched |
-//! | unclosed delimiter | passed through as literal |
+//! |        Syntax         | Output |
+//! |-----------------------|--------|
+//! | `*bold*`              | `[bold]bold[/bold]` |
+//! | `_underline_`         | `[underline]underline[/underline]` |
+//! | `` `code` ``          | `[code]code[/code]` |
+//! | `~strikethrough~`     | `[strikethrough]strikethrough[/]` |
+//! | `/italic/`            | `[italic]italic[/italic]` |
+//! | `**`                  | `*` (escaped literal) |
+//! | `__`                  | `_` (escaped literal) |
+//! | content inside `[...]`| passed through untouched |
+//! | unclosed delimiter    | passed through as literal |
 
 struct PendingSpan {
     delimiter: char,
@@ -23,9 +24,10 @@ struct PendingSpan {
 fn delimiter_tags(c: char) -> Option<(&'static str, &'static str)> {
     match c {
         '*' => Some(("[bold]", "[/bold]")),
-        '_' => Some(("[italic]", "[/italic]")),
+        '_' => Some(("[underline]", "[/underline]")),
         '`' => Some(("[code]", "[/code]")),
         '~' => Some(("[strikethrough]", "[/strikethrough]")),
+        '/' => Some(("[italic]", "[/italic]")),
         _ => None,
     }
 }
