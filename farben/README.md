@@ -1,9 +1,10 @@
 <div align="center">
 
-![banner logo](images/farben.png)
+![banner logo](farben/images/farben.png)
 
 ### Markup for the Terminal
 
+[![Crate of the Week](https://img.shields.io/badge/Crate%20of%20The%20Week-648-orange?style=flat-square&logo=rust)](https://this-week-in-rust.org/blog/2026/04/22/this-week-in-rust-648/)
 [![Crates.io Version](https://img.shields.io/crates/v/farben)](https://crates.io/crates/farben)
 [![docs.rs](https://img.shields.io/docsrs/farben)](https://docs.rs/farben)
 [![License MIT](https://img.shields.io/crates/l/farben)](https://github.com/razkar-studio/farben/blob/main/LICENSE-MIT)
@@ -21,18 +22,41 @@
 
 ## What Is Farben
 
-Farben is a color library that uses markup-like syntax. Color your terminal without typing whatever the heck `\x1b[31m` is.
+Farben is a terminal styling library for Rust that uses markup syntax. Color your terminal without typing whatever the heck `\x1b[31m` is.
+
+```rust
+use farben::prelude::*;
+
+cprintln!("[bold red]Error:[/] something went wrong.");
+```
 
 ## Documentation
 
 - **User Guide**: [https://razkar-studio.github.io/farben](https://razkar-studio.github.io/farben)
 - **API Reference**: [https://docs.rs/farben](https://docs.rs/farben)
+- **News**: [https://razkar-studio.github.io/farben/news](https://razkar-studio.github.io/farben/news)
 - **Changelog**: [CHANGELOG.md](./CHANGELOG.md)
+
+> [!NOTE]
+> Pre-1.0 versions have iterated quickly. Most minor bumps reflect internal changes; the public macro API (`cprint!`, `cprintln!`, `style!`, etc.) has been stable since 0.10. Farben aims for 1.0 once the API fully stabilizes with complete features, or once I get bored developing it.
+
+## Install
+
+```bash
+cargo add farben
+```
+
+For compile-time markup validation:
+
+```bash
+cargo add farben --features compile
+```
 
 ## Usage
 
+### Default Features (Runtime)
+
 ```rust
-// Using default features
 use farben::prelude::*;
 
 style!("error", "[bold underline red]");
@@ -49,11 +73,14 @@ cprintb!("[red]This bleeds ");
 cprintln!("into this.");
 ```
 
+### With the `compile` Feature
+
+The same code, but markup is parsed and validated at compile time. Invalid markup becomes a compile error instead of a runtime panic.
+
 ```rust
-// Using the "compile" feature
 use farben::prelude::*;
 
-cprintln!("[bold underline red]error: [/]Something bad happened."); // compile-time validation
+cprintln!("[bold underline red]error: [/]Something bad happened.");
 cprintln!("[bg:blue fg:white]White on blue!");
 
 let name = "Razkar";
@@ -65,17 +92,28 @@ cprintln!("into this.");
 
 ## Features
 
-- **Markup-like Syntax**: Easy to read, write, and powerful when used.
-- **Zero required runtime dependencies**: Only `farben-core` as a path dependency, Farben introduces no complicated dependency tree.
+- **Markup-like Syntax**: Easy to read, easy to write, powerful when used.
+- **Zero Required Runtime Dependencies**: Only `farben-core` as a path dependency. Farben introduces no complicated dependency tree.
 - **Opt-in Compile-time Processing**: Validate and process markup at compile time with no runtime overhead, via the `compile` feature flag.
 - **Complete Toolkit**: Named colors, ANSI256, RGB, emphasis styles, style chaining, foreground and background support.
-- **Drop-in Print Macros**: `cprint!`, `cprintln!`, `cprintb!`, `cprintbln!` work just like `print!` and `println!` but with markup support. Writer variants `cwrite!`, `cwriteln!`, `cwriteb!`, `cwritebln!` work with any `Write` implementor.
+- **Drop-in Print Macros**: `cprint!`, `cprintln!`, `cprintb!`, `cprintbln!` work just like `print!` and `println!` but with markup support. Writer variants (`cwrite!`, `cwriteln!`, `cwriteb!`, `cwritebln!`) work with any `Write` implementor.
+- **Stderr Variants**: All print macros have `e` variants (`ceprint!`, `ceprintln!`, etc.) that target stderr.
 - **Bleed Variants**: `cprintb!`, `cprintbln!`, `colorb()`, and `colorb!()` skip the trailing reset, letting styles carry forward across multiple calls.
-- **User-defined styles**: Define your own tags with `style!()` that expand to any combination of supported tags.
+- **User-defined Styles**: Define your own tags with `style!()` that expand to any combination of supported tags.
+- **Custom Style Files**: Drop a `name.frb.toml` file in your project, write one line in `build.rs` and two in `main.rs`, and all styles from that file are registered.
+- **anstyle Interop**: Convert to and from `anstyle::Style` with the sugar of markup. See the docs for details.
 
-# Known Limitations
+## Workspace
 
-None at the moment! :tada:
+Farben is a Cargo workspace. The main crate is what most users want, but the others are published independently for advanced use:
+
+| Crate | Purpose |
+|-------|---------|
+| [`farben`](https://crates.io/crates/farben) | Main user-facing crate. Macros, prelude, runtime entry points. |
+| [`farben-core`](https://crates.io/crates/farben-core) | Zero-dependency core. Lexer, parser, ANSI encoding, registry. |
+| [`farben-macros`](https://crates.io/crates/farben-macros) | Proc-macros powering the `compile` feature. |
+| [`farben-build`](https://crates.io/crates/farben-build) | Build script support for `.frb.toml` style files. |
+| [`farben-md`](https://crates.io/crates/farben-md) | Inline markdown rendering to ANSI. |
 
 ## Syntax
 
@@ -87,13 +125,15 @@ Tags are written as `[tag]` and apply from that point forward. Multiple tags can
 | Tag | Description |
 |-----|-------------|
 | `[red]`, `[blue]`, ... | Named colors (black, red, green, yellow, blue, magenta, cyan, white) |
-| `[fg:red]`, `[bg:red]` | Explicit foreground/background color — works with all color formats |
+| `[fg:red]`, `[bg:red]` | Explicit foreground/background color, works with all color formats |
 | `[rgb(r,g,b)]` | 24-bit RGB color |
 | `[ansi(n)]` | 256-color palette index |
 | `[bold]`, `[italic]`, `[dim]`, `[underline]`, `[blink]`, `[strikethrough]` | Emphasis styles |
+| `[overline]`, `[reverse]`, `[invisible]`, `[rapid-blink]`, `[double-underline]` | Extended emphasis |
 | `[/]` | Reset all styles |
-| `\\[` | Escaped bracket, treated as literal `[` |
-| `[yourname]` | User-defined style via `style!()` |
+| `[/red]`, `[/bold]` | Reset a specific style, leaving others active |
+| `\[` | Escaped bracket, treated as literal `[` |
+| `[yourname]` | User-defined style registered via `style!()` |
 
 ## Error Handling
 
@@ -110,11 +150,11 @@ match try_color("[invalid]oops") {
 
 ## Contributing
 
-Contributions are welcome! Feel free to submit a Pull Request.
+Contributions are welcome. Feel free to open an issue or submit a Pull Request.
 
 ## License
 
 Licensed under either of [MIT License](LICENSE-MIT) or [Apache License, Version 2.0](LICENSE-APACHE) at your option.
 
-Cheers, RazkarStudio.  
-© 2026 RazkarStudio. All rights reserved.
+Cheers, RazkarStudio.
+© 2026 RazkarStudio.
