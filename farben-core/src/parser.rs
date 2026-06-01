@@ -16,7 +16,7 @@ use crate::{
 ///
 /// Text tokens are appended as-is. Tag tokens are converted to their corresponding
 /// ANSI escape sequences. The active style stack persists across calls via thread-local state
-/// callers using non-bleed semantics should call clear_active_stack() after their reset.
+/// callers using non-bleed semantics should call `clear_active_stack()` after their reset.
 ///
 /// # Example
 ///
@@ -25,6 +25,7 @@ use crate::{
 /// let output = render(tokens);
 /// assert_eq!(output, "\x1b[31mhello\x1b[0m");
 /// ```
+#[must_use] 
 pub fn render(tokens: Vec<Token>) -> String {
     if !color_enabled() {
         return tokens
@@ -42,6 +43,7 @@ pub fn render(tokens: Vec<Token>) -> String {
 /// The same as [`render`], but bypasses the `color_enabled` check.
 ///
 /// This means that this function renders directly without checking if color should be enabled.
+#[must_use] 
 pub fn render_forced(tokens: Vec<Token>) -> String {
     let mut result = String::with_capacity(tokens.len() * 16);
     let mut active: Vec<TagType> = active_stack();
@@ -69,7 +71,7 @@ pub fn render_forced(tokens: Vec<Token>) -> String {
                 for a in &active {
                     match a {
                         TagType::Color { color, ground } => {
-                            result.push_str(&color_to_ansi(color, ground.clone()))
+                            result.push_str(&color_to_ansi(color, ground.clone()));
                         }
                         TagType::Emphasis(e) => result.push_str(&emphasis_to_ansi(e)),
                         _ => {}

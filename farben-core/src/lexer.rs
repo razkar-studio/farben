@@ -142,13 +142,13 @@ fn style_to_tags(style: Arc<Style>) -> Vec<TagType> {
         res.push(TagType::Color {
             color: fg,
             ground: Ground::Foreground,
-        })
+        });
     }
     if let Some(bg) = style.bg.clone() {
         res.push(TagType::Color {
             color: bg,
             ground: Ground::Background,
-        })
+        });
     }
 
     if let Some(p) = prefix {
@@ -189,29 +189,26 @@ fn parse_part(part: &str, position: usize) -> Result<Vec<TagType>, LexError> {
             Ok(vec![TagType::ResetAll])
         } else {
             let inner = parse_part(remainder, position + 1)?;
-            match inner.as_slice() {
-                [tag] => match tag {
-                    TagType::ResetAll | TagType::ResetOne(_) | TagType::Prefix(_) => {
-                        Err(LexError::InvalidResetTarget(position))
-                    }
-                    _ => Ok(vec![TagType::ResetOne(Box::new(tag.clone()))]),
-                },
-                _ => {
-                    let resets: Vec<TagType> = inner
-                        .iter()
-                        .filter(|t| {
-                            !matches!(
-                                t,
-                                TagType::Prefix(_) | TagType::ResetAll | TagType::ResetOne(_)
-                            )
-                        })
-                        .map(|t| TagType::ResetOne(Box::new(t.clone())))
-                        .collect();
-                    if resets.is_empty() {
-                        Err(LexError::InvalidResetTarget(position))
-                    } else {
-                        Ok(resets)
-                    }
+            if let [tag] = inner.as_slice() { match tag {
+                TagType::ResetAll | TagType::ResetOne(_) | TagType::Prefix(_) => {
+                    Err(LexError::InvalidResetTarget(position))
+                }
+                _ => Ok(vec![TagType::ResetOne(Box::new(tag.clone()))]),
+            } } else {
+                let resets: Vec<TagType> = inner
+                    .iter()
+                    .filter(|t| {
+                        !matches!(
+                            t,
+                            TagType::Prefix(_) | TagType::ResetAll | TagType::ResetOne(_)
+                        )
+                    })
+                    .map(|t| TagType::ResetOne(Box::new(t.clone())))
+                    .collect();
+                if resets.is_empty() {
+                    Err(LexError::InvalidResetTarget(position))
+                } else {
+                    Ok(resets)
                 }
             }
         }
@@ -376,7 +373,7 @@ pub fn tokenize(input: impl Into<String>) -> Result<Vec<Token>, LexError> {
         if abs_starting > 0 && input.as_bytes().get(abs_starting.wrapping_sub(1)) == Some(&b'\x1b')
         {
             tokens.push(Token::Text(Cow::Owned(
-                input[pos..abs_starting + 1].to_string(),
+                input[pos..=abs_starting].to_string(),
             )));
             pos = abs_starting + 1;
             continue;

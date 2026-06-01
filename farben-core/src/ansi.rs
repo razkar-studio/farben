@@ -272,6 +272,7 @@ const fn named_sgr(color: &NamedColor) -> u8 {
 /// let seq = color_to_ansi(&Color::Named(NamedColor::Red), Ground::Foreground);
 /// assert_eq!(seq, "\x1b[31m");
 /// ```
+#[must_use] 
 pub fn color_to_ansi(color: &Color, ground: Ground) -> String {
     let add: u8 = match ground {
         Ground::Background => 10,
@@ -287,6 +288,7 @@ pub fn color_to_ansi(color: &Color, ground: Ground) -> String {
 /// Converts an `EmphasisType` into the corresponding SGR escape sequence.
 ///
 /// Returns an ANSI escape code like `"\x1b[1m"` for bold.
+#[must_use] 
 pub fn emphasis_to_ansi(emphasis: &EmphasisType) -> String {
     let code: u8 = match emphasis {
         EmphasisType::Bold => 1,
@@ -301,7 +303,7 @@ pub fn emphasis_to_ansi(emphasis: &EmphasisType) -> String {
         EmphasisType::Strikethrough => 9,
         EmphasisType::Overline => 53,
     };
-    format!("\x1b[{}m", code)
+    format!("\x1b[{code}m")
 }
 
 /// Converts a `Style` into a single combined SGR escape sequence.
@@ -323,6 +325,7 @@ pub fn emphasis_to_ansi(emphasis: &EmphasisType) -> String {
 /// };
 /// assert_eq!(style_to_ansi(&style), "\x1b[1;31m");
 /// ```
+#[must_use] 
 pub fn style_to_ansi(style: &Style) -> String {
     let mut ansi: Vec<u8> = Vec::new();
 

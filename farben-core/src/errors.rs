@@ -152,6 +152,7 @@ impl LexError {
     ///     Err(e) => eprintln!("{}", e.display(input)),
     /// }
     /// ```
+    #[must_use] 
     pub fn display<'a>(&'a self, input: &'a str) -> LexErrorDisplay<'a> {
         LexErrorDisplay { error: self, input }
     }
