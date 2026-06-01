@@ -79,7 +79,7 @@ pub fn color(input: TokenStream) -> TokenStream {
         }
     };
     let styled = format!("{}\x1b[0m", farben_core::parser::render_forced(tokens));
-    let plain = farben_core::strip::strip_markup(&input.value());
+    let plain = farben_core::strip::strip_markup(input.value());
     quote! {
         ::farben::FarbenStr { styled: #styled, plain: #plain }
     }
@@ -115,7 +115,7 @@ pub fn colorb(input: TokenStream) -> TokenStream {
         }
     };
     let styled = farben_core::parser::render_forced(tokens);
-    let plain = farben_core::strip::strip_markup(&input.value());
+    let plain = farben_core::strip::strip_markup(input.value());
     quote! {
         ::farben::FarbenStr { styled: #styled, plain: #plain }
     }

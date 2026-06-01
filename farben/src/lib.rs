@@ -126,6 +126,7 @@ pub struct FarbenStr {
 impl FarbenStr {
     /// Returns the styled string if color is enabled, otherwise the plain string.
     #[inline]
+    #[must_use] 
     pub fn resolve(&self) -> &'static str {
         if color_enabled() {
             self.styled

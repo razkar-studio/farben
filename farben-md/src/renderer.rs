@@ -23,6 +23,7 @@ use farben_core::lexer::EmphasisType;
 /// let output = render(&tokens);
 /// assert!(output.contains("\x1b[1m"));
 /// ```
+#[must_use] 
 pub fn render(tokens: &[MdToken]) -> String {
     let mut out = String::new();
     let mut active: Vec<EmphasisType> = Vec::new();

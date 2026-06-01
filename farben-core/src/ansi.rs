@@ -11,7 +11,7 @@
 use std::fmt::Write;
 
 use crate::errors::LexError;
-use crate::lexer::{tokenize, EmphasisType, TagType, Token};
+use crate::lexer::{EmphasisType, TagType, Token, tokenize};
 
 /// Whether a color applies to the foreground (text) or background.
 #[derive(Debug, PartialEq, Clone)]

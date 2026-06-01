@@ -1,4 +1,4 @@
-use criterion::{black_box, criterion_group, criterion_main, Criterion};
+use criterion::{Criterion, black_box, criterion_group, criterion_main};
 use farben_core::{
     ansi::{Color, Ground, NamedColor, color_to_ansi, emphasis_to_ansi},
     lexer::{EmphasisType, TagType, Token, tokenize},
@@ -47,9 +47,7 @@ fn make_tokens() -> Vec<Token> {
 }
 
 fn bench_render(c: &mut Criterion) {
-    c.bench_function("render", |b| {
-        b.iter(|| render(black_box(make_tokens())))
-    });
+    c.bench_function("render", |b| b.iter(|| render(black_box(make_tokens()))));
 }
 
 // --- full pipeline ---

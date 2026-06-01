@@ -14,15 +14,15 @@ pub enum MdToken {
     /// A run of plain text with no markdown formatting.
     Text(String),
     /// A bold span, delimited by `**...**`.
-    Bold(Vec<MdToken>),
+    Bold(Vec<Self>),
     /// An italic span, delimited by `*...*` or `_..._`.
-    Italic(Vec<MdToken>),
+    Italic(Vec<Self>),
     /// An inline code span, delimited by `` `...` ``.
     Code(String),
     /// A strikethrough span, delimited by `~~...~~`.
-    Strikethrough(Vec<MdToken>),
+    Strikethrough(Vec<Self>),
     /// An underlined span, delimited by `__...__`.
-    Underline(Vec<MdToken>),
+    Underline(Vec<Self>),
 }
 
 /// Converts a token tree back into a plain string, re-inserting the opening delimiter.
@@ -67,13 +67,14 @@ fn tokenize_inner(input: &str, pos: &mut usize, stop_at: Option<&str>) -> (Vec<M
 
     while *pos < input.len() {
         if let Some(stop) = stop_at
-            && input[*pos..].starts_with(stop) {
-                *pos += stop.len();
-                if !text_buf.is_empty() {
-                    tokens.push(MdToken::Text(std::mem::take(&mut text_buf)));
-                }
-                return (tokens, true);
+            && input[*pos..].starts_with(stop)
+        {
+            *pos += stop.len();
+            if !text_buf.is_empty() {
+                tokens.push(MdToken::Text(std::mem::take(&mut text_buf)));
             }
+            return (tokens, true);
+        }
 
         if input[*pos..].starts_with("**") {
             *pos += 2;
@@ -139,7 +140,7 @@ fn tokenize_inner(input: &str, pos: &mut usize, stop_at: Option<&str>) -> (Vec<M
                     found = true;
                     break;
                 }
-                *pos += input[*pos..].chars().next().map_or(1, |c| c.len_utf8());
+                *pos += input[*pos..].chars().next().map_or(1, char::len_utf8);
             }
             if found {
                 let content = input[start..*pos].to_string();
@@ -180,6 +181,7 @@ fn tokenize_inner(input: &str, pos: &mut usize, stop_at: Option<&str>) -> (Vec<M
 /// let tokens = tokenize("**bold** and *italic*");
 /// assert!(matches!(tokens[0], MdToken::Bold(_)));
 /// ```
+#[must_use] 
 pub fn tokenize(input: &str) -> Vec<MdToken> {
     let mut pos = 0;
     let (tokens, _) = tokenize_inner(input, &mut pos, None);

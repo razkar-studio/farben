@@ -9,8 +9,8 @@
 //! threads writing to the same stdout are already racing; they shouldn't also
 //! be racing over style state.
 
-use std::cell::RefCell;
 use crate::lexer::TagType;
+use std::cell::RefCell;
 
 thread_local! {
     static ACTIVE_STACK: RefCell<Vec<TagType>> = const { RefCell::new(Vec::new()) };

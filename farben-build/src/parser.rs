@@ -73,7 +73,7 @@ pub fn parse(input: &str) -> Result<FrbConfig, ParseError> {
             let section_str = &line[1..closing];
             let mut parts = section_str.splitn(2, '.');
             let section_name = parts.next().unwrap();
-            let namespace = parts.next().map(|s| s.to_string());
+            let namespace = parts.next().map(std::string::ToString::to_string);
 
             current_section = match section_name {
                 "styles" => Section::Styles(namespace),
