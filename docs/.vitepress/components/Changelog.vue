@@ -62,30 +62,7 @@ const releases = [
             {
                 type: "Added",
                 items: [
-                    '<code>untag!()</code> macro (backed by <code>escape_tags()</code> in <code>farben-core::strip</code>): doubles <code>[</code>/<code>]</code> so they survive the lexer as literal text. Useful for displaying markup examples in terminal UIs.',
-                    'Whitespace inside <code>(...)</code> groups in tags is now preserved: <code>rgb(1, 2, 3)</code> and <code>ansi( 93 )</code> survive as single tags instead of being split on inner spaces.',
-                ],
-            },
-            {
-                type: "Changed",
-                items: [
-                    '<code>ansi_strip!</code> renamed to <code>unansi!</code>, <code>markup_strip!</code> renamed to <code>unmarkup!</code>. The old names still work with a deprecation warning.',
-                    'All <code>c*</code>, <code>md*</code>, <code>un*</code>, and <code>ce*</code> macros now accept <code>$($rest:tt)*</code> instead of the restrictive <code>$(, $arg:expr)*</code>, enabling Rust 2024 implicit format captures (<code>cformat!("[red]{name}")</code>) and named arguments (<code>cformat!("[green]{greeting}", greeting = "hi")</code>).',
-                    '<code>farben-md</code> README reduced to a one-liner noting deprecation.',
-                    'Version promoted from alpha to beta across all three crates.',
-                ],
-            },
-            {
-                type: "Fixed",
-                items: [
-                    'SGR reset sequences appended by <code>try_color</code>, <code>color_runtime</code>, etc. are now gated behind <code>color_enabled()</code>: they no longer emit escape codes when colors are disabled via <code>NO_COLOR</code> / <code>FORCE_COLOR</code>.',
-                ],
-            },
-            {
-                type: "Deprecated",
-                items: [
-                    '<code>ansi_strip!</code>: use <code>unansi!</code> instead.',
-                    '<code>markup_strip!</code>: use <code>unmarkup!</code> instead.',
+                    'See the <a href="https://github.com/razkar-studio/farben/releases/tag/v0.19.0-beta.1">GitHub release</a> for the full changelog.',
                 ],
             },
         ],
