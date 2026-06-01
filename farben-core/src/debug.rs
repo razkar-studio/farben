@@ -11,7 +11,7 @@ use crate::{
 /// Converts a `TagType` into its farben markup representation.
 ///
 /// Example: `TagType::Emphasis(EmphasisType::Bold)` → `"bold"`.
-#[must_use] 
+#[must_use]
 pub fn tag_to_markup_part(tag: &TagType) -> String {
     match tag {
         TagType::Emphasis(e) => match e {
@@ -67,7 +67,7 @@ pub fn tag_to_markup_part(tag: &TagType) -> String {
 /// Converts a sequence of `Token`s back into a farben markup string.
 ///
 /// The inverse of [`tokenize`](crate::lexer::tokenize).
-#[must_use] 
+#[must_use]
 pub fn tokens_to_markup(tokens: &[Token]) -> String {
     let mut result = String::new();
     let mut i = 0;

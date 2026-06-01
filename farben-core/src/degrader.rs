@@ -79,7 +79,7 @@ pub fn color_level() -> &'static ColorLevel {
 /// Computes squared Euclidean distance in RGB space against each entry in
 /// Compares the input RGB against an internal table of the 16 named ANSI colors
 /// and returns the color with the smallest distance.
-#[must_use] 
+#[must_use]
 pub fn nearest_named(r: u8, g: u8, b: u8) -> NamedColor {
     let mut best = &NAMED_COLOR_RGB[0];
     let mut best_dist = u32::MAX;
@@ -102,7 +102,7 @@ pub fn nearest_named(r: u8, g: u8, b: u8) -> NamedColor {
 ///
 /// Each channel is scaled from 0..=255 to 0..=5 and combined into a cube index.
 /// Returns a value in the range `16..=231`.
-#[must_use] 
+#[must_use]
 pub fn nearest_ansi256(r: u8, g: u8, b: u8) -> u8 {
     let r6 = (u16::from(r) * 5 / 255) as u8;
     let g6 = (u16::from(g) * 5 / 255) as u8;
@@ -114,7 +114,7 @@ pub fn nearest_ansi256(r: u8, g: u8, b: u8) -> u8 {
 ///
 /// Handles three ranges: `0..=15` looks up the named color table, `16..=231` decodes
 /// the 6x6x6 color cube, and `232..=255` decodes the 24-step grayscale ramp.
-#[must_use] 
+#[must_use]
 pub fn ansi256_to_rgb(n: u8) -> (u8, u8, u8) {
     match n {
         0..=15 => {
@@ -141,7 +141,7 @@ pub fn ansi256_to_rgb(n: u8) -> (u8, u8, u8) {
 /// For `Ansi256` terminals, `Color::Rgb` is mapped to the nearest cube index.
 /// For `Basic` terminals, both `Color::Rgb` and `Color::Ansi256` are mapped to
 /// the nearest named color via [`nearest_named`].
-#[must_use] 
+#[must_use]
 pub fn degrade(color: Color) -> Color {
     match color_level() {
         ColorLevel::TrueColor => color,

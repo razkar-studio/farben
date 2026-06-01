@@ -18,7 +18,7 @@ thread_local! {
 
 /// Returns a clone of the current persisted stack.
 /// Used by the parser at the start of `render` to resume from prior state.
-#[must_use] 
+#[must_use]
 pub fn active_stack() -> Vec<TagType> {
     ACTIVE_STACK.with(|s| s.borrow().clone())
 }

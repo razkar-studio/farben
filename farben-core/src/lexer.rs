@@ -189,12 +189,14 @@ fn parse_part(part: &str, position: usize) -> Result<Vec<TagType>, LexError> {
             Ok(vec![TagType::ResetAll])
         } else {
             let inner = parse_part(remainder, position + 1)?;
-            if let [tag] = inner.as_slice() { match tag {
-                TagType::ResetAll | TagType::ResetOne(_) | TagType::Prefix(_) => {
-                    Err(LexError::InvalidResetTarget(position))
+            if let [tag] = inner.as_slice() {
+                match tag {
+                    TagType::ResetAll | TagType::ResetOne(_) | TagType::Prefix(_) => {
+                        Err(LexError::InvalidResetTarget(position))
+                    }
+                    _ => Ok(vec![TagType::ResetOne(Box::new(tag.clone()))]),
                 }
-                _ => Ok(vec![TagType::ResetOne(Box::new(tag.clone()))]),
-            } } else {
+            } else {
                 let resets: Vec<TagType> = inner
                     .iter()
                     .filter(|t| {

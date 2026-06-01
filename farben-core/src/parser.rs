@@ -25,7 +25,7 @@ use crate::{
 /// let output = render(tokens);
 /// assert_eq!(output, "\x1b[31mhello\x1b[0m");
 /// ```
-#[must_use] 
+#[must_use]
 pub fn render(tokens: Vec<Token>) -> String {
     if !color_enabled() {
         return tokens
@@ -43,7 +43,7 @@ pub fn render(tokens: Vec<Token>) -> String {
 /// The same as [`render`], but bypasses the `color_enabled` check.
 ///
 /// This means that this function renders directly without checking if color should be enabled.
-#[must_use] 
+#[must_use]
 pub fn render_forced(tokens: Vec<Token>) -> String {
     let mut result = String::with_capacity(tokens.len() * 16);
     let mut active: Vec<TagType> = active_stack();

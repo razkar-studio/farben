@@ -112,7 +112,7 @@ mod tests {
 /// let bare_esc = "\x1bhello";
 /// assert_eq!(strip_ansi(bare_esc), "\x1bhello");
 /// ```
-#[must_use] 
+#[must_use]
 pub fn strip_ansi(input: &str) -> String {
     let mut output = String::new();
     let mut chars = input.chars();
@@ -155,7 +155,7 @@ pub fn strip_ansi(input: &str) -> String {
 /// let invalid = strip_markup("[I'm unclosed");
 /// assert_eq!("[I'm unclosed", invalid);
 /// ```
-#[must_use] 
+#[must_use]
 pub fn strip_markup(input: &str) -> String {
     match crate::lexer::tokenize(input) {
         Ok(tokens) => tokens
@@ -182,7 +182,7 @@ pub fn strip_markup(input: &str) -> String {
 /// let safe = escape_tags("[bold]hello[/]");
 /// assert_eq!(safe, "[[bold]]hello[[/]]");
 /// ```
-#[must_use] 
+#[must_use]
 pub fn escape_tags(input: &str) -> String {
     let mut output = String::with_capacity(input.len());
     for c in input.chars() {
