@@ -11,6 +11,7 @@ frb / v, core, macros, build, md
 frb0.19.0-beta.1
 core0.14.0-beta.1
 macros0.7.0-beta.1
+md0.2.3 (dep)
 
 ### Added
 
