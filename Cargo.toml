@@ -1,7 +1,7 @@
 [workspace]
 members = [
     "farben", "farben-build", "farben-core",
-    "farben-macros", "farben-md", "testfarbenyay"
+    "farben-macros", "farben-md"
 ]
 resolver = "3"
 

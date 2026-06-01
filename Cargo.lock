@@ -483,15 +483,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "testfarbenyay"
-version = "0.1.0"
-dependencies = [
- "farben",
- "farben-build",
- "farben-core",
-]
-
-[[package]]
 name = "tinytemplate"
 version = "1.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
