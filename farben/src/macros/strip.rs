@@ -1,13 +1,9 @@
-//! ANSI escape sequence stripping macro.
-//!
-//! [`ansi_strip!`] accepts format-string arguments, builds the resulting string,
-//! then removes all CSI ANSI escape sequences from it. Non-CSI `ESC` bytes
-//! pass through unchanged.
+//! Macros that strip ANSI, strip markup, and escape markup brackets.
 
-/// Formats a string and strips all CSI ANSI escape sequences from the result.
+/// Removes all CSI ANSI escape sequences from a formatted string.
 ///
-/// Accepts the same arguments as [`format!`]. After formatting, every sequence
-/// of the form `ESC [ ... <letter>` is removed. Non-CSI `ESC` bytes are left intact.
+/// Accepts the same arguments as [`format!`]. Every sequence of the form
+/// `ESC [ ... <letter>` is removed. Non-CSI `ESC` bytes are left intact.
 ///
 /// The return type is `String`.
 ///
@@ -17,7 +13,7 @@
 /// use farben::prelude::*;
 ///
 /// let colored = "\x1b[31mError\x1b[0m";
-/// let plain = ansi_strip!("{}", colored);
+/// let plain = unansi!("{}", colored);
 /// assert_eq!(plain, "Error");
 /// ```
 ///
@@ -27,43 +23,90 @@
 /// use farben::prelude::*;
 ///
 /// let code = 42;
-/// let plain = ansi_strip!("\x1b[1mcode {code}\x1b[0m");
+/// let plain = unansi!("\x1b[1mcode {code}\x1b[0m");
 /// assert_eq!(plain, "code 42");
 /// ```
 #[macro_export]
-macro_rules! ansi_strip {
-    ($fmt:literal $(, $arg:expr)*) => {{
-        $crate::strip_ansi(&format!($fmt $(, $arg)*))
+macro_rules! unansi {
+    ($fmt:literal $($rest:tt)*) => {{
+        $crate::strip_ansi(&format!($fmt $($rest)*))
     }};
     ($s:expr) => {{
         $crate::strip_ansi(&$s.to_string())
     }};
 }
 
-/// Formats a string and strips all Farben markup tags from the result.
+/// Removes all Farben markup tags from a formatted string.
 ///
-/// Accepts the same arguments as [`format!`]. After formatting, every sequence of the form of
-/// Farben markup, `[tag]` is removed. Invalid tags are left as-is without panic.
+/// Accepts the same arguments as [`format!`]. Every tag like `[bold]` or `[/]`
+/// is removed. Invalid markup is left as-is without panicking.
 ///
-/// The return type is `String`
+/// The return type is `String`.
 ///
 /// # Example
 /// ```
-/// use farben::prelude::markup_strip;
+/// use farben::prelude::*;
 ///
-/// let stripped = markup_strip!("[bold red]Just the text");
+/// let stripped = unmarkup!("[bold red]Just the text");
 /// assert_eq!("Just the text", stripped);
 ///
-/// let invalid = markup_strip!("[I'm unclosed");
+/// let invalid = unmarkup!("[I'm unclosed");
 /// assert_eq!("[I'm unclosed", invalid);
 ///
 /// let text = "hey!";
-/// let formatted = markup_strip!("[bold red]{text}");
+/// let formatted = unmarkup!("[bold red]{text}");
 /// assert_eq!("hey!", formatted);
 /// ```
 #[macro_export]
-macro_rules! markup_strip {
+macro_rules! unmarkup {
     ($($arg:tt)*) => {{
         $crate::strip_markup(&format!($($arg)*))
+    }};
+}
+
+/// Escapes markup brackets in a formatted string so they render as literal text.
+///
+/// Every `[` becomes `[[` and every `]` becomes `]]`. The lexer treats `[[` as
+/// a literal `[` and `]]` as a literal `]`, so the result contains no parseable tags.
+///
+/// Accepts the same arguments as [`format!`].
+///
+/// The return type is `String`.
+///
+/// # Example
+/// ```
+/// use farben::prelude::*;
+///
+/// let safe = untag!("[bold]hello[/]");
+/// assert_eq!(safe, "[[bold]]hello[[/]]");
+///
+/// let name = "world";
+/// let safe = untag!("[bold]{name}[/]");
+/// assert_eq!(safe, "[[bold]]world[[/]]");
+/// ```
+#[macro_export]
+macro_rules! untag {
+    ($($arg:tt)*) => {{
+        $crate::escape_tags(&format!($($arg)*))
+    }};
+}
+
+// --- Deprecated aliases ---------------------------------------------------
+
+#[deprecated(since = "0.19.0", note = "renamed to `unansi!`")]
+#[macro_export]
+/// Deprecated in favor of [`unansi!`].
+macro_rules! ansi_strip {
+    ($($arg:tt)*) => {{
+        $crate::unansi!($($arg)*)
+    }};
+}
+
+#[deprecated(since = "0.19.0", note = "renamed to `unmarkup!`")]
+#[macro_export]
+/// Deprecated in favor of [`unmarkup!`]
+macro_rules! markup_strip {
+    ($($arg:tt)*) => {{
+        $crate::unmarkup!($($arg)*)
     }};
 }

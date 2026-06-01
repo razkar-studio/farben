@@ -97,3 +97,57 @@ fn test_color_invalid_input_panics() {
     unsafe { std::env::set_var("FORCE_COLOR", "1") };
     color("[notacolor]text");
 }
+
+// --- format-arg styles (implicit capture & named) ---
+
+#[test]
+fn test_cformat_implicit_capture() {
+    unsafe { std::env::set_var("FORCE_COLOR", "1") };
+    let user = "Alice";
+    let result = cformat!("[red]{user}");
+    assert_eq!(result, "\x1b[31mAlice\x1b[0m");
+}
+
+#[test]
+fn test_cformat_explicit_named() {
+    unsafe { std::env::set_var("FORCE_COLOR", "1") };
+    let result = cformat!("[green]{greeting}", greeting = "Hello");
+    assert_eq!(result, "\x1b[32mHello\x1b[0m");
+}
+
+#[test]
+fn test_cformat_positional_still_works() {
+    unsafe { std::env::set_var("FORCE_COLOR", "1") };
+    let result = cformat!("[blue]{}", "world");
+    assert_eq!(result, "\x1b[34mworld\x1b[0m");
+}
+
+#[test]
+fn test_unansi_named_arg() {
+    unsafe { std::env::set_var("FORCE_COLOR", "1") };
+    let plain = unansi!("\x1b[31m{val}\x1b[0m", val = "stripped");
+    assert_eq!(plain, "stripped");
+}
+
+#[test]
+fn test_untag_named_arg() {
+    unsafe { std::env::set_var("FORCE_COLOR", "1") };
+    let safe = untag!("[bold]{name}", name = "x");
+    assert_eq!(safe, "[[bold]]x");
+}
+
+#[test]
+fn test_unmarkup_implicit_capture() {
+    unsafe { std::env::set_var("FORCE_COLOR", "1") };
+    let msg = "hey!";
+    let stripped = unmarkup!("[bold red]{msg}");
+    assert_eq!(stripped, "hey!");
+}
+
+#[test]
+fn test_cprint_implicit_capture() {
+    unsafe { std::env::set_var("FORCE_COLOR", "1") };
+    let name = "Bob";
+    let result = cformat!("[dim]{name}");
+    assert_eq!(result, "\x1b[2mBob\x1b[0m");
+}

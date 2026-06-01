@@ -8,7 +8,7 @@
 ///
 /// Each variant carries its own content as an owned `String`, allowing the
 /// renderer to process tokens independently without a separate open/close pass.
-/// Produced by [`tokenize`] and consumed by [`render`].
+/// Produced by [`tokenize`] and consumed by [`crate::renderer::render`].
 #[derive(Debug, PartialEq)]
 pub enum MdToken {
     /// A run of plain text with no markdown formatting.

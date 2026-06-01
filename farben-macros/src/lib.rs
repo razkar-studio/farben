@@ -3,12 +3,12 @@
 //! Provides compile-time processing of farben markup and inline markdown,
 //! baking the final ANSI-escaped strings directly into the binary with zero
 //! runtime overhead. All macros in this crate are re-exported through
-//! [`farben`] and should not be used directly in most cases.
+//! `farben` and should not be used directly in most cases.
 //!
 //! ## Features
 //!
-//! - `markdown`: enables [`markdown!`] and [`colorb!`] for compile-time
-//!   markdown rendering via [`farben_md`].
+//! - `markdown`: enables `markdown!` and [`colorb!`] for compile-time
+//!   markdown rendering via `farben_md`.
 
 use litext::litext;
 use proc_macro::TokenStream;
@@ -129,7 +129,7 @@ pub fn colorb(input: TokenStream) -> TokenStream {
 /// the format string before runtime processing with format arguments.
 ///
 /// This macro is part of the internal API. Prefer [`color!`] for static strings or
-/// [`color_fmt!`] for strings with format arguments.
+/// `color_fmt!` for strings with format arguments.
 #[proc_macro]
 pub fn validate_color(input: TokenStream) -> TokenStream {
     load_registry();

@@ -51,8 +51,8 @@ $crate::color_runtime(format!($($arg)*), false)
 #[deprecated = "in favor of cformat"]
 #[macro_export]
 macro_rules! color_fmt {
-    ($fmt:literal $(, $arg:expr)*) => {
-        $crate::color_runtime(format!($crate::validate_color!($fmt) $(, $arg)*), false)
+    ($fmt:literal $($rest:tt)*) => {
+        $crate::color_runtime(format!($crate::validate_color!($fmt) $($rest)*), false)
     };
 }
 
@@ -67,8 +67,8 @@ macro_rules! color_fmt {
 #[cfg(feature = "compile")]
 #[macro_export]
 macro_rules! cformat {
-    ($fmt:literal $(, $arg:expr)*) => {
-        $crate::color_runtime(format!($crate::validate_color!($fmt) $(, $arg)*), false)
+    ($fmt:literal $($rest:tt)*) => {
+        $crate::color_runtime(format!($crate::validate_color!($fmt) $($rest)*), false)
     };
 }
 
@@ -98,8 +98,8 @@ macro_rules! cformatb {
 #[cfg(feature = "compile")]
 #[macro_export]
 macro_rules! cformatb {
-    ($fmt:literal $(, $arg:expr)*) => {
-        $crate::color_runtime(format!($crate::validate_color!($fmt) $(, $arg)*), true)
+    ($fmt:literal $($rest:tt)*) => {
+        $crate::color_runtime(format!($crate::validate_color!($fmt) $($rest)*), true)
     };
 }
 
@@ -110,7 +110,7 @@ macro_rules! cformatb {
 ///
 /// # Panics
 ///
-/// Panics if the markup is invalid. Use [`try_color`] directly for error handling.
+/// Panics if the markup is invalid. Use [`crate::try_color`] directly for error handling.
 ///
 /// # Examples
 ///
@@ -125,8 +125,8 @@ macro_rules! cprint {
     () => {
         print!()
     };
-    ($fmt:literal $(, $arg:expr)*) => {
-        print!("{}", $crate::color_runtime(format!($fmt $(, $arg)*), false))
+    ($fmt:literal $($rest:tt)*) => {
+        print!("{}", $crate::color_runtime(format!($fmt $($rest)*), false))
     };
 }
 
@@ -137,7 +137,7 @@ macro_rules! cprint {
 ///
 /// # Panics
 ///
-/// Panics if the markup is invalid. Use [`try_color`] directly for error handling.
+/// Panics if the markup is invalid. Use [`crate::try_color`] directly for error handling.
 ///
 /// # Examples
 ///
@@ -155,8 +155,8 @@ macro_rules! cprint {
     ($fmt:literal) => {
         print!("{}", $crate::color!($fmt))
     };
-    ($fmt:literal $(, $arg:expr)*) => {
-        print!("{}", $crate::color_runtime(format!($crate::validate_color!($fmt) $(, $arg)*), false))
+    ($fmt:literal $($rest:tt)*) => {
+        print!("{}", $crate::color_runtime(format!($crate::validate_color!($fmt) $($rest)*), false))
     };
 }
 
@@ -167,7 +167,7 @@ macro_rules! cprint {
 ///
 /// # Panics
 ///
-/// Panics if the markup is invalid. Use [`try_color`] directly for error handling.
+/// Panics if the markup is invalid. Use [`crate::try_color`] directly for error handling.
 ///
 /// # Examples
 ///
@@ -182,8 +182,8 @@ macro_rules! cprintln {
     () => {
         println!()
     };
-    ($fmt:literal $(, $arg:expr)*) => {
-        println!("{}", $crate::color_runtime(format!($fmt $(, $arg)*), false))
+    ($fmt:literal $($rest:tt)*) => {
+        println!("{}", $crate::color_runtime(format!($fmt $($rest)*), false))
     };
 }
 
@@ -194,7 +194,7 @@ macro_rules! cprintln {
 ///
 /// # Panics
 ///
-/// Panics if the markup is invalid. Use [`try_color`] directly for error handling.
+/// Panics if the markup is invalid. Use [`crate::try_color`] directly for error handling.
 ///
 /// # Examples
 ///
@@ -209,8 +209,8 @@ macro_rules! cprintln {
     () => {
         println!()
     };
-    ($fmt:literal $(, $arg:expr)*) => {
-        println!("{}", $crate::color_runtime(format!($crate::validate_color!($fmt) $(, $arg)*), false))
+    ($fmt:literal $($rest:tt)*) => {
+        println!("{}", $crate::color_runtime(format!($crate::validate_color!($fmt) $($rest)*), false))
     };
     ($fmt:literal) => {
         println!("{}", $crate::color!($fmt))
@@ -224,7 +224,7 @@ macro_rules! cprintln {
 ///
 /// # Panics
 ///
-/// Panics if the markup is invalid. Use [`try_color`] directly for error handling.
+/// Panics if the markup is invalid. Use [`crate::try_color`] directly for error handling.
 ///
 /// # Examples
 ///
@@ -240,8 +240,8 @@ macro_rules! cprintb {
     () => {
         print!()
     };
-    ($fmt:literal $(, $arg:expr)*) => {
-        print!("{}", $crate::color_runtime(format!($fmt $(, $arg)*), true))
+    ($fmt:literal $($rest:tt)*) => {
+        print!("{}", $crate::color_runtime(format!($fmt $($rest)*), true))
     };
 }
 
@@ -251,7 +251,7 @@ macro_rules! cprintb {
 ///
 /// # Panics
 ///
-/// Panics if the markup is invalid. Use [`try_color`] directly for error handling.
+/// Panics if the markup is invalid. Use [`crate::try_color`] directly for error handling.
 #[cfg(feature = "compile")]
 #[macro_export]
 macro_rules! cprintb {
@@ -261,8 +261,8 @@ macro_rules! cprintb {
     ($fmt:literal) => {
         print!("{}", $crate::colorb!($fmt))
     };
-    ($fmt:literal $(, $arg:expr)*) => {
-        print!("{}", $crate::color_runtime(format!($crate::validate_color!($fmt) $(, $arg)*), true))
+    ($fmt:literal $($rest:tt)*) => {
+        print!("{}", $crate::color_runtime(format!($crate::validate_color!($fmt) $($rest)*), true))
     };
 }
 
@@ -273,7 +273,7 @@ macro_rules! cprintb {
 ///
 /// # Panics
 ///
-/// Panics if the markup is invalid. Use [`try_color`] directly for error handling.
+/// Panics if the markup is invalid. Use [`crate::try_color`] directly for error handling.
 ///
 /// # Examples
 ///
@@ -289,8 +289,8 @@ macro_rules! cprintbln {
     () => {
         println!()
     };
-    ($fmt:literal $(, $arg:expr)*) => {
-        println!("{}", $crate::color_runtime(format!($fmt $(, $arg)*), true))
+    ($fmt:literal $($rest:tt)*) => {
+        println!("{}", $crate::color_runtime(format!($fmt $($rest)*), true))
     };
 }
 
@@ -300,7 +300,7 @@ macro_rules! cprintbln {
 ///
 /// # Panics
 ///
-/// Panics if the markup is invalid. Use [`try_color`] directly for error handling.
+/// Panics if the markup is invalid. Use [`crate::try_color`] directly for error handling.
 #[cfg(feature = "compile")]
 #[macro_export]
 macro_rules! cprintbln {
@@ -310,8 +310,8 @@ macro_rules! cprintbln {
     ($fmt:literal) => {
         println!("{}", $crate::colorb!($fmt))
     };
-    ($fmt:literal $(, $arg:expr)*) => {
-        println!("{}", $crate::color_runtime(format!($crate::validate_color!($fmt) $(, $arg)*), true))
+    ($fmt:literal $($rest:tt)*) => {
+        println!("{}", $crate::color_runtime(format!($crate::validate_color!($fmt) $($rest)*), true))
     };
 }
 
@@ -322,7 +322,7 @@ macro_rules! cprintbln {
 ///
 /// # Panics
 ///
-/// Panics if the markup is invalid. Use [`try_color`] directly for error handling.
+/// Panics if the markup is invalid. Use [`crate::try_color`] directly for error handling.
 ///
 /// # Examples
 ///
@@ -348,7 +348,7 @@ macro_rules! cwrite {
 ///
 /// # Panics
 ///
-/// Panics if the markup is invalid. Use [`try_color`] directly for error handling.
+/// Panics if the markup is invalid. Use [`crate::try_color`] directly for error handling.
 ///
 /// # Examples
 ///
@@ -366,7 +366,7 @@ macro_rules! cwrite {
         write!($writer, "{}", $crate::color!($fmt))
     };
     ($writer:expr, $fmt:literal $(, $arg:expr)*) => {
-        write!($writer, "{}", $crate::color_runtime(format!($crate::validate_color!($fmt) $(, $arg)*), false))
+        write!($writer, "{}", $crate::color_runtime(format!($crate::validate_color!($fmt) $($rest)*), false))
     };
 }
 
@@ -377,7 +377,7 @@ macro_rules! cwrite {
 ///
 /// # Panics
 ///
-/// Panics if the markup is invalid. Use [`try_color`] directly for error handling.
+/// Panics if the markup is invalid. Use [`crate::try_color`] directly for error handling.
 ///
 /// # Examples
 ///
@@ -403,7 +403,7 @@ macro_rules! cwriteln {
 ///
 /// # Panics
 ///
-/// Panics if the markup is invalid. Use [`try_color`] directly for error handling.
+/// Panics if the markup is invalid. Use [`crate::try_color`] directly for error handling.
 ///
 /// # Examples
 ///
@@ -421,7 +421,7 @@ macro_rules! cwriteln {
         writeln!($writer, "{}", $crate::color!($fmt))
     };
     ($writer:expr, $fmt:literal $(, $arg:expr)*) => {
-        writeln!($writer, "{}", $crate::color_runtime(format!($crate::validate_color!($fmt) $(, $arg)*), false))
+        writeln!($writer, "{}", $crate::color_runtime(format!($crate::validate_color!($fmt) $($rest)*), false))
     };
 }
 
@@ -432,7 +432,7 @@ macro_rules! cwriteln {
 ///
 /// # Panics
 ///
-/// Panics if the markup is invalid. Use [`try_color`] directly for error handling.
+/// Panics if the markup is invalid. Use [`crate::try_color`] directly for error handling.
 ///
 /// # Examples
 ///
@@ -458,7 +458,7 @@ macro_rules! cwriteb {
 ///
 /// # Panics
 ///
-/// Panics if the markup is invalid. Use [`try_color`] directly for error handling.
+/// Panics if the markup is invalid. Use [`crate::try_color`] directly for error handling.
 #[cfg(feature = "compile")]
 #[macro_export]
 macro_rules! cwriteb {
@@ -466,7 +466,7 @@ macro_rules! cwriteb {
         write!($writer, "{}", $crate::colorb!($fmt))
     };
     ($writer:expr, $fmt:literal $(, $arg:expr)*) => {
-        write!($writer, "{}", $crate::color_runtime(format!($crate::validate_color!($fmt) $(, $arg)*), true))
+        write!($writer, "{}", $crate::color_runtime(format!($crate::validate_color!($fmt) $($rest)*), true))
     };
 }
 
@@ -477,7 +477,7 @@ macro_rules! cwriteb {
 ///
 /// # Panics
 ///
-/// Panics if the markup is invalid. Use [`try_color`] directly for error handling.
+/// Panics if the markup is invalid. Use [`crate::try_color`] directly for error handling.
 ///
 /// # Examples
 ///
@@ -503,7 +503,7 @@ macro_rules! cwritebln {
 ///
 /// # Panics
 ///
-/// Panics if the markup is invalid. Use [`try_color`] directly for error handling.
+/// Panics if the markup is invalid. Use [`crate::try_color`] directly for error handling.
 #[cfg(feature = "compile")]
 #[macro_export]
 macro_rules! cwritebln {
@@ -511,6 +511,6 @@ macro_rules! cwritebln {
         writeln!($writer, "{}", $crate::colorb!($fmt))
     };
     ($writer:expr, $fmt:literal $(, $arg:expr)*) => {
-        writeln!($writer, "{}", $crate::color_runtime(format!($crate::validate_color!($fmt) $(, $arg)*), true))
+        writeln!($writer, "{}", $crate::color_runtime(format!($crate::validate_color!($fmt) $($rest)*), true))
     };
 }

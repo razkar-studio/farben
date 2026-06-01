@@ -23,7 +23,7 @@
 //! | *(default)* | Runtime coloring: [`color`], [`colorb`], [`cformat!`], [`cprint!`], [`cprintln!`], [`cprintb!`], [`cprintbln!`], [`cwrite!`], [`cwriteln!`], [`cwriteb!`], [`cwritebln!`] |
 //! | `compile` | Compile-time validation of markup strings via proc macros |
 //! | `format` | Named style registry: [`style!`], [`prefix!`] |
-//! | `markdown` | Runtime inline markdown rendering: [`markdown`], [`md_fmt!`], [`mdprint!`], [`mdprintln!`] |
+//! | `markdown` | Runtime inline markdown rendering: `markdown`, `md_fmt!`, `mdprint!`, `mdprintln!` |
 //! | `markdown-compile` | Compile-time inline markdown rendering |
 //!
 //! # Emphasis Styles
@@ -103,7 +103,7 @@ pub use functions::*;
 
 pub mod prelude;
 
-pub use farben_core::strip::{strip_ansi, strip_markup};
+pub use farben_core::strip::{escape_tags, strip_ansi, strip_markup};
 
 mod macros;
 

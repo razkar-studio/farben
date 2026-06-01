@@ -124,11 +124,11 @@ fn showcase() {
 
     section("ANSI Stripping");
     let colored = color("[bold red]this is colored[/]");
-    let plain = ansi_strip!(&colored);
+    let plain = unansi!(&colored);
     println!("colored  : {colored}");
     println!("stripped : {plain}");
-    let stripped_fmt = ansi_strip!("{}", color("[rgb(255,128,0)]formatted and stripped[/]"));
-    println!("ansi_strip!: {stripped_fmt}");
+    let stripped_fmt = unansi!("{}", color("[rgb(255,128,0)]formatted and stripped[/]"));
+    println!("unansi!: {stripped_fmt}");
 
     section("Stderr (ceprint variants)");
     ceprintln!("[bold red]error:[/] this went to stderr");

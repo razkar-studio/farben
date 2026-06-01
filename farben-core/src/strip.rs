@@ -55,6 +55,31 @@ mod tests {
     fn test_strip_ansi_ansi256_sequence_stripped() {
         assert_eq!(strip_ansi("\x1b[38;5;200mcolor\x1b[0m"), "color");
     }
+
+    #[test]
+    fn test_escape_tags_empty_string() {
+        assert_eq!(escape_tags(""), "");
+    }
+
+    #[test]
+    fn test_escape_tags_no_brackets_unchanged() {
+        assert_eq!(escape_tags("hello world"), "hello world");
+    }
+
+    #[test]
+    fn test_escape_tags_doubles_opening_bracket() {
+        assert_eq!(escape_tags("[bold]"), "[[bold]]");
+    }
+
+    #[test]
+    fn test_escape_tags_doubles_closing_bracket() {
+        assert_eq!(escape_tags("[/]"), "[[/]]");
+    }
+
+    #[test]
+    fn test_escape_tags_mixed_text_and_tags() {
+        assert_eq!(escape_tags("a[b]c"), "a[[b]]c");
+    }
 }
 
 /// Remove all CSI ANSI escape sequences from `input` and return the plain text.
@@ -141,4 +166,28 @@ pub fn strip_markup(input: &str) -> String {
             .collect(),
         Err(_) => input.to_owned(),
     }
+}
+
+/// Escapes farben markup brackets in `input` so they render as literal text.
+///
+/// Doubles every `[` and `]` character. The lexer treats `[[` as a literal `[`
+/// and `]]` as a literal `]`, so the result contains no parseable tags.
+///
+/// # Example
+/// ```
+/// use farben_core::strip::escape_tags;
+///
+/// let safe = escape_tags("[bold]hello[/]");
+/// assert_eq!(safe, "[[bold]]hello[[/]]");
+/// ```
+pub fn escape_tags(input: &str) -> String {
+    let mut output = String::with_capacity(input.len());
+    for c in input.chars() {
+        match c {
+            '[' => output.push_str("[["),
+            ']' => output.push_str("]]"),
+            _ => output.push(c),
+        }
+    }
+    output
 }

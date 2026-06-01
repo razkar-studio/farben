@@ -5,6 +5,7 @@
 
 use std::sync::OnceLock;
 
+use crate::color_enabled;
 use farben_core::*;
 
 /// Parses and renders a farben markup string, appending a final SGR reset.
@@ -16,7 +17,9 @@ use farben_core::*;
 pub fn try_color(input: impl Into<String>) -> Result<String, errors::LexError> {
     let input = input.into();
     let mut res = parser::render(lexer::tokenize(input)?);
-    res.push_str("\x1b[0m");
+    if color_enabled() {
+        res.push_str("\x1b[0m");
+    }
     Ok(res)
 }
 
@@ -47,7 +50,7 @@ pub fn colorb(input: impl Into<String>) -> String {
 static CODE_STYLE_INIT: OnceLock<()> = OnceLock::new();
 /// Parses and renders a farben markup string, appending a final SGR reset.
 ///
-/// The runtime fallback used internally by [`color_fmt!`], [`cprint!`], and [`cprintln!`].
+/// The runtime fallback used internally by [`macro@crate::color_fmt`], [`macro@crate::cprint`], and [`macro@crate::cprintln`].
 /// Always a function regardless of active feature flags.
 ///
 /// # Panics
@@ -76,7 +79,9 @@ pub fn color_runtime(input: impl Into<String>, bleed: bool) -> String {
     });
     let mut res = parser::render(tokens);
     if !bleed {
-        res.push_str("\x1b[0m");
+        if color_enabled() {
+            res.push_str("\x1b[0m");
+        }
         farben_core::clear_active_stack();
     }
     res

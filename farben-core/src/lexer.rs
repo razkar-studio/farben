@@ -270,6 +270,34 @@ fn parse_part(part: &str, position: usize) -> Result<Vec<TagType>, LexError> {
     }
 }
 
+/// Splits a raw tag string on whitespace, but not within `(…)` groups.
+///
+/// This allows constructs like `rgb(1, 2, 3)` or `ansi( 93 )` to survive as a
+/// single part instead of being split on the inner whitespace.
+fn split_tag_parts(raw_tag: &str) -> Vec<(usize, &str)> {
+    let mut parts = Vec::new();
+    let mut part_start = 0;
+    let mut depth = 0usize;
+
+    for (i, c) in raw_tag.char_indices() {
+        match c {
+            '(' => depth += 1,
+            ')' => depth = depth.saturating_sub(1),
+            c if c.is_whitespace() && depth == 0 => {
+                if i > part_start {
+                    parts.push((part_start, &raw_tag[part_start..i]));
+                }
+                part_start = i + c.len_utf8();
+            }
+            _ => {}
+        }
+    }
+    if part_start < raw_tag.len() {
+        parts.push((part_start, &raw_tag[part_start..]));
+    }
+    parts
+}
+
 /// Splits a raw tag string on whitespace and parses each part into a `TagType`.
 ///
 /// A tag like `"bold red"` produces two `TagType` values. Whitespace between parts
@@ -280,13 +308,10 @@ fn parse_part(part: &str, position: usize) -> Result<Vec<TagType>, LexError> {
 /// Propagates any error from `parse_part`.
 fn parse_tag(raw_tag: &str, tag_start: usize) -> Result<Vec<TagType>, LexError> {
     let mut result = Vec::new();
-    let mut search_from = 0;
 
-    for part in raw_tag.split_whitespace() {
-        let part_offset = raw_tag[search_from..].find(part).unwrap() + search_from;
-        let abs_position = tag_start + part_offset;
+    for (offset, part) in split_tag_parts(raw_tag) {
+        let abs_position = tag_start + offset;
         result.extend(parse_part(part, abs_position)?);
-        search_from = part_offset + part.len();
     }
 
     Ok(result)
@@ -747,6 +772,66 @@ mod tests {
                 color: Color::Ansi256(1),
                 ground: Ground::Foreground,
             })
+        );
+    }
+
+    #[test]
+    fn test_split_tag_parts_simple() {
+        assert_eq!(
+            split_tag_parts("bold red"),
+            vec![(0usize, "bold"), (5, "red")]
+        );
+    }
+
+    #[test]
+    fn test_split_tag_parts_respects_parens() {
+        assert_eq!(
+            split_tag_parts("rgb(1, 2, 3)"),
+            vec![(0usize, "rgb(1, 2, 3)")]
+        );
+    }
+
+    #[test]
+    fn test_split_tag_parts_mixed() {
+        assert_eq!(
+            split_tag_parts("bold rgb(255, 128, 0)"),
+            vec![(0usize, "bold"), (5, "rgb(255, 128, 0)")]
+        );
+    }
+
+    #[test]
+    fn test_split_tag_parts_ansi_with_spaces() {
+        assert_eq!(
+            split_tag_parts("fg:ansi( 93 )"),
+            vec![(0usize, "fg:ansi( 93 )")]
+        );
+    }
+
+    #[test]
+    fn test_tokenize_rgb_with_spaces_inside_parens() {
+        let tokens = tokenize("[rgb(1, 2, 3)]text").unwrap();
+        assert_eq!(
+            tokens[0],
+            Token::Tag(TagType::Color {
+                color: Color::Rgb(1, 2, 3),
+                ground: Ground::Foreground,
+            })
+        );
+    }
+
+    #[test]
+    fn test_tokenize_mixed_bold_rgb_with_spaces() {
+        let tokens = tokenize("[bold rgb(255, 128, 0)]text").unwrap();
+        assert_eq!(
+            tokens,
+            vec![
+                Token::Tag(TagType::Emphasis(EmphasisType::Bold)),
+                Token::Tag(TagType::Color {
+                    color: Color::Rgb(255, 128, 0),
+                    ground: Ground::Foreground,
+                }),
+                Token::Text("text".into()),
+            ]
         );
     }
 

@@ -23,7 +23,7 @@
 //! | [`cformat!`], [`cprint!`], [`cprintln!`], [`cprintb!`], [`cprintbln!`] | always |
 //! | [`cwrite!`], [`cwriteln!`], [`cwriteb!`], [`cwritebln!`] | always |
 //! | [`ceprint!`], [`ceprintln!`], [`ceprintb!`], [`ceprintbln!`] | always |
-//! | [`ansi_strip!`], [`markup_strip!`] | always |
+//! | [`unansi!`], [`unmarkup!`], [`untag!`] | always |
 //! | [`expand!`] | always |
 //! | [`style!`], [`prefix!`] | `format` feature |
 
@@ -46,7 +46,7 @@ pub use crate::{ceprint, ceprintb, ceprintbln, ceprintln};
 
 pub use crate::expand;
 
-pub use crate::{ansi_strip, markup_strip};
+pub use crate::{unansi, unmarkup, untag};
 
 #[cfg(feature = "format")]
 pub use crate::{prefix, style};

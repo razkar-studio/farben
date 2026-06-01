@@ -183,7 +183,7 @@ checksum = "48c757948c5ede0e46177b7add2e67155f70e33c07fea8284df6576da70b3719"
 
 [[package]]
 name = "farben"
-version = "0.19.0-alpha.5"
+version = "0.19.0-beta.1"
 dependencies = [
  "anstyle",
  "farben-core",
@@ -197,7 +197,7 @@ version = "0.1.5-alpha.1"
 
 [[package]]
 name = "farben-core"
-version = "0.14.0-alpha.3"
+version = "0.14.0-beta.1"
 dependencies = [
  "anstyle",
  "criterion",
@@ -205,7 +205,7 @@ dependencies = [
 
 [[package]]
 name = "farben-macros"
-version = "0.7.0-alpha.3"
+version = "0.7.0-beta.1"
 dependencies = [
  "comperr",
  "farben-core",
