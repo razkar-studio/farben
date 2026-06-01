@@ -6,7 +6,9 @@
 use std::sync::OnceLock;
 
 use crate::color_enabled;
-use farben_core::{errors, parser, lexer, registry, ansi, inline};
+#[cfg(feature = "inline")]
+use farben_core::inline;
+use farben_core::{ansi, errors, lexer, parser, registry};
 
 /// Parses and renders a farben markup string, appending a final SGR reset.
 ///

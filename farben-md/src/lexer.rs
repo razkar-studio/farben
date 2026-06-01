@@ -181,7 +181,7 @@ fn tokenize_inner(input: &str, pos: &mut usize, stop_at: Option<&str>) -> (Vec<M
 /// let tokens = tokenize("**bold** and *italic*");
 /// assert!(matches!(tokens[0], MdToken::Bold(_)));
 /// ```
-#[must_use] 
+#[must_use]
 pub fn tokenize(input: &str) -> Vec<MdToken> {
     let mut pos = 0;
     let (tokens, _) = tokenize_inner(input, &mut pos, None);

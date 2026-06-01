@@ -36,12 +36,18 @@ pub fn run_with(paths: &[&str]) {
         .unwrap_or_else(|e| panic!("farben-build: error parsing '{path}': {e}"));
 
         for (key, value) in config.styles {
-            assert!(!all_styles.contains_key(&key), "farben-build: duplicate style '{key}' found in '{path}'");
+            assert!(
+                !all_styles.contains_key(&key),
+                "farben-build: duplicate style '{key}' found in '{path}'"
+            );
             all_styles.insert(key, value);
         }
 
         for (key, value) in config.prefixes {
-            assert!(!all_prefixes.contains_key(&key), "farben-build: duplicate prefix '{key}' found in '{path}'");
+            assert!(
+                !all_prefixes.contains_key(&key),
+                "farben-build: duplicate prefix '{key}' found in '{path}'"
+            );
             all_prefixes.insert(key, value);
         }
     }
