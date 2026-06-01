@@ -1,10 +1,11 @@
-use criterion::{Criterion, black_box, criterion_group, criterion_main};
+use criterion::{Criterion, criterion_group, criterion_main};
 use farben_core::{
     ansi::{Color, Ground, NamedColor, color_to_ansi, emphasis_to_ansi},
     lexer::{EmphasisType, TagType, Token, tokenize},
     parser::render,
     registry::insert_style,
 };
+use std::hint::black_box;
 
 // --- tokenize ---
 
