@@ -166,6 +166,8 @@ fn style_to_tags(style: &Style) -> Vec<TagType> {
 /// - Emphasis keywords (`bold`, `italic`, etc.)
 /// - `ansi(N)` for ANSI 256-palette colors
 /// - `rgb(R,G,B)` for true-color values
+/// - `hsl(H,S,L)` for HSL colors (H=0-360, S=0-100, L=0-100)
+/// - `#fff` / `#ffffff` for hex colors
 /// - A named style from the registry as a fallback
 ///
 /// Parts may be prefixed with `bg:` to target the background ground, or `fg:` to
@@ -175,7 +177,8 @@ fn style_to_tags(style: &Style) -> Vec<TagType> {
 ///
 /// Returns `LexError::InvalidTag` if the part matches none of the above forms.
 /// Returns `LexError::InvalidValue` if a numeric argument cannot be parsed.
-/// Returns `LexError::InvalidArgumentCount` if `rgb(...)` does not receive exactly three values.
+/// Returns `LexError::InvalidArgumentCount` if `rgb(...)` or `hsl(...)` does not receive exactly three values.
+#[allow(clippy::too_many_lines)]
 fn parse_part(part: &str, position: usize) -> Result<Vec<TagType>, LexError> {
     let (ground, part) = if let Some(rest) = part.strip_prefix("bg:") {
         (Ground::Background, rest)
@@ -258,6 +261,105 @@ fn parse_part(part: &str, position: usize) -> Result<Vec<TagType>, LexError> {
                 position,
             }),
         }
+    } else if let Some(rest) = part.strip_prefix("hsl(") {
+        if !rest.ends_with(')') {
+            return Err(LexError::UnclosedValue(position));
+        }
+        let inner = &rest[..rest.len() - 1];
+        let raw: Vec<&str> = inner.split(',').collect();
+        if raw.len() != 3 {
+            return Err(LexError::InvalidArgumentCount {
+                expected: 3,
+                got: raw.len(),
+                position,
+            });
+        }
+        let vals: Vec<f64> = raw
+            .iter()
+            .map(|v| v.trim().parse::<f64>())
+            .collect::<Result<_, _>>()
+            .map_err(|_| LexError::InvalidValue {
+                value: inner.to_string(),
+                position,
+            })?;
+        if !(0.0..=360.0).contains(&vals[0]) {
+            return Err(LexError::InvalidValue {
+                value: format!("hue {} out of range (0-360)", vals[0]),
+                position,
+            });
+        }
+        if !(0.0..=100.0).contains(&vals[1]) {
+            return Err(LexError::InvalidValue {
+                value: format!("saturation {} out of range (0-100)", vals[1]),
+                position,
+            });
+        }
+        if !(0.0..=100.0).contains(&vals[2]) {
+            return Err(LexError::InvalidValue {
+                value: format!("lightness {} out of range (0-100)", vals[2]),
+                position,
+            });
+        }
+        let (r, g, b) = hsl_to_rgb(vals[0], vals[1], vals[2]);
+        Ok(vec![TagType::Color {
+            color: Color::Rgb(r, g, b),
+            ground,
+        }])
+    } else if let Some(hex) = part.strip_prefix('#') {
+        if hex.is_empty() {
+            return Err(LexError::InvalidValue {
+                value: String::new(),
+                position,
+            });
+        }
+        let (r, g, b) = match hex.len() {
+            3 => {
+                let r = u8::from_str_radix(&hex[0..1].repeat(2), 16).map_err(|_| {
+                    LexError::InvalidValue {
+                        value: hex.to_string(),
+                        position,
+                    }
+                })?;
+                let g = u8::from_str_radix(&hex[1..2].repeat(2), 16).map_err(|_| {
+                    LexError::InvalidValue {
+                        value: hex.to_string(),
+                        position,
+                    }
+                })?;
+                let b = u8::from_str_radix(&hex[2..3].repeat(2), 16).map_err(|_| {
+                    LexError::InvalidValue {
+                        value: hex.to_string(),
+                        position,
+                    }
+                })?;
+                (r, g, b)
+            }
+            6 => {
+                let r = u8::from_str_radix(&hex[0..2], 16).map_err(|_| LexError::InvalidValue {
+                    value: hex.to_string(),
+                    position,
+                })?;
+                let g = u8::from_str_radix(&hex[2..4], 16).map_err(|_| LexError::InvalidValue {
+                    value: hex.to_string(),
+                    position,
+                })?;
+                let b = u8::from_str_radix(&hex[4..6], 16).map_err(|_| LexError::InvalidValue {
+                    value: hex.to_string(),
+                    position,
+                })?;
+                (r, g, b)
+            }
+            _ => {
+                return Err(LexError::InvalidValue {
+                    value: hex.to_string(),
+                    position,
+                });
+            }
+        };
+        Ok(vec![TagType::Color {
+            color: Color::Rgb(r, g, b),
+            ground,
+        }])
     } else {
         match search_registry(part) {
             Ok(style) => Ok(style_to_tags(&style)),
@@ -408,6 +510,37 @@ pub fn tokenize(input: impl Into<String>) -> Result<Vec<Token>, LexError> {
         pos = abs_closing + 1;
     }
     Ok(tokens)
+}
+
+/// Converts HSL (hue, saturation, lightness) to an RGB triple (0–255 each).
+///
+/// `hue` in [0, 360), `saturation` in [0, 100], `lightness` in [0, 100].
+///
+/// The cast from `f64` to `u16` / `u8` is intentional: the input values are validated
+/// to be in range before this function is called, so no truncation or sign loss occurs.
+#[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
+fn hsl_to_rgb(hue: f64, saturation: f64, lightness: f64) -> (u8, u8, u8) {
+    let saturation = saturation / 100.0;
+    let lightness = lightness / 100.0;
+
+    let chroma = (1.0 - (2.0 * lightness - 1.0).abs()) * saturation;
+    let x = chroma * (1.0 - ((hue / 60.0) % 2.0 - 1.0).abs());
+    let match_lightness = lightness - chroma / 2.0;
+
+    let (red, green, blue) = match hue as u16 % 360 {
+        0..=59 => (chroma, x, 0.0),
+        60..=119 => (x, chroma, 0.0),
+        120..=179 => (0.0, chroma, x),
+        180..=239 => (0.0, x, chroma),
+        240..=299 => (x, 0.0, chroma),
+        _ => (chroma, 0.0, x),
+    };
+
+    (
+        ((red + match_lightness) * 255.0).round() as u8,
+        ((green + match_lightness) * 255.0).round() as u8,
+        ((blue + match_lightness) * 255.0).round() as u8,
+    )
 }
 
 #[cfg(test)]
@@ -576,6 +709,156 @@ mod tests {
     fn test_parse_part_rgb_invalid_value() {
         assert!(parse_part("rgb(r,g,b)", 0).is_err());
     }
+
+    // --- hex (#fff / #ffffff) ---
+
+    #[test]
+    fn test_parse_part_hex_6digit() {
+        assert_eq!(
+            parse_part("#ff0000", 0).unwrap(),
+            vec![TagType::Color {
+                color: Color::Rgb(255, 0, 0),
+                ground: Ground::Foreground,
+            }]
+        );
+    }
+
+    #[test]
+    fn test_parse_part_hex_3digit() {
+        assert_eq!(
+            parse_part("#f00", 0).unwrap(),
+            vec![TagType::Color {
+                color: Color::Rgb(255, 0, 0),
+                ground: Ground::Foreground,
+            }]
+        );
+    }
+
+    #[test]
+    fn test_parse_part_hex_bg() {
+        assert_eq!(
+            parse_part("bg:#ffffff", 0).unwrap(),
+            vec![TagType::Color {
+                color: Color::Rgb(255, 255, 255),
+                ground: Ground::Background,
+            }]
+        );
+    }
+
+    #[test]
+    fn test_parse_part_hex_invalid_length() {
+        assert!(parse_part("#ff", 0).is_err());
+        assert!(parse_part("#ffff", 0).is_err());
+        assert!(parse_part("#fffffff", 0).is_err());
+    }
+
+    #[test]
+    fn test_parse_part_hex_invalid_chars() {
+        assert!(parse_part("#xyz", 0).is_err());
+        assert!(parse_part("#xyzzzz", 0).is_err());
+    }
+
+    #[test]
+    fn test_parse_part_hex_empty() {
+        assert!(parse_part("#", 0).is_err());
+    }
+
+    // --- hsl(H,S,L) ---
+
+    #[test]
+    fn test_parse_part_hsl_red() {
+        assert_eq!(
+            parse_part("hsl(0,100,50)", 0).unwrap(),
+            vec![TagType::Color {
+                color: Color::Rgb(255, 0, 0),
+                ground: Ground::Foreground,
+            }]
+        );
+    }
+
+    #[test]
+    fn test_parse_part_hsl_green() {
+        assert_eq!(
+            parse_part("hsl(120,100,50)", 0).unwrap(),
+            vec![TagType::Color {
+                color: Color::Rgb(0, 255, 0),
+                ground: Ground::Foreground,
+            }]
+        );
+    }
+
+    #[test]
+    fn test_parse_part_hsl_blue() {
+        assert_eq!(
+            parse_part("hsl(240,100,50)", 0).unwrap(),
+            vec![TagType::Color {
+                color: Color::Rgb(0, 0, 255),
+                ground: Ground::Foreground,
+            }]
+        );
+    }
+
+    #[test]
+    fn test_parse_part_hsl_bg() {
+        assert_eq!(
+            parse_part("bg:hsl(0,100,50)", 0).unwrap(),
+            vec![TagType::Color {
+                color: Color::Rgb(255, 0, 0),
+                ground: Ground::Background,
+            }]
+        );
+    }
+
+    #[test]
+    fn test_parse_part_hsl_wrong_arg_count() {
+        let result = parse_part("hsl(0,50)", 0);
+        assert!(result.is_err());
+        if let Err(crate::errors::LexError::InvalidArgumentCount { expected, got, .. }) = result {
+            assert_eq!(expected, 3);
+            assert_eq!(got, 2);
+        }
+    }
+
+    #[test]
+    fn test_parse_part_hsl_hue_out_of_range() {
+        let result = parse_part("hsl(400,50,50)", 0);
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn test_parse_part_hsl_sat_out_of_range() {
+        let result = parse_part("hsl(0,150,50)", 0);
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn test_parse_part_hsl_light_out_of_range() {
+        let result = parse_part("hsl(0,50,110)", 0);
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn test_parse_part_hsl_invalid_value() {
+        assert!(parse_part("hsl(a,b,c)", 0).is_err());
+    }
+
+    #[test]
+    fn test_parse_part_hsl_unclosed() {
+        assert!(parse_part("hsl(0,50,50", 0).is_err());
+    }
+
+    #[test]
+    fn test_parse_part_hsl_with_spaces() {
+        assert_eq!(
+            parse_part("hsl( 120 , 100 , 50 )", 0).unwrap(),
+            vec![TagType::Color {
+                color: Color::Rgb(0, 255, 0),
+                ground: Ground::Foreground,
+            }]
+        );
+    }
+
+    // --- tokenize ---
 
     #[test]
     fn test_parse_part_unknown_tag_returns_error() {
@@ -855,6 +1138,98 @@ mod tests {
                 color: Color::Rgb(0, 255, 0),
                 ground: Ground::Background,
             })
+        );
+    }
+
+    // --- tokenization: hex ---
+
+    #[test]
+    fn test_tokenize_hex_tag() {
+        let tokens = tokenize("[#ff0000]text").unwrap();
+        assert_eq!(
+            tokens[0],
+            Token::Tag(TagType::Color {
+                color: Color::Rgb(255, 0, 0),
+                ground: Ground::Foreground,
+            })
+        );
+    }
+
+    #[test]
+    fn test_tokenize_hex_3digit_tag() {
+        let tokens = tokenize("[#f00]text").unwrap();
+        assert_eq!(
+            tokens[0],
+            Token::Tag(TagType::Color {
+                color: Color::Rgb(255, 0, 0),
+                ground: Ground::Foreground,
+            })
+        );
+    }
+
+    #[test]
+    fn test_tokenize_bg_hex_tag() {
+        let tokens = tokenize("[bg:#fff]text").unwrap();
+        assert_eq!(
+            tokens[0],
+            Token::Tag(TagType::Color {
+                color: Color::Rgb(255, 255, 255),
+                ground: Ground::Background,
+            })
+        );
+    }
+
+    // --- tokenization: hsl ---
+
+    #[test]
+    fn test_tokenize_hsl_tag() {
+        let tokens = tokenize("[hsl(0,100,50)]text").unwrap();
+        assert_eq!(
+            tokens[0],
+            Token::Tag(TagType::Color {
+                color: Color::Rgb(255, 0, 0),
+                ground: Ground::Foreground,
+            })
+        );
+    }
+
+    #[test]
+    fn test_tokenize_bg_hsl_tag() {
+        let tokens = tokenize("[bg:hsl(0,100,50)]text").unwrap();
+        assert_eq!(
+            tokens[0],
+            Token::Tag(TagType::Color {
+                color: Color::Rgb(255, 0, 0),
+                ground: Ground::Background,
+            })
+        );
+    }
+
+    #[test]
+    fn test_tokenize_hsl_with_spaces() {
+        let tokens = tokenize("[hsl( 120 , 100 , 50 )]text").unwrap();
+        assert_eq!(
+            tokens[0],
+            Token::Tag(TagType::Color {
+                color: Color::Rgb(0, 255, 0),
+                ground: Ground::Foreground,
+            })
+        );
+    }
+
+    #[test]
+    fn test_tokenize_mixed_bold_hsl() {
+        let tokens = tokenize("[bold hsl(0,100,50)]text").unwrap();
+        assert_eq!(
+            tokens,
+            vec![
+                Token::Tag(TagType::Emphasis(EmphasisType::Bold)),
+                Token::Tag(TagType::Color {
+                    color: Color::Rgb(255, 0, 0),
+                    ground: Ground::Foreground,
+                }),
+                Token::Text("text".into()),
+            ]
         );
     }
 
