@@ -15,8 +15,8 @@ build0.1.5-beta.1
 md0.2.4
 
 ### Added
-- Hex color support: `[#ffffff]` (6-digit) and `[#fff]` (3-digit shorthand) — both convert to `Color::Rgb` internally. Error on invalid length or hex chars.
-- HSL color support: `[hsl(h,s,l)]` with H=0–360, S=0–100, L=0–100 — converts to `Color::Rgb` via the CSS HSL→RGB algorithm. Validates all ranges and argument count.
+- Hex color support: `[#ffffff]` (6-digit) and `[#fff]` (3-digit shorthand). Both convert to `Color::Rgb` internally. Error on invalid length or hex chars.
+- HSL color support: `[hsl(h,s,l)]` with H=0-360, S=0-100, L=0-100. Converts to `Color::Rgb` via the CSS HSL to RGB algorithm. Validates all ranges and argument count.
 
 ## [0.19.0-beta.1] — 2026-06-01
 

@@ -64,8 +64,8 @@ const releases = [
             {
                 type: "Added",
                 items: [
-                    "Hex color support: <code>[#ffffff]</code> (6-digit) and <code>[#fff]</code> (3-digit shorthand) — both convert to <code>Color::Rgb</code> internally. Error on invalid length or hex chars.",
-                    "HSL color support: <code>[hsl(h,s,l)]</code> with H=0–360, S=0–100, L=0–100 — converts to <code>Color::Rgb</code> via the CSS HSL→RGB algorithm. Validates all ranges and argument count.",
+                    "Hex color support: <code>[#ffffff]</code> (6-digit) and <code>[#fff]</code> (3-digit shorthand). Both convert to <code>Color::Rgb</code> internally. Error on invalid length or hex chars.",
+                    "HSL color support: <code>[hsl(h,s,l)]</code> with H=0-360, S=0-100, L=0-100. Converts to <code>Color::Rgb</code> via the CSS HSL to RGB algorithm. Validates all ranges and argument count.",
                 ],
             },
         ],
