@@ -55,6 +55,22 @@ function crateClass(crate) {
 
 const releases = [
     {
+        version:
+            "frb0.19.0-beta.2 / core0.14.0-beta.2 / macros0.7.0-beta.2 / build0.1.5-beta.1 / md0.2.4",
+        crate: "Global",
+        subtitle: "Hex and HSL Colors",
+        date: "2026-06-02",
+        sections: [
+            {
+                type: "Added",
+                items: [
+                    "Hex color support: <code>[#ffffff]</code> (6-digit) and <code>[#fff]</code> (3-digit shorthand) — both convert to <code>Color::Rgb</code> internally. Error on invalid length or hex chars.",
+                    "HSL color support: <code>[hsl(h,s,l)]</code> with H=0–360, S=0–100, L=0–100 — converts to <code>Color::Rgb</code> via the CSS HSL→RGB algorithm. Validates all ranges and argument count.",
+                ],
+            },
+        ],
+    },
+    {
         version: "frb0.19.0-beta.1 / core0.14.0-beta.1 / macros0.7.0-beta.1",
         crate: "Global",
         date: "2026-06-01",

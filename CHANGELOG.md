@@ -6,6 +6,18 @@ farben, farben-core, farben-macros, farben-build, farben-md.
 as
 frb / v, core, macros, build, md
 
+## [0.19.0-beta.2] — 2026-06-02
+
+frb0.19.0-beta.2
+core0.14.0-beta.2
+macros0.7.0-beta.2
+build0.1.5-beta.1
+md0.2.4
+
+### Added
+- Hex color support: `[#ffffff]` (6-digit) and `[#fff]` (3-digit shorthand) — both convert to `Color::Rgb` internally. Error on invalid length or hex chars.
+- HSL color support: `[hsl(h,s,l)]` with H=0–360, S=0–100, L=0–100 — converts to `Color::Rgb` via the CSS HSL→RGB algorithm. Validates all ranges and argument count.
+
 ## [0.19.0-beta.1] — 2026-06-01
 
 frb0.19.0-beta.1
