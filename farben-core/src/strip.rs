@@ -163,7 +163,7 @@ pub fn strip_markup(input: &str) -> String {
             .filter_map(|t| match t {
                 crate::lexer::Token::Text(s) => Some(s.into_owned()),
                 crate::lexer::Token::Tag(crate::lexer::TagType::Prefix(s)) => Some(s),
-                _ => None,
+                crate::lexer::Token::Tag(_) => None,
             })
             .collect(),
         Err(_) => input.to_owned(),

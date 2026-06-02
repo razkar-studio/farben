@@ -69,7 +69,7 @@ pub fn color_runtime(input: impl Into<String>, bleed: bool) -> String {
     });
     let input = input.into();
     #[cfg(feature = "inline")]
-    let input = inline::preprocess(input);
+    let input = inline::preprocess(&input);
     let tokens = lexer::tokenize(&input).unwrap_or_else(|e| {
         panic!(
             "{}",
@@ -98,7 +98,7 @@ pub fn color_runtime(input: impl Into<String>, bleed: bool) -> String {
 /// # Examples
 ///
 /// ```
-/// use farben::prelude::*;
+/// use farben::markdown;
 /// let s = markdown("**bold** and *italic*");
 /// ```
 #[cfg(feature = "markdown")]

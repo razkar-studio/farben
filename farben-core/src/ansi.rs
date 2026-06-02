@@ -14,7 +14,7 @@ use crate::errors::LexError;
 use crate::lexer::{EmphasisType, TagType, Token, tokenize};
 
 /// Whether a color applies to the foreground (text) or background.
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub enum Ground {
     /// Applies the color to the text itself (SGR 30-series / 38).
     Foreground,
@@ -24,6 +24,7 @@ pub enum Ground {
 
 /// A complete set of visual attributes for a span of text.
 #[derive(Default, Clone, Debug)]
+#[allow(clippy::struct_excessive_bools)]
 pub struct Style {
     /// Foreground color. `None` leaves the terminal default unchanged.
     pub fg: Option<Color>,
@@ -129,7 +130,7 @@ impl Style {
         };
         for tok in tokenize(markup.into())? {
             match tok {
-                Token::Text(_) => continue,
+                Token::Text(_) => {}
                 Token::Tag(tag) => match tag {
                     TagType::ResetAll | TagType::ResetOne(_) => res.reset = true,
                     TagType::Emphasis(emphasis) => match emphasis {
@@ -149,7 +150,7 @@ impl Style {
                         Ground::Background => res.bg = Some(color),
                         Ground::Foreground => res.fg = Some(color),
                     },
-                    TagType::Prefix(_) => continue,
+                    TagType::Prefix(_) => {}
                 },
             }
         }
@@ -189,7 +190,7 @@ impl NamedColor {
 /// Joins a slice of SGR parameter bytes into a complete ANSI escape sequence.
 ///
 /// Produces a string of the form `\x1b[n;n;...m`. An empty `vec` produces `\x1b[m`.
-fn vec_to_ansi_seq(vec: Vec<u8>) -> String {
+fn vec_to_ansi_seq(vec: &[u8]) -> String {
     let mut seq = String::from("\x1b[");
 
     for (i, n) in vec.iter().enumerate() {
@@ -362,7 +363,7 @@ pub fn style_to_ansi(style: &Style) -> String {
         return String::new();
     }
 
-    vec_to_ansi_seq(ansi)
+    vec_to_ansi_seq(&ansi)
 }
 
 #[cfg(test)]
@@ -404,19 +405,19 @@ mod tests {
 
     #[test]
     fn test_vec_to_ansi_seq_single_param() {
-        let result = vec_to_ansi_seq(vec![1]);
+        let result = vec_to_ansi_seq(&[1]);
         assert_eq!(result, "\x1b[1m");
     }
 
     #[test]
     fn test_vec_to_ansi_seq_multiple_params() {
-        let result = vec_to_ansi_seq(vec![1, 31]);
+        let result = vec_to_ansi_seq(&[1, 31]);
         assert_eq!(result, "\x1b[1;31m");
     }
 
     #[test]
     fn test_vec_to_ansi_seq_empty_produces_bare_sequence() {
-        let result = vec_to_ansi_seq(vec![]);
+        let result = vec_to_ansi_seq(&[]);
         assert_eq!(result, "\x1b[m");
     }
 

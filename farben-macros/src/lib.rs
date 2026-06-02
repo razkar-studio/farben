@@ -167,6 +167,6 @@ pub fn validate_color(input: TokenStream) -> TokenStream {
 pub fn markdown(input: TokenStream) -> TokenStream {
     let input = litext!(input as litext::LitStr);
     let value = input.value();
-    let result = farben_md::renderer::render(&farben_md::lexer::tokenize(&input.value()));
+    let result = farben_md::renderer::render(&farben_md::lexer::tokenize(value));
     quote! { #result }.into()
 }

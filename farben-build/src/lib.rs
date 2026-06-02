@@ -9,7 +9,7 @@
 pub mod core;
 mod parser;
 
-use std::{collections::HashMap, fs, path::Path};
+use std::{collections::HashMap, fmt::Write, fs, path::Path};
 
 /// Runs the build script with the default config filename `farben.frb.toml`.
 pub fn run() {
@@ -17,6 +17,11 @@ pub fn run() {
 }
 
 /// Runs the build script with custom config file paths.
+///
+/// # Panics
+///
+/// Panics if `OUT_DIR` is not set (unlikely in a build script context),
+/// if a config file cannot be read, or if writing the generated output fails.
 pub fn run_with(paths: &[&str]) {
     let out_dir = std::env::var("OUT_DIR").unwrap();
     let dest = Path::new(&out_dir).join("farben_styles.rs");
@@ -66,16 +71,18 @@ pub fn run_with(paths: &[&str]) {
     code.push_str("pub fn init_styles() {\n");
 
     for (key, value) in &all_styles {
-        code.push_str(&format!(
-            "    farben::insert_style({key:?}, farben::Style::parse({markup:?}).unwrap_or_else(|e| panic!(\"{{e}}\"))).unwrap_or_else(|e| panic!(\"{{e}}\"));\n",
-            markup = format!("[{value}]")
-        ));
+        let markup = format!("[{value}]");
+        let _ = writeln!(
+            code,
+            "    farben::insert_style({key:?}, farben::Style::parse({markup:?}).unwrap_or_else(|e| panic!(\"{{e}}\"))).unwrap_or_else(|e| panic!(\"{{e}}\"));"
+        );
     }
 
     for (key, value) in &all_prefixes {
-        code.push_str(&format!(
-            "    farben::set_prefix({key:?}, {value:?}).unwrap_or_else(|e| panic!(\"{{e}}\"));\n"
-        ));
+        let _ = writeln!(
+            code,
+            "    farben::set_prefix({key:?}, {value:?}).unwrap_or_else(|e| panic!(\"{{e}}\"));"
+        );
     }
 
     code.push_str("}\n");

@@ -36,7 +36,8 @@ fn delimiter_tags(c: char) -> Option<(&'static str, &'static str)> {
 ///
 /// Runs as a pre-processing pass before tokenization. See module-level
 /// docs for the full syntax table.
-pub fn preprocess(input: String) -> String {
+#[must_use]
+pub fn preprocess(input: &str) -> String {
     let mut output = String::with_capacity(input.len() + 16);
     let mut chars = input.chars().peekable();
     let mut bracket_depth: u32 = 0;
@@ -49,9 +50,7 @@ pub fn preprocess(input: String) -> String {
             continue;
         }
         if c == ']' {
-            if bracket_depth > 0 {
-                bracket_depth -= 1;
-            }
+            bracket_depth = bracket_depth.saturating_sub(1);
             output.push(']');
             continue;
         }
@@ -61,12 +60,13 @@ pub fn preprocess(input: String) -> String {
             continue;
         }
 
-        if let Some(&next) = chars.peek() {
-            if next == c && delimiter_tags(c).is_some() {
-                chars.next();
-                output.push(c);
-                continue;
-            }
+        if let Some(&next) = chars.peek()
+            && next == c
+            && delimiter_tags(c).is_some()
+        {
+            chars.next();
+            output.push(c);
+            continue;
         }
 
         if let Some((open_tag, close_tag)) = delimiter_tags(c) {

@@ -87,7 +87,7 @@ fn test_try_color_inline_reset() {
 #[test]
 fn test_color_valid_input_returns_string() {
     unsafe { std::env::set_var("FORCE_COLOR", "1") };
-    let result = color("[green]ok");
+    let result = color_runtime("[green]ok", false);
     assert_eq!(result, "\x1b[32mok\x1b[0m");
 }
 
@@ -95,16 +95,16 @@ fn test_color_valid_input_returns_string() {
 #[should_panic]
 fn test_color_invalid_input_panics() {
     unsafe { std::env::set_var("FORCE_COLOR", "1") };
-    color("[notacolor]text");
+    color_runtime("[notacolor]text", false);
 }
 
 // --- format-arg styles (implicit capture & named) ---
 
 #[test]
-fn test_cformat_implicit_capture() {
+fn test_cformat_positional() {
     unsafe { std::env::set_var("FORCE_COLOR", "1") };
     let user = "Alice";
-    let result = cformat!("[red]{user}");
+    let result = cformat!("[red]{}", user);
     assert_eq!(result, "\x1b[31mAlice\x1b[0m");
 }
 
@@ -148,6 +148,6 @@ fn test_unmarkup_implicit_capture() {
 fn test_cprint_implicit_capture() {
     unsafe { std::env::set_var("FORCE_COLOR", "1") };
     let name = "Bob";
-    let result = cformat!("[dim]{name}");
+    let result = cformat!("[dim]{}", name);
     assert_eq!(result, "\x1b[2mBob\x1b[0m");
 }

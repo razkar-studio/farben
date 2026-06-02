@@ -52,8 +52,16 @@ impl std::fmt::Display for ParseError {
 /// `key = "value"` are inserted into the appropriate map, with namespaced keys
 /// stored as `namespace:key`.
 ///
+/// # Errors
+///
 /// Returns `Err(ParseError::InvalidSection)` for unrecognized headers and
 /// `Err(ParseError::InvalidKeyValue)` for malformed value lines.
+///
+/// # Panics
+///
+/// Panics if a section name is missing the closing `]` or a key is missing the
+/// `=` separator — both indicate malformed input that should have been caught
+/// by the error paths above.
 pub fn parse(input: &str) -> Result<FrbConfig, ParseError> {
     let mut styles = HashMap::new();
     let mut prefixes = HashMap::new();

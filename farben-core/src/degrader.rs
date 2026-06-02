@@ -102,7 +102,11 @@ pub fn nearest_named(r: u8, g: u8, b: u8) -> NamedColor {
 ///
 /// Each channel is scaled from 0..=255 to 0..=5 and combined into a cube index.
 /// Returns a value in the range `16..=231`.
+///
+/// The `as u8` truncations are safe: `u16::from(r) * 5 / 255` is at most 5,
+/// which fits in `u8`.
 #[must_use]
+#[allow(clippy::cast_possible_truncation)]
 pub fn nearest_ansi256(r: u8, g: u8, b: u8) -> u8 {
     let r6 = (u16::from(r) * 5 / 255) as u8;
     let g6 = (u16::from(g) * 5 / 255) as u8;

@@ -94,10 +94,11 @@ impl From<Style> for anstyle::Style {
 /// Converts an [`anstyle::Style`] into a farben [`Style`].
 impl From<anstyle::Style> for Style {
     fn from(style: anstyle::Style) -> Self {
-        let mut out = Style::default();
-
-        out.fg = style.get_fg_color().map(|c| c.into());
-        out.bg = style.get_bg_color().map(|c| c.into());
+        let mut out = Style {
+            fg: style.get_fg_color().map(Into::into),
+            bg: style.get_bg_color().map(Into::into),
+            ..Style::default()
+        };
 
         let effects = style.get_effects();
         out.bold = effects.contains(anstyle::Effects::BOLD);

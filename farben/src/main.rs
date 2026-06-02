@@ -1,5 +1,6 @@
 //! Demo binary showcasing the full farben feature set.
 
+use farben::color_runtime;
 use farben::prelude::*;
 use farben::try_color;
 
@@ -10,6 +11,7 @@ fn main() {
     showcase();
 }
 
+#[allow(clippy::too_many_lines)]
 fn showcase() {
     section("Named Colors");
     cprintln!(
@@ -83,9 +85,15 @@ fn showcase() {
     section("color() and try_color()");
     println!(
         "{}",
-        color("[bold cyan]color()[/] panics on invalid markup.")
+        color_runtime(
+            "[bold cyan]color_runtime()[/] panics on invalid markup.",
+            false
+        )
     );
-    println!("{}", colorb("[dim]colorb()[/] -no trailing reset, styles"));
+    println!(
+        "{}",
+        color_runtime("[dim]colorb()[/] -no trailing reset, styles", true)
+    );
     cprintln!("[/] -reset that bleed.");
     match try_color("[red]try_color[/] returns a Result") {
         Ok(s) => println!("{s}"),
@@ -93,7 +101,7 @@ fn showcase() {
     }
     match try_color("[doesnotexist]oops") {
         Ok(s) => println!("{s}"),
-        Err(e) => cprintln!("[yellow]try_color error:[/] {e}"),
+        Err(e) => cprintln!("[yellow]try_color error:[/] {}", e),
     }
 
     section("Style Bleed");
@@ -110,24 +118,27 @@ fn showcase() {
     prefix!("ok", "✔ ");
     prefix!("warn", "⚠ ");
     prefix!("err", "✖ ");
-    cprintln!("[ok]all checks passed.");
-    cprintln!("[warn]deprecated API in use.");
-    cprintln!("[err]connection refused.");
+    println!("{}", try_color("[ok]all checks passed.").unwrap());
+    println!("{}", try_color("[warn]deprecated API in use.").unwrap());
+    println!("{}", try_color("[err]connection refused.").unwrap());
 
     section("Chained Custom Tags");
     style!("error", "[bold red]");
     style!("critical", "[error underline]");
     prefix!("error", "[ERROR] ");
     prefix!("critical", "[CRIT]  ");
-    cprintln!("[error]something went wrong.");
-    cprintln!("[critical]unrecoverable failure.");
+    println!("{}", try_color("[error]something went wrong.").unwrap());
+    println!("{}", try_color("[critical]unrecoverable failure.").unwrap());
 
     section("ANSI Stripping");
-    let colored = color("[bold red]this is colored[/]");
+    let colored = color_runtime("[bold red]this is colored[/]", false);
     let plain = unansi!(&colored);
     println!("colored  : {colored}");
     println!("stripped : {plain}");
-    let stripped_fmt = unansi!("{}", color("[rgb(255,128,0)]formatted and stripped[/]"));
+    let stripped_fmt = unansi!(
+        "{}",
+        color_runtime("[rgb(255,128,0)]formatted and stripped[/]", false)
+    );
     println!("unansi!: {stripped_fmt}");
 
     section("Stderr (ceprint variants)");
@@ -150,5 +161,5 @@ fn showcase() {
 
 fn section(title: &str) {
     println!();
-    cprintln!("[bold underline]{title}");
+    cprintln!("[bold underline]{}", title);
 }

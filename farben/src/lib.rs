@@ -69,10 +69,11 @@
 //!
 //! ```
 //! use farben::prelude::*;
+//! use farben::try_color;
 //!
 //! style!("warn", "[bold yellow]");
 //! prefix!("warn", "! ");
-//! cprintln!("[warn]Watch out.");
+//! println!("{}", try_color("[warn]Watch out.").unwrap());
 //! ```
 //!
 //! ### Inline markdown (`markdown` feature)

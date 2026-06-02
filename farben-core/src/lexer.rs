@@ -7,7 +7,7 @@
 //! The main entry point is [`tokenize`]. The lower-level `parse_tag` and `parse_part`
 //! functions handle individual tag strings and are not part of the public API.
 
-use std::{borrow::Cow, sync::Arc};
+use std::borrow::Cow;
 
 use crate::{
     ansi::{Color, Ground, NamedColor, Style},
@@ -99,7 +99,7 @@ impl EmphasisType {
 ///
 /// A `Prefix` tag is always prepended first, if one is set. A `reset` style short-circuits
 /// after the prefix: no emphasis or color tags are emitted.
-fn style_to_tags(style: Arc<Style>) -> Vec<TagType> {
+fn style_to_tags(style: &Style) -> Vec<TagType> {
     let mut res: Vec<TagType> = Vec::new();
     let prefix = style.prefix.clone();
 
@@ -260,7 +260,7 @@ fn parse_part(part: &str, position: usize) -> Result<Vec<TagType>, LexError> {
         }
     } else {
         match search_registry(part) {
-            Ok(style) => Ok(style_to_tags(style)),
+            Ok(style) => Ok(style_to_tags(&style)),
             Err(_) => Err(LexError::InvalidTag {
                 tag_content: part.to_string(),
                 position,

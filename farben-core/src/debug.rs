@@ -30,7 +30,7 @@ pub fn tag_to_markup_part(tag: &TagType) -> String {
         TagType::Color { color, ground } => {
             let prepend = match ground {
                 Ground::Background => "bg:",
-                _ => "",
+                Ground::Foreground => "",
             };
             match color {
                 Color::Ansi256(a) => format!("{prepend}ansi({a})"),

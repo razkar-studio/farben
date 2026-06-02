@@ -33,7 +33,7 @@ pub fn render(tokens: Vec<Token>) -> String {
             .filter_map(|t| match t {
                 Token::Text(s) => Some(s.into_owned()),
                 Token::Tag(TagType::Prefix(s)) => Some(s),
-                _ => None,
+                Token::Tag(_) => None,
             })
             .collect();
     }
@@ -54,7 +54,7 @@ pub fn render_forced(tokens: Vec<Token>) -> String {
             Token::Tag(TagType::Color { color, ground }) => {
                 #[cfg(feature = "lossy")]
                 let color = crate::degrader::degrade(color);
-                result.push_str(&color_to_ansi(&color, ground.clone()));
+                result.push_str(&color_to_ansi(&color, ground));
                 active.push(TagType::Color { color, ground });
             }
             Token::Tag(TagType::Emphasis(e)) => {
@@ -71,7 +71,7 @@ pub fn render_forced(tokens: Vec<Token>) -> String {
                 for a in &active {
                     match a {
                         TagType::Color { color, ground } => {
-                            result.push_str(&color_to_ansi(color, ground.clone()));
+                            result.push_str(&color_to_ansi(color, *ground));
                         }
                         TagType::Emphasis(e) => result.push_str(&emphasis_to_ansi(e)),
                         _ => {}

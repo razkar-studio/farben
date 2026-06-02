@@ -23,6 +23,11 @@ static REGISTRY: OnceLock<Mutex<HashMap<String, Arc<Style>>>> = OnceLock::new();
 /// # Errors
 ///
 /// Returns [`RegistryError::InvalidName`] if `name` contains `[` or `]`.
+///
+/// # Panics
+///
+/// Panics if the internal mutex is poisoned (i.e., another thread panicked while
+/// holding the lock).
 pub fn insert_style(name: impl Into<String>, style: Style) -> Result<(), RegistryError> {
     let name = name.into();
     if name.contains('[') || name.contains(']') {
@@ -45,6 +50,11 @@ pub fn insert_style(name: impl Into<String>, style: Style) -> Result<(), Registr
 ///
 /// Returns [`crate::errors::RegistryError::UnknownStyle`] if `name` has not been registered via
 /// [`insert_style`] (or the `style!` macro from the `farben` crate).
+///
+/// # Panics
+///
+/// Panics if the internal mutex is poisoned (i.e., another thread panicked while
+/// holding the lock).
 pub fn set_prefix(name: impl Into<String>, prefix: impl Into<String>) -> Result<(), RegistryError> {
     let name = name.into();
     let prefix = prefix.into();
@@ -68,6 +78,11 @@ pub fn set_prefix(name: impl Into<String>, prefix: impl Into<String>) -> Result<
 /// # Errors
 ///
 /// Returns `LexError::InvalidTag` if `query` does not match any registered style name.
+///
+/// # Panics
+///
+/// Panics if the internal mutex is poisoned (i.e., another thread panicked while
+/// holding the lock).
 pub fn search_registry(query: impl Into<String>) -> Result<Arc<Style>, RegistryError> {
     let map = REGISTRY
         .get_or_init(|| Mutex::new(HashMap::new()))
