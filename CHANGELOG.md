@@ -6,6 +6,27 @@ farben, farben-core, farben-macros, farben-build, farben-md.
 as
 frb / v, core, macros, build, md
 
+## [0.19.0-beta.4] — 2026-06-03
+
+frb0.19.0-beta.4
+core0.14.0-beta.4
+macros0.7.0-beta.4
+build0.1.5-beta.1
+md0.2.5
+
+### Added
+- **6 new color formats**: You can now use `[hsv(0,100,100)]`, `[hsb(0,100,100)]`, `[hwb(0,0,0)]`, `[lab(53,80,67)]`, `[lch(50,30,270)]`, and `[oklch(0.6,0.15,280)]` directly in your markup, alongside the existing `rgb()` and `hsl()`. All formats validate argument ranges and accept optional spaces inside the parentheses, same ergonomics as HSL.
+- **Faster compile-time rendering**: When the `compile` feature is enabled, `cformat!()` and `cformatb!()` now split your format string at compile time rather than at runtime. Static markup like `[red]` is rendered to ANSI escape codes once and baked into the binary; only `{...}` argument placeholders are evaluated at runtime via `format_args!()`. Every macro built on top of them, `cprintln!`, `cwrite!`, `cprintb!`, and all their stderr variants, inherits this improvement transparently.
+  + Compile-time macros now can use Rust's implicit capture and much more.
+
+### Changed
+- **Half the embedded size**: `FarbenStr` no longer stores a pre-computed plain-text variant alongside the styled one. The `plain` field is dropped, and `resolve()` now returns `Cow<'static, str>`, stripping ANSI on the fly only when color is disabled. This cuts the per-invocation binary footprint of `color!()` and `colorb!()` in half.
+- **Polished README**: Updated example to use Rust's implicit capture syntax (`{name}` instead of `{}`, `name`). Badges use the `for-the-badge` style for a cleaner look on GitHub.
+
+### Fixed
+- An edge case where `{:.2}` and similar format specs inside farben format strings would fail to parse correctly.
+- Clippy pedantic lints across all workspace crates for a cleaner audit trail.
+
 ## [0.19.0-beta.3] — 2026-06-03
 
 frb0.19.0-beta.3

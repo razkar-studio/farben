@@ -56,6 +56,36 @@ function crateClass(crate) {
 const releases = [
     {
         version:
+            "frb0.19.0-beta.4 / core0.14.0-beta.4 / macros0.7.0-beta.4 / build0.1.5-beta.1 / md0.2.5",
+        crate: "Global",
+        subtitle: "Color Spaces &amp; Compile-Time Templates",
+        date: "2026-06-03",
+        sections: [
+            {
+                type: "Added",
+                items: [
+                    "<strong>6 new color formats</strong>: You can now use <code>[hsv(0,100,100)]</code>, <code>[hsb(0,100,100)]</code>, <code>[hwb(0,0,0)]</code>, <code>[lab(53,80,67)]</code>, <code>[lch(50,30,270)]</code>, and <code>[oklch(0.6,0.15,280)]</code> directly in your markup, alongside the existing <code>rgb()</code> and <code>hsl()</code>. All formats validate argument ranges and accept optional spaces inside the parentheses, same ergonomics as HSL.",
+                    "<strong>Faster compile-time rendering</strong>: When the <code>compile</code> feature is enabled, <code>cformat!()</code> and <code>cformatb!()</code> now split your format string at compile time rather than at runtime. Static markup like <code>[red]</code> is rendered to ANSI escape codes once and baked into the binary; only <code>{...}</code> argument placeholders are evaluated at runtime via <code>format_args!()</code>. Every macro built on top of them, <code>cprintln!</code>, <code>cwrite!</code>, <code>cprintb!</code>, and all their stderr variants, inherits this improvement transparently.",
+                ],
+            },
+            {
+                type: "Changed",
+                items: [
+                    "<strong>Half the embedded size</strong>: <code>FarbenStr</code> no longer stores a pre-computed plain-text variant alongside the styled one. The <code>plain</code> field is dropped, and <code>resolve()</code> now returns <code>Cow&lt;'static, str&gt;</code>, stripping ANSI on the fly only when color is disabled. This cuts the per-invocation binary footprint of <code>color!()</code> and <code>colorb!()</code> in half.",
+                    "<strong>Polished README</strong>: Updated example to use Rust's implicit capture syntax (<code>{name}</code> instead of <code>{}</code>, <code>name</code>). Badges use the <code>for-the-badge</code> style for a cleaner look on GitHub.",
+                ],
+            },
+            {
+                type: "Fixed",
+                items: [
+                    "An edge case where <code>{:.2}</code> and similar format specs inside farben format strings would fail to parse correctly.",
+                    "Clippy pedantic lints across all workspace crates for a cleaner audit trail.",
+                ],
+            },
+        ],
+    },
+    {
+        version:
             "frb0.19.0-beta.3 / core0.14.0-beta.3 / macros0.7.0-beta.3 / build0.1.5-beta.1 / md0.2.4",
         crate: "Global",
         subtitle: "Hyper-Optimized Pipeline",
