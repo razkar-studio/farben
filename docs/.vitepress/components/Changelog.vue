@@ -64,12 +64,10 @@ const releases = [
             {
                 type: "Changed",
                 items: [
-                    "Hyper-optimized the render pipeline: <code>ResetOne</code> uses a <code>ResetKind</code> enum instead of <code>Box&lt;TagType&gt;</code>, eliminating heap allocation per <code>[/bold]</code> tag.",
-                    "Direct-to-buffer <code>write_color_ansi</code> / <code>write_emphasis_ansi</code> eliminate intermediate <code>String</code> allocations per tag.",
-                    "<code>parse_part</code> and <code>parse_tag</code> now take caller-provided buffers, reusing allocations across calls.",
-                    "New single-pass <code>render_str()</code> combines tokenization and ANSI emission, avoiding the intermediate <code>Vec&lt;Token&gt;</code> allocation. This is the hot path used by <code>color()</code>, <code>colorb()</code>, <code>cprint!()</code>, <code>cprintln!()</code>, <code>cformat!()</code>, etc.",
-                    "<code>nearest_named</code> squared-distance uses <code>u32::abs_diff</code> and inline multiply instead of <code>i32::pow(2)</code>.",
-                    "Benchmark results: old pipeline ~905 ns, new <code>render_str</code> ~760 ns (~16% improvement).",
+                    "Optimized the render pipeline: <code>ResetOne</code> uses a lightweight enum instead of <code>Box</code>, allocations are reused across parsing calls, and ANSI sequences are written directly to the output buffer.",
+                    "Added <code>render_str()</code>, a single-pass render function that avoids allocating a <code>Vec&lt;Token&gt;</code>. Now used by <code>color()</code>, <code>colorb()</code>, <code>cprint!()</code>, <code>cprintln!()</code>, and <code>cformat!()</code>.",
+                    "<code>nearest_named</code> color distance uses inline multiply instead of <code>pow(2)</code>.",
+                    "Full pipeline benchmark improved by ~16% (905 ns to 760 ns).",
                 ],
             },
         ],

@@ -15,13 +15,10 @@ build0.1.5-beta.1
 md0.2.4
 
 ### Changed
-- Hyper-optimized the render pipeline:
-  - `ResetOne` now uses a `ResetKind` enum instead of `Box<TagType>`, eliminating heap allocation per `[/bold]` tag.
-  - `color_to_ansi` and `emphasis_to_ansi` are replaced by direct-to-buffer `write_color_ansi` / `write_emphasis_ansi`, eliminating intermediate `String` allocations per tag.
-  - `parse_part` and `parse_tag` now take a caller-provided buffer, reusing allocations across calls.
-  - New single-pass `render_str()` combines tokenization and ANSI emission, avoiding the intermediate `Vec<Token>` allocation entirely. This is the hot path used by `color()`, `colorb()`, `cprint!`, `cprintln!`, `cformat!`, etc.
-  - `nearest_named` squared-distance computation uses `u32::abs_diff` and inline multiply instead of `i32::pow(2)`.
-- Benchmark results: old pipeline ~905 ns, new `render_str` ~760 ns (~16% improvement).
+- Optimized the render pipeline: `ResetOne` uses a lightweight enum instead of `Box`, allocations are reused across parsing calls, and ANSI sequences are written directly to the output buffer.
+- Added `render_str()`, a single-pass render function that avoids allocating a `Vec<Token>`. Now used by `color()`, `colorb()`, `cprint!()`, `cprintln!()`, and `cformat!()`.
+- `nearest_named` color distance uses inline multiply instead of `pow(2)`.
+- Full pipeline benchmark improved by ~16% (905 ns to 760 ns).
 
 ## [0.19.0-beta.2] — 2026-06-02
 
