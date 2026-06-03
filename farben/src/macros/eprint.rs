@@ -56,7 +56,7 @@ macro_rules! ceprint {
         eprint!("{}", $crate::color!($fmt))
     };
     ($fmt:literal $($rest:tt)*) => {
-        eprint!("{}", $crate::color_runtime(format!($crate::validate_color!($fmt) $($rest)*), false))
+        eprint!("{}", $crate::cformat!($fmt $($rest)*))
     };
 }
 
@@ -111,7 +111,7 @@ macro_rules! ceprintln {
         eprintln!("{}", $crate::color!($fmt))
     };
     ($fmt:literal $($rest:tt)*) => {
-        eprintln!("{}", $crate::color_runtime(format!($crate::validate_color!($fmt) $($rest)*), false))
+        eprintln!("{}", $crate::cformat!($fmt $($rest)*))
     };
 }
 
@@ -160,7 +160,7 @@ macro_rules! ceprintb {
         eprint!("{}", $crate::colorb!($fmt))
     };
     ($fmt:literal $($rest:tt)*) => {
-        eprint!("{}", $crate::color_runtime(format!($crate::validate_color!($fmt) $($rest)*), true))
+        eprint!("{}", $crate::cformatb!($fmt $($rest)*))
     };
 }
 
@@ -209,6 +209,6 @@ macro_rules! ceprintbln {
         eprintln!("{}", $crate::colorb!($fmt))
     };
     ($fmt:literal $($rest:tt)*) => {
-        eprintln!("{}", $crate::color_runtime(format!($crate::validate_color!($fmt) $($rest)*), true))
+        eprintln!("{}", $crate::cformatb!($fmt $($rest)*))
     };
 }

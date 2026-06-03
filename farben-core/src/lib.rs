@@ -9,6 +9,9 @@
 #![warn(missing_docs)]
 #![deny(rustdoc::broken_intra_doc_links)]
 #![warn(rustdoc::private_intra_doc_links)]
+// Single-letter names (`r`, `g`, `b`, `h`, `s`, `v`, `l`, `a`, `c`, etc.) are standard
+// mathematical notation in color-space conversion code.
+#![allow(clippy::many_single_char_names)]
 
 pub mod ansi;
 pub mod debug;

@@ -9,7 +9,7 @@ use crate::{
     ansi::{write_color_ansi, write_emphasis_ansi},
     env::color_enabled,
     errors::LexError,
-    lexer::{parse_part, split_tag_parts, TagType, Token},
+    lexer::{TagType, Token, parse_part, split_tag_parts},
     state::{active_stack, set_active_stack},
     strip::strip_markup,
 };

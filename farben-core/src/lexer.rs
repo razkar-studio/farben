@@ -69,7 +69,10 @@ impl ResetKind {
                     color: ca,
                     ground: ga,
                 },
-                TagType::Color { color: cb, ground: gb },
+                TagType::Color {
+                    color: cb,
+                    ground: gb,
+                },
             ) => ca == cb && ga == gb,
             _ => false,
         }
@@ -215,20 +218,30 @@ fn style_to_tags(style: &Style) -> Vec<TagType> {
 /// - Emphasis keywords (`bold`, `italic`, etc.)
 /// - `ansi(N)` for ANSI 256-palette colors
 /// - `rgb(R,G,B)` for true-color values
-/// - `hsl(H,S,L)` for HSL colors (H=0-360, S=0-100, L=0-100)
+/// - `hsl(H,S,L)` for HSL colors (H=0–360, S=0–100, L=0–100)
+/// - `hsv(H,S,V)` / `hsb(H,S,B)` for HSV colors (H=0–360, S=0–100, V=0–100)
+/// - `hwb(H,W,B)` for HWB colors (H=0–360, W=0–100, B=0–100; W+B≤100)
+/// - `lab(L,a,b)` for CIE Lab (D65) colors (L=0–100, a=-128–127, b=-128–127)
+/// - `lch(L,C,H)` for `CIELCh` colors (L=0–100, C=0–150, H=0–360)
+/// - `oklch(L,C,H)` for OKLCH colors (L=0–1, C=0–0.4, H=0–360)
 /// - `#fff` / `#ffffff` for hex colors
 /// - A named style from the registry as a fallback
 ///
+/// All color functions accept optional spaces inside the parentheses.
 /// Parts may be prefixed with `bg:` to target the background ground, or `fg:` to
 /// explicitly target the foreground. Unprefixed color parts default to foreground.
 ///
 /// # Errors
 ///
 /// Returns `LexError::InvalidTag` if the part matches none of the above forms.
-/// Returns `LexError::InvalidValue` if a numeric argument cannot be parsed.
-/// Returns `LexError::InvalidArgumentCount` if `rgb(...)` or `hsl(...)` does not receive exactly three values.
+/// Returns `LexError::InvalidValue` if a numeric argument cannot be parsed or is out of range.
+/// Returns `LexError::InvalidArgumentCount` if a color function does not receive exactly three values.
 #[allow(clippy::too_many_lines)]
-pub(crate) fn parse_part(part: &str, position: usize, out: &mut Vec<TagType>) -> Result<(), LexError> {
+pub(crate) fn parse_part(
+    part: &str,
+    position: usize,
+    out: &mut Vec<TagType>,
+) -> Result<(), LexError> {
     let (ground, part) = if let Some(rest) = part.strip_prefix("bg:") {
         (Ground::Background, rest)
     } else if let Some(rest) = part.strip_prefix("fg:") {
@@ -249,9 +262,7 @@ pub(crate) fn parse_part(part: &str, position: usize, out: &mut Vec<TagType>) ->
                         Err(LexError::InvalidResetTarget(position))
                     }
                     _ => {
-                        out.push(TagType::ResetOne(
-                            ResetKind::from_tag(tag).unwrap(),
-                        ));
+                        out.push(TagType::ResetOne(ResetKind::from_tag(tag).unwrap()));
                         Ok(())
                     }
                 }
@@ -365,6 +376,67 @@ pub(crate) fn parse_part(part: &str, position: usize, out: &mut Vec<TagType>) ->
             });
         }
         let (r, g, b) = hsl_to_rgb(vals[0], vals[1], vals[2]);
+        out.push(TagType::Color {
+            color: Color::Rgb(r, g, b),
+            ground,
+        });
+        Ok(())
+    } else if let Some(rest) = part.strip_prefix("hsv(") {
+        let [h, s, v] =
+            parse_color_triple(rest, "hsv", position, 0.0, 360.0, 0.0, 100.0, 0.0, 100.0)?;
+        let (r, g, b) = hsv_to_rgb(h, s, v);
+        out.push(TagType::Color {
+            color: Color::Rgb(r, g, b),
+            ground,
+        });
+        Ok(())
+    } else if let Some(rest) = part.strip_prefix("hsb(") {
+        let [h, s, v] =
+            parse_color_triple(rest, "hsb", position, 0.0, 360.0, 0.0, 100.0, 0.0, 100.0)?;
+        let (r, g, b) = hsv_to_rgb(h, s, v);
+        out.push(TagType::Color {
+            color: Color::Rgb(r, g, b),
+            ground,
+        });
+        Ok(())
+    } else if let Some(rest) = part.strip_prefix("hwb(") {
+        let [h, w, blk] =
+            parse_color_triple(rest, "hwb", position, 0.0, 360.0, 0.0, 100.0, 0.0, 100.0)?;
+        if w + blk > 100.0 {
+            return Err(LexError::InvalidValue {
+                value: format!("whiteness+blackness {} exceeds 100", w + blk),
+                position,
+            });
+        }
+        let (r, g, b) = hwb_to_rgb(h, w, blk);
+        out.push(TagType::Color {
+            color: Color::Rgb(r, g, b),
+            ground,
+        });
+        Ok(())
+    } else if let Some(rest) = part.strip_prefix("lab(") {
+        let [l, a, b_val] = parse_color_triple(
+            rest, "lab", position, 0.0, 100.0, -128.0, 127.0, -128.0, 127.0,
+        )?;
+        let (r, g, b) = lab_to_rgb(l, a, b_val);
+        out.push(TagType::Color {
+            color: Color::Rgb(r, g, b),
+            ground,
+        });
+        Ok(())
+    } else if let Some(rest) = part.strip_prefix("lch(") {
+        let [l, c, h] =
+            parse_color_triple(rest, "lch", position, 0.0, 100.0, 0.0, 150.0, 0.0, 360.0)?;
+        let (r, g, b) = lch_to_rgb(l, c, h);
+        out.push(TagType::Color {
+            color: Color::Rgb(r, g, b),
+            ground,
+        });
+        Ok(())
+    } else if let Some(rest) = part.strip_prefix("oklch(") {
+        let [l, c, h] =
+            parse_color_triple(rest, "oklch", position, 0.0, 1.0, 0.0, 0.4, 0.0, 360.0)?;
+        let (r, g, b) = oklch_to_rgb(l, c, h);
         out.push(TagType::Color {
             color: Color::Rgb(r, g, b),
             ground,
@@ -585,6 +657,68 @@ pub fn tokenize(input: impl Into<String>) -> Result<Vec<Token>, LexError> {
     Ok(tokens)
 }
 
+/// Parses a 3-argument float color function like `hsv(H,S,V)`.
+///
+/// Expects `rest` to be the part after `func_name(` and checks for the closing `)`.
+/// Validates that exactly 3 comma-separated `f64` values are present, each within
+/// its respective `[min, max]` range.
+///
+/// Returns `[f64; 3]` on success, or a `LexError` on failure.
+#[allow(clippy::too_many_arguments)]
+fn parse_color_triple(
+    rest: &str,
+    func_name: &str,
+    position: usize,
+    min1: f64,
+    max1: f64,
+    min2: f64,
+    max2: f64,
+    min3: f64,
+    max3: f64,
+) -> Result<[f64; 3], LexError> {
+    if !rest.ends_with(')') {
+        return Err(LexError::UnclosedValue(position));
+    }
+    let inner = &rest[..rest.len() - 1];
+    let raw: Vec<&str> = inner.split(',').collect();
+    if raw.len() != 3 {
+        return Err(LexError::InvalidArgumentCount {
+            expected: 3,
+            got: raw.len(),
+            position,
+        });
+    }
+    let vals: Vec<f64> = raw
+        .iter()
+        .map(|v| v.trim().parse::<f64>())
+        .collect::<Result<_, _>>()
+        .map_err(|_| LexError::InvalidValue {
+            value: inner.to_string(),
+            position,
+        })?;
+
+    if !(min1..=max1).contains(&vals[0]) {
+        return Err(LexError::InvalidValue {
+            value: format!("{func_name} arg1 {} out of range ({min1}-{max1})", vals[0]),
+            position,
+        });
+    }
+    if !(min2..=max2).contains(&vals[1]) {
+        return Err(LexError::InvalidValue {
+            value: format!("{func_name} arg2 {} out of range ({min2}-{max2})", vals[1]),
+            position,
+        });
+    }
+    if !(min3..=max3).contains(&vals[2]) {
+        return Err(LexError::InvalidValue {
+            value: format!("{func_name} arg3 {} out of range ({min3}-{max3})", vals[2]),
+            position,
+        });
+    }
+
+    Ok([vals[0], vals[1], vals[2]])
+}
+
 /// Converts HSL (hue, saturation, lightness) to an RGB triple (0–255 each).
 ///
 /// `hue` in [0, 360), `saturation` in [0, 100], `lightness` in [0, 100].
@@ -613,6 +747,173 @@ fn hsl_to_rgb(hue: f64, saturation: f64, lightness: f64) -> (u8, u8, u8) {
         ((red + match_lightness) * 255.0).round() as u8,
         ((green + match_lightness) * 255.0).round() as u8,
         ((blue + match_lightness) * 255.0).round() as u8,
+    )
+}
+
+/// Converts HSV (hue, saturation, value) to an RGB triple (0–255 each).
+///
+/// `hue` in [0, 360), `saturation` in [0, 100], `value` in [0, 100].
+#[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
+fn hsv_to_rgb(hue: f64, saturation: f64, value: f64) -> (u8, u8, u8) {
+    let s = saturation / 100.0;
+    let v = value / 100.0;
+
+    let chroma = v * s;
+    let x = chroma * (1.0 - ((hue / 60.0) % 2.0 - 1.0).abs());
+    let m = v - chroma;
+
+    let (red, green, blue) = match hue as u16 % 360 {
+        0..=59 => (chroma, x, 0.0),
+        60..=119 => (x, chroma, 0.0),
+        120..=179 => (0.0, chroma, x),
+        180..=239 => (0.0, x, chroma),
+        240..=299 => (x, 0.0, chroma),
+        _ => (chroma, 0.0, x),
+    };
+
+    (
+        ((red + m) * 255.0).round() as u8,
+        ((green + m) * 255.0).round() as u8,
+        ((blue + m) * 255.0).round() as u8,
+    )
+}
+
+/// Converts HWB (hue, whiteness, blackness) to an RGB triple (0–255 each).
+///
+/// `hue` in [0, 360), `whiteness` in [0, 100], `blackness` in [0, 100].
+/// When `whiteness + blackness ≥ 100`, the result is a shade of gray.
+#[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
+fn hwb_to_rgb(hue: f64, whiteness: f64, blackness: f64) -> (u8, u8, u8) {
+    let w = whiteness / 100.0;
+    let b = blackness / 100.0;
+
+    // If w + b >= 1, result is a shade of gray
+    if w + b >= 1.0 {
+        let gray = (w / (w + b) * 255.0).round() as u8;
+        return (gray, gray, gray);
+    }
+
+    // Pure hue at full saturation/value (chroma = 1.0)
+    let x = 1.0 - ((hue / 60.0) % 2.0 - 1.0).abs();
+
+    let (red, green, blue) = match hue as u16 % 360 {
+        0..=59 => (1.0, x, 0.0),
+        60..=119 => (x, 1.0, 0.0),
+        120..=179 => (0.0, 1.0, x),
+        180..=239 => (0.0, x, 1.0),
+        240..=299 => (x, 0.0, 1.0),
+        _ => (1.0, 0.0, x),
+    };
+
+    let factor = 1.0 - w - b;
+    (
+        ((red * factor + w) * 255.0).round() as u8,
+        ((green * factor + w) * 255.0).round() as u8,
+        ((blue * factor + w) * 255.0).round() as u8,
+    )
+}
+
+/// Applies sRGB gamma encoding to a linear-channel value clamped to [0, 1].
+fn srgb_gamma(c: f64) -> f64 {
+    let c = c.clamp(0.0, 1.0);
+    if c <= 0.003_130_8 {
+        12.92 * c
+    } else {
+        1.055 * c.powf(1.0 / 2.4) - 0.055
+    }
+}
+
+/// Converts CIE Lab (D65) to an sRGB triple (0–255 each).
+///
+/// `l` in [0, 100], `a` and `b` typically in [-128, 127].
+/// Out-of-sRGB-gamut colors are clamped to the displayable range.
+#[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
+fn lab_to_rgb(l: f64, a: f64, b: f64) -> (u8, u8, u8) {
+    // D65 reference white
+    const XN: f64 = 0.950_47;
+    const YN: f64 = 1.0;
+    const ZN: f64 = 1.088_83;
+
+    const DELTA: f64 = 6.0 / 29.0;
+    const DELTA_SQ: f64 = DELTA * DELTA; // (6/29)²
+
+    // Lab → XYZ (D65)
+    let fy = (l + 16.0) / 116.0;
+    let fx = a / 500.0 + fy;
+    let fz = fy - b / 200.0;
+
+    let x = if fx > DELTA {
+        fx * fx * fx
+    } else {
+        3.0 * DELTA_SQ * (fx - 4.0 / 29.0)
+    };
+    let y = if fy > DELTA {
+        fy * fy * fy
+    } else {
+        3.0 * DELTA_SQ * (fy - 4.0 / 29.0)
+    };
+    let z = if fz > DELTA {
+        fz * fz * fz
+    } else {
+        3.0 * DELTA_SQ * (fz - 4.0 / 29.0)
+    };
+
+    let x = x * XN;
+    let y = y * YN;
+    let z = z * ZN;
+
+    // XYZ → linear sRGB (D65 matrix from IEC 61966-2-1)
+    let r_lin = 3.240_454_2 * x - 1.537_138_5 * y - 0.498_531_4 * z;
+    let g_lin = -0.969_266_0 * x + 1.876_010_8 * y + 0.041_556_0 * z;
+    let b_lin = 0.055_643_4 * x - 0.204_025_9 * y + 1.057_225_2 * z;
+
+    (
+        (srgb_gamma(r_lin) * 255.0).round() as u8,
+        (srgb_gamma(g_lin) * 255.0).round() as u8,
+        (srgb_gamma(b_lin) * 255.0).round() as u8,
+    )
+}
+
+/// Converts `CIELCh` (`LCh` ab, D65) to an sRGB triple (0–255 each).
+///
+/// `l` in [0, 100], `c` (chroma) typically in [0, 150], `h` (hue) in [0, 360).
+/// Delegates to [`lab_to_rgb`] after converting LCH → Lab.
+#[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
+fn lch_to_rgb(l: f64, c: f64, h: f64) -> (u8, u8, u8) {
+    let h_rad = h.to_radians();
+    let a = c * h_rad.cos();
+    let b = c * h_rad.sin();
+    lab_to_rgb(l, a, b)
+}
+
+/// Converts OKLCH to an sRGB triple (0–255 each).
+///
+/// `l` in [0, 1], `c` (chroma) typically in [0, 0.4], `h` (hue) in [0, 360).
+#[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
+fn oklch_to_rgb(l: f64, c: f64, h: f64) -> (u8, u8, u8) {
+    let h_rad = h.to_radians();
+    let a = c * h_rad.cos();
+    let b = c * h_rad.sin();
+
+    // OKLab → LMS'
+    let lms_l = l + 0.396_337_777_4 * a + 0.215_803_757_3 * b;
+    let lms_m = l - 0.105_561_345_8 * a - 0.063_854_172_8 * b;
+    let lms_s = l - 0.089_484_177_5 * a - 1.291_485_548_0 * b;
+
+    // Cube to linear LMS
+    let l_lms = lms_l * lms_l * lms_l;
+    let m_lms = lms_m * lms_m * lms_m;
+    let s_lms = lms_s * lms_s * lms_s;
+
+    // LMS → linear sRGB
+    let r_lin = 4.076_741_662_1 * l_lms - 3.307_711_591_3 * m_lms + 0.230_969_929_2 * s_lms;
+    let g_lin = -1.268_438_004_6 * l_lms + 2.609_757_401_1 * m_lms - 0.341_319_396_5 * s_lms;
+    let b_lin = -0.004_196_086_3 * l_lms - 0.703_418_614_7 * m_lms + 1.707_614_701_0 * s_lms;
+
+    (
+        (srgb_gamma(r_lin) * 255.0).round() as u8,
+        (srgb_gamma(g_lin) * 255.0).round() as u8,
+        (srgb_gamma(b_lin) * 255.0).round() as u8,
     )
 }
 
@@ -935,6 +1236,305 @@ mod tests {
                 ground: Ground::Foreground,
             }]
         );
+    }
+
+    // --- hsv(H,S,V) ---
+
+    #[test]
+    fn test_parse_part_hsv_red() {
+        assert_eq!(
+            parse_part("hsv(0,100,100)", 0).unwrap(),
+            vec![TagType::Color {
+                color: Color::Rgb(255, 0, 0),
+                ground: Ground::Foreground,
+            }]
+        );
+    }
+
+    #[test]
+    fn test_parse_part_hsv_green() {
+        assert_eq!(
+            parse_part("hsv(120,100,100)", 0).unwrap(),
+            vec![TagType::Color {
+                color: Color::Rgb(0, 255, 0),
+                ground: Ground::Foreground,
+            }]
+        );
+    }
+
+    #[test]
+    fn test_parse_part_hsv_blue() {
+        assert_eq!(
+            parse_part("hsv(240,100,100)", 0).unwrap(),
+            vec![TagType::Color {
+                color: Color::Rgb(0, 0, 255),
+                ground: Ground::Foreground,
+            }]
+        );
+    }
+
+    #[test]
+    fn test_parse_part_hsv_gray() {
+        assert_eq!(
+            parse_part("hsv(0,0,50)", 0).unwrap(),
+            vec![TagType::Color {
+                color: Color::Rgb(128, 128, 128),
+                ground: Ground::Foreground,
+            }]
+        );
+    }
+
+    #[test]
+    fn test_parse_part_hsv_bg() {
+        assert_eq!(
+            parse_part("bg:hsv(0,100,100)", 0).unwrap(),
+            vec![TagType::Color {
+                color: Color::Rgb(255, 0, 0),
+                ground: Ground::Background,
+            }]
+        );
+    }
+
+    #[test]
+    fn test_parse_part_hsv_wrong_arg_count() {
+        let result = parse_part("hsv(0,50)", 0);
+        assert!(result.is_err());
+        if let Err(crate::errors::LexError::InvalidArgumentCount { expected, got, .. }) = result {
+            assert_eq!(expected, 3);
+            assert_eq!(got, 2);
+        }
+    }
+
+    #[test]
+    fn test_parse_part_hsv_hue_out_of_range() {
+        assert!(parse_part("hsv(400,50,50)", 0).is_err());
+    }
+
+    #[test]
+    fn test_parse_part_hsv_sat_out_of_range() {
+        assert!(parse_part("hsv(0,150,50)", 0).is_err());
+    }
+
+    #[test]
+    fn test_parse_part_hsv_val_out_of_range() {
+        assert!(parse_part("hsv(0,50,110)", 0).is_err());
+    }
+
+    #[test]
+    fn test_parse_part_hsv_invalid_value() {
+        assert!(parse_part("hsv(a,b,c)", 0).is_err());
+    }
+
+    #[test]
+    fn test_parse_part_hsv_unclosed() {
+        assert!(parse_part("hsv(0,50,50", 0).is_err());
+    }
+
+    #[test]
+    fn test_parse_part_hsv_with_spaces() {
+        assert_eq!(
+            parse_part("hsv( 120 , 100 , 100 )", 0).unwrap(),
+            vec![TagType::Color {
+                color: Color::Rgb(0, 255, 0),
+                ground: Ground::Foreground,
+            }]
+        );
+    }
+
+    // --- hsb(H,S,B) alias ---
+
+    #[test]
+    fn test_parse_part_hsb_alias() {
+        assert_eq!(
+            parse_part("hsb(0,100,100)", 0).unwrap(),
+            parse_part("hsv(0,100,100)", 0).unwrap(),
+        );
+    }
+
+    // --- hwb(H,W,B) ---
+
+    #[test]
+    fn test_parse_part_hwb_red() {
+        assert_eq!(
+            parse_part("hwb(0,0,0)", 0).unwrap(),
+            vec![TagType::Color {
+                color: Color::Rgb(255, 0, 0),
+                ground: Ground::Foreground,
+            }]
+        );
+    }
+
+    #[test]
+    fn test_parse_part_hwb_white() {
+        assert_eq!(
+            parse_part("hwb(0,100,0)", 0).unwrap(),
+            vec![TagType::Color {
+                color: Color::Rgb(255, 255, 255),
+                ground: Ground::Foreground,
+            }]
+        );
+    }
+
+    #[test]
+    fn test_parse_part_hwb_black() {
+        assert_eq!(
+            parse_part("hwb(0,0,100)", 0).unwrap(),
+            vec![TagType::Color {
+                color: Color::Rgb(0, 0, 0),
+                ground: Ground::Foreground,
+            }]
+        );
+    }
+
+    #[test]
+    fn test_parse_part_hwb_pink() {
+        assert_eq!(
+            parse_part("hwb(0,50,0)", 0).unwrap(),
+            vec![TagType::Color {
+                color: Color::Rgb(255, 128, 128),
+                ground: Ground::Foreground,
+            }]
+        );
+    }
+
+    #[test]
+    fn test_parse_part_hwb_wb_too_high() {
+        assert!(parse_part("hwb(0,60,60)", 0).is_err());
+    }
+
+    #[test]
+    fn test_parse_part_hwb_bg() {
+        assert_eq!(
+            parse_part("bg:hwb(0,0,0)", 0).unwrap(),
+            vec![TagType::Color {
+                color: Color::Rgb(255, 0, 0),
+                ground: Ground::Background,
+            }]
+        );
+    }
+
+    // --- lab(L,a,b) ---
+
+    #[test]
+    fn test_parse_part_lab_black() {
+        assert_eq!(
+            parse_part("lab(0,0,0)", 0).unwrap(),
+            vec![TagType::Color {
+                color: Color::Rgb(0, 0, 0),
+                ground: Ground::Foreground,
+            }]
+        );
+    }
+
+    #[test]
+    fn test_parse_part_lab_white() {
+        assert_eq!(
+            parse_part("lab(100,0,0)", 0).unwrap(),
+            vec![TagType::Color {
+                color: Color::Rgb(255, 255, 255),
+                ground: Ground::Foreground,
+            }]
+        );
+    }
+
+    #[test]
+    fn test_parse_part_lab_bg() {
+        assert_eq!(
+            parse_part("bg:lab(53,80,67)", 0).unwrap(),
+            vec![TagType::Color {
+                color: Color::Rgb(254, 0, 0),
+                ground: Ground::Background,
+            }]
+        );
+    }
+
+    #[test]
+    fn test_parse_part_lab_wrong_arg_count() {
+        assert!(parse_part("lab(50,20)", 0).is_err());
+    }
+
+    #[test]
+    fn test_parse_part_lab_l_out_of_range() {
+        assert!(parse_part("lab(110,0,0)", 0).is_err());
+    }
+
+    #[test]
+    fn test_parse_part_lab_unclosed() {
+        assert!(parse_part("lab(50,20,30", 0).is_err());
+    }
+
+    // --- lch(L,C,H) ---
+
+    #[test]
+    fn test_parse_part_lch_black() {
+        assert_eq!(
+            parse_part("lch(0,0,0)", 0).unwrap(),
+            vec![TagType::Color {
+                color: Color::Rgb(0, 0, 0),
+                ground: Ground::Foreground,
+            }]
+        );
+    }
+
+    #[test]
+    fn test_parse_part_lch_white() {
+        assert_eq!(
+            parse_part("lch(100,0,0)", 0).unwrap(),
+            vec![TagType::Color {
+                color: Color::Rgb(255, 255, 255),
+                ground: Ground::Foreground,
+            }]
+        );
+    }
+
+    #[test]
+    fn test_parse_part_lch_bg() {
+        assert_eq!(
+            parse_part("bg:lch(50,0,0)", 0).unwrap(),
+            vec![TagType::Color {
+                color: Color::Rgb(119, 119, 119),
+                ground: Ground::Background,
+            }]
+        );
+    }
+
+    #[test]
+    fn test_parse_part_lch_chroma_out_of_range() {
+        assert!(parse_part("lch(50,200,0)", 0).is_err());
+    }
+
+    // --- oklch(L,C,H) ---
+
+    #[test]
+    fn test_parse_part_oklch_black() {
+        assert_eq!(
+            parse_part("oklch(0,0,0)", 0).unwrap(),
+            vec![TagType::Color {
+                color: Color::Rgb(0, 0, 0),
+                ground: Ground::Foreground,
+            }]
+        );
+    }
+
+    #[test]
+    fn test_parse_part_oklch_white() {
+        assert_eq!(
+            parse_part("oklch(1,0,0)", 0).unwrap(),
+            vec![TagType::Color {
+                color: Color::Rgb(255, 255, 255),
+                ground: Ground::Foreground,
+            }]
+        );
+    }
+
+    #[test]
+    fn test_parse_part_oklch_l_out_of_range() {
+        assert!(parse_part("oklch(1.5,0,0)", 0).is_err());
+    }
+
+    #[test]
+    fn test_parse_part_oklch_chroma_out_of_range() {
+        assert!(parse_part("oklch(0.5,0.5,0)", 0).is_err());
     }
 
     // --- tokenize ---
@@ -1309,6 +1909,138 @@ mod tests {
                 }),
                 Token::Text("text".into()),
             ]
+        );
+    }
+
+    // --- tokenization: hsv ---
+
+    #[test]
+    fn test_tokenize_hsv_tag() {
+        let tokens = tokenize("[hsv(0,100,100)]text").unwrap();
+        assert_eq!(
+            tokens[0],
+            Token::Tag(TagType::Color {
+                color: Color::Rgb(255, 0, 0),
+                ground: Ground::Foreground,
+            })
+        );
+    }
+
+    #[test]
+    fn test_tokenize_bg_hsv_tag() {
+        let tokens = tokenize("[bg:hsv(120,100,100)]text").unwrap();
+        assert_eq!(
+            tokens[0],
+            Token::Tag(TagType::Color {
+                color: Color::Rgb(0, 255, 0),
+                ground: Ground::Background,
+            })
+        );
+    }
+
+    // --- tokenization: hsb (alias) ---
+
+    #[test]
+    fn test_tokenize_hsb_tag() {
+        let tokens = tokenize("[hsb(0,100,100)]text").unwrap();
+        assert_eq!(
+            tokens[0],
+            Token::Tag(TagType::Color {
+                color: Color::Rgb(255, 0, 0),
+                ground: Ground::Foreground,
+            })
+        );
+    }
+
+    // --- tokenization: hwb ---
+
+    #[test]
+    fn test_tokenize_hwb_tag() {
+        let tokens = tokenize("[hwb(0,0,0)]text").unwrap();
+        assert_eq!(
+            tokens[0],
+            Token::Tag(TagType::Color {
+                color: Color::Rgb(255, 0, 0),
+                ground: Ground::Foreground,
+            })
+        );
+    }
+
+    #[test]
+    fn test_tokenize_bg_hwb_tag() {
+        let tokens = tokenize("[bg:hwb(0,0,0)]text").unwrap();
+        assert_eq!(
+            tokens[0],
+            Token::Tag(TagType::Color {
+                color: Color::Rgb(255, 0, 0),
+                ground: Ground::Background,
+            })
+        );
+    }
+
+    // --- tokenization: lab ---
+
+    #[test]
+    fn test_tokenize_lab_tag() {
+        let tokens = tokenize("[lab(0,0,0)]text").unwrap();
+        assert_eq!(
+            tokens[0],
+            Token::Tag(TagType::Color {
+                color: Color::Rgb(0, 0, 0),
+                ground: Ground::Foreground,
+            })
+        );
+    }
+
+    #[test]
+    fn test_tokenize_bg_lab_tag() {
+        let tokens = tokenize("[bg:lab(100,0,0)]text").unwrap();
+        assert_eq!(
+            tokens[0],
+            Token::Tag(TagType::Color {
+                color: Color::Rgb(255, 255, 255),
+                ground: Ground::Background,
+            })
+        );
+    }
+
+    // --- tokenization: lch ---
+
+    #[test]
+    fn test_tokenize_lch_tag() {
+        let tokens = tokenize("[lch(0,0,0)]text").unwrap();
+        assert_eq!(
+            tokens[0],
+            Token::Tag(TagType::Color {
+                color: Color::Rgb(0, 0, 0),
+                ground: Ground::Foreground,
+            })
+        );
+    }
+
+    // --- tokenization: oklch ---
+
+    #[test]
+    fn test_tokenize_oklch_tag() {
+        let tokens = tokenize("[oklch(0,0,0)]text").unwrap();
+        assert_eq!(
+            tokens[0],
+            Token::Tag(TagType::Color {
+                color: Color::Rgb(0, 0, 0),
+                ground: Ground::Foreground,
+            })
+        );
+    }
+
+    #[test]
+    fn test_tokenize_bg_oklch_tag() {
+        let tokens = tokenize("[bg:oklch(1,0,0)]text").unwrap();
+        assert_eq!(
+            tokens[0],
+            Token::Tag(TagType::Color {
+                color: Color::Rgb(255, 255, 255),
+                ground: Ground::Background,
+            })
         );
     }
 

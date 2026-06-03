@@ -9,5 +9,5 @@ fn main() {
 
     // Format args version
     let name = "Razkar";
-    println!("{}", cformat!("[green]Hello, {}!", name));
+    println!("{}", cformat!("[green]Hello, {name}!"));
 }

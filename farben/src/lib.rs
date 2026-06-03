@@ -1,7 +1,7 @@
 //! # Farben
 //!
-//! Farben *(as in "color" in German)* is a zero-dependency terminal coloring library.
-//! It uses a markup-like syntax to apply ANSI styles to your strings — named colors,
+//! Farben (as in "color" in German) is a zero-dependency terminal coloring library.
+//! It uses a markup-like syntax to apply ANSI styles to your strings -- named colors,
 //! RGB, ANSI 256, emphasis styles, foreground and background targeting, custom named
 //! tags, inline resets, and inline markdown rendering.
 //!
@@ -86,8 +86,10 @@
 //!
 #![warn(missing_docs)]
 
+extern crate self as farben;
+
 #[cfg(feature = "compile")]
-pub use farben_macros::{color, colorb, validate_color};
+pub use farben_macros::{cformat, cformatb, color, colorb, validate_color};
 
 #[cfg(feature = "markdown-compile")]
 pub use farben_macros::markdown;
@@ -115,30 +117,30 @@ mod tests;
 
 pub use farben_core::env::color_enabled;
 
-/// A compile-time colored string with both styled and plain variants.
-/// Resolved at runtime based on environment and TTY detection.
+/// A compile-time colored string. Stores only the ANSI-styled variant;
+/// plain text is derived at runtime via [`strip_ansi`] when color is disabled.
 pub struct FarbenStr {
-    /// The string, when it is styled
+    /// The pre-rendered, ANSI-escaped string baked in at compile time.
     pub styled: &'static str,
-    /// The string, without styling
-    pub plain: &'static str,
 }
 
 impl FarbenStr {
-    /// Returns the styled string if color is enabled, otherwise the plain string.
+    /// Returns the styled string if color is enabled, otherwise strips ANSI
+    /// escapes and returns the plain text. Borrowing avoids allocation on the
+    /// hot path; stripping only allocates when color is actually disabled.
     #[inline]
     #[must_use]
-    pub fn resolve(&self) -> &'static str {
+    pub fn resolve(&self) -> std::borrow::Cow<'static, str> {
         if color_enabled() {
-            self.styled
+            std::borrow::Cow::Borrowed(self.styled)
         } else {
-            self.plain
+            std::borrow::Cow::Owned(strip_ansi(self.styled))
         }
     }
 }
 
 impl std::fmt::Display for FarbenStr {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.write_str(self.resolve())
+        f.write_str(&self.resolve())
     }
 }

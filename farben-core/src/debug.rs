@@ -62,12 +62,10 @@ pub fn tag_to_markup_part(tag: &TagType) -> String {
         TagType::ResetOne(inner) => {
             let part = match inner {
                 ResetKind::Emphasis(e) => tag_to_markup_part(&TagType::Emphasis(*e)),
-                ResetKind::Color { color, ground } => {
-                    tag_to_markup_part(&TagType::Color {
-                        color: color.clone(),
-                        ground: *ground,
-                    })
-                }
+                ResetKind::Color { color, ground } => tag_to_markup_part(&TagType::Color {
+                    color: color.clone(),
+                    ground: *ground,
+                }),
             };
             format!("/{part}")
         }
