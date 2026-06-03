@@ -5,7 +5,7 @@
 
 use crate::{
     ansi::{Color, Ground, NamedColor},
-    lexer::{EmphasisType, TagType, Token},
+    lexer::{EmphasisType, ResetKind, TagType, Token},
 };
 
 /// Converts a `TagType` into its farben markup representation.
@@ -59,7 +59,18 @@ pub fn tag_to_markup_part(tag: &TagType) -> String {
             }
         }
         TagType::ResetAll => "/".to_string(),
-        TagType::ResetOne(inner) => format!("/{}", tag_to_markup_part(inner)),
+        TagType::ResetOne(inner) => {
+            let part = match inner {
+                ResetKind::Emphasis(e) => tag_to_markup_part(&TagType::Emphasis(*e)),
+                ResetKind::Color { color, ground } => {
+                    tag_to_markup_part(&TagType::Color {
+                        color: color.clone(),
+                        ground: *ground,
+                    })
+                }
+            };
+            format!("/{part}")
+        }
         TagType::Prefix(_) => String::new(),
     }
 }

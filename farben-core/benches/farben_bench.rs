@@ -2,7 +2,7 @@ use criterion::{Criterion, criterion_group, criterion_main};
 use farben_core::{
     ansi::{Color, Ground, NamedColor, color_to_ansi, emphasis_to_ansi},
     lexer::{EmphasisType, TagType, Token, tokenize},
-    parser::render,
+    parser::{render, render_str},
     registry::insert_style,
 };
 use std::hint::black_box;
@@ -61,6 +61,17 @@ fn bench_pipeline(c: &mut Criterion) {
             ))
             .unwrap();
             render(tokens)
+        })
+    });
+}
+
+fn bench_render_str(c: &mut Criterion) {
+    c.bench_function("render_str pipeline", |b| {
+        b.iter(|| {
+            render_str(black_box(
+                "[bold red]error:[/] something [bg:blue]went[/] wrong with [italic]this[/] call",
+            ))
+            .unwrap()
         })
     });
 }
@@ -147,6 +158,7 @@ criterion_group!(
     bench_tokenize_complex,
     bench_render,
     bench_pipeline,
+    bench_render_str,
     bench_emphasis_to_ansi,
     bench_color_to_ansi_named,
     bench_color_to_ansi_rgb,

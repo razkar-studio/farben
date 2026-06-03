@@ -8,7 +8,7 @@ use std::sync::OnceLock;
 use crate::color_enabled;
 #[cfg(feature = "inline")]
 use farben_core::inline;
-use farben_core::{ansi, errors, lexer, parser, registry};
+use farben_core::{ansi, errors, parser, registry};
 
 /// Parses and renders a farben markup string, appending a final SGR reset.
 ///
@@ -18,7 +18,9 @@ use farben_core::{ansi, errors, lexer, parser, registry};
 /// or a malformed color value.
 pub fn try_color(input: impl Into<String>) -> Result<String, errors::LexError> {
     let input = input.into();
-    let mut res = parser::render(lexer::tokenize(input)?);
+    #[cfg(feature = "inline")]
+    let input = inline::preprocess(&input);
+    let mut res = parser::render_str(&input)?;
     if color_enabled() {
         res.push_str("\x1b[0m");
     }
@@ -70,7 +72,7 @@ pub fn color_runtime(input: impl Into<String>, bleed: bool) -> String {
     let input = input.into();
     #[cfg(feature = "inline")]
     let input = inline::preprocess(&input);
-    let tokens = lexer::tokenize(&input).unwrap_or_else(|e| {
+    let mut res = parser::render_str(&input).unwrap_or_else(|e| {
         panic!(
             "{}",
             errors::LexErrorDisplay {
@@ -79,7 +81,6 @@ pub fn color_runtime(input: impl Into<String>, bleed: bool) -> String {
             }
         );
     });
-    let mut res = parser::render(tokens);
     if !bleed {
         if color_enabled() {
             res.push_str("\x1b[0m");

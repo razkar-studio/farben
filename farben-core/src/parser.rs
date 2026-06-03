@@ -6,11 +6,48 @@
 //! with [`render`].
 
 use crate::{
-    ansi::{color_to_ansi, emphasis_to_ansi},
+    ansi::{write_color_ansi, write_emphasis_ansi},
     env::color_enabled,
-    lexer::{TagType, Token},
+    errors::LexError,
+    lexer::{parse_part, split_tag_parts, TagType, Token},
     state::{active_stack, set_active_stack},
+    strip::strip_markup,
 };
+
+/// Applies a single styling `TagType` to `result`, writing ANSI sequences and
+/// tracking active styles in `active`.
+fn apply_tag(tag: TagType, result: &mut String, active: &mut Vec<TagType>) {
+    match tag {
+        TagType::Prefix(s) => result.push_str(&s),
+        TagType::Color { color, ground } => {
+            #[cfg(feature = "lossy")]
+            let color = crate::degrader::degrade(color);
+            write_color_ansi(result, &color, ground);
+            active.push(TagType::Color { color, ground });
+        }
+        TagType::Emphasis(e) => {
+            write_emphasis_ansi(result, &e);
+            active.push(TagType::Emphasis(e));
+        }
+        TagType::ResetAll => {
+            result.push_str("\x1b[0m");
+            active.clear();
+        }
+        TagType::ResetOne(r) => {
+            result.push_str("\x1b[0m");
+            active.retain(|x| !r.matches_tag(x));
+            for a in &*active {
+                match a {
+                    TagType::Color { color, ground } => {
+                        write_color_ansi(result, color, *ground);
+                    }
+                    TagType::Emphasis(e) => write_emphasis_ansi(result, e),
+                    _ => {}
+                }
+            }
+        }
+    }
+}
 
 /// Renders a token stream into a raw ANSI-escaped string.
 ///
@@ -50,38 +87,117 @@ pub fn render_forced(tokens: Vec<Token>) -> String {
     for t in tokens {
         match t {
             Token::Text(s) => result.push_str(&s),
-            Token::Tag(TagType::Prefix(s)) => result.push_str(&s),
-            Token::Tag(TagType::Color { color, ground }) => {
-                #[cfg(feature = "lossy")]
-                let color = crate::degrader::degrade(color);
-                result.push_str(&color_to_ansi(&color, ground));
-                active.push(TagType::Color { color, ground });
-            }
-            Token::Tag(TagType::Emphasis(e)) => {
-                result.push_str(&emphasis_to_ansi(&e));
-                active.push(TagType::Emphasis(e));
-            }
-            Token::Tag(TagType::ResetAll) => {
-                result.push_str("\x1b[0m");
-                active.clear();
-            }
-            Token::Tag(TagType::ResetOne(r)) => {
-                result.push_str("\x1b[0m");
-                active.retain(|x| x != r.as_ref());
-                for a in &active {
-                    match a {
-                        TagType::Color { color, ground } => {
-                            result.push_str(&color_to_ansi(color, *ground));
-                        }
-                        TagType::Emphasis(e) => result.push_str(&emphasis_to_ansi(e)),
-                        _ => {}
-                    }
-                }
-            }
+            Token::Tag(tag) => apply_tag(tag, &mut result, &mut active),
         }
     }
     set_active_stack(active);
     result
+}
+
+/// Single-pass render: parses and renders markup in one pass, avoiding intermediate `Vec<Token>`.
+///
+/// When colors are enabled, scans the input for tags and emits ANSI sequences directly.
+/// When disabled, validates markup and strips all tags.
+///
+/// # Errors
+///
+/// Returns `LexError` on unclosed tags or malformed tag content.
+/// Note: this is the optimized single-pass entry point used by the `farben` crate.
+/// External consumers calling `render` + `tokenize` separately will also work, but
+/// this function avoids the intermediate `Vec<Token>` allocation.
+pub fn render_str(input: &str) -> Result<String, LexError> {
+    if !color_enabled() {
+        crate::lexer::tokenize(input)?; // validate (preserves existing error behavior)
+        return Ok(strip_markup(input));
+    }
+    render_forced_str(input)
+}
+
+/// The same as `render_str`, but bypasses the `color_enabled` check.
+fn render_forced_str(input: &str) -> Result<String, LexError> {
+    let mut result = String::with_capacity(input.len() + input.len() / 4);
+    let mut active: Vec<TagType> = active_stack();
+    let mut tag_types = Vec::new();
+    let bytes = input.as_bytes();
+    let mut pos = 0;
+
+    while pos < input.len() {
+        // Find the next '[' or ']'
+        let next = {
+            let rest = &input[pos..];
+            let open = rest.find('[');
+            let close = rest.find(']');
+            match (open, close) {
+                (Some(o), Some(c)) if o <= c => Some((pos + o, b'[')),
+                (Some(_) | None, Some(c)) => Some((pos + c, b']')),
+                (Some(o), None) => Some((pos + o, b'[')),
+                (None, None) => None,
+            }
+        };
+
+        let Some((abs_pos, kind)) = next else {
+            // No more brackets; flush remaining text.
+            if pos < input.len() {
+                result.push_str(&input[pos..]);
+            }
+            break;
+        };
+
+        // Flush text before the bracket.
+        if abs_pos > pos {
+            result.push_str(&input[pos..abs_pos]);
+        }
+
+        match kind {
+            b']' => {
+                if abs_pos + 1 < input.len() && bytes[abs_pos + 1] == b']' {
+                    result.push(']');
+                    pos = abs_pos + 2;
+                } else {
+                    result.push(']');
+                    pos = abs_pos + 1;
+                }
+            }
+            b'[' => {
+                // ESC prefix: raw ANSI passthrough.
+                if abs_pos > 0 && bytes[abs_pos - 1] == b'\x1b' {
+                    result.push_str("\x1b[");
+                    pos = abs_pos + 1;
+                    continue;
+                }
+
+                // Double-bracket escape.
+                if abs_pos + 1 < input.len() && bytes[abs_pos + 1] == b'[' {
+                    result.push('[');
+                    pos = abs_pos + 2;
+                    continue;
+                }
+
+                // Find matching ']'.
+                let tag_start = abs_pos + 1;
+                let closing = input[tag_start..]
+                    .find(']')
+                    .ok_or(LexError::UnclosedTag(abs_pos))?;
+                let raw_tag = &input[tag_start..tag_start + closing];
+
+                // Parse tag parts and emit ANSI directly.
+                tag_types.clear();
+                for (offset, part) in split_tag_parts(raw_tag) {
+                    let abs_off = tag_start + offset;
+                    parse_part(part, abs_off, &mut tag_types)?;
+                }
+                for t in tag_types.drain(..) {
+                    apply_tag(t, &mut result, &mut active);
+                }
+
+                pos = tag_start + closing + 1;
+            }
+            _ => unreachable!(),
+        }
+    }
+
+    set_active_stack(active);
+    Ok(result)
 }
 
 #[cfg(test)]
@@ -89,7 +205,7 @@ mod tests {
     use super::*;
     use crate::ansi::{Color, Ground, NamedColor};
     use crate::env::color_enabled;
-    use crate::lexer::{EmphasisType, TagType, Token};
+    use crate::lexer::{EmphasisType, ResetKind, TagType, Token};
 
     // --- render ---
     #[test]
@@ -287,9 +403,7 @@ mod tests {
             return;
         }
         let result = render(vec![
-            Token::Tag(TagType::ResetOne(Box::new(TagType::Emphasis(
-                EmphasisType::Bold,
-            )))),
+            Token::Tag(TagType::ResetOne(ResetKind::Emphasis(EmphasisType::Bold))),
             Token::Text("plain".into()),
         ]);
         assert_eq!(result, "plain");
@@ -310,10 +424,10 @@ mod tests {
         ]);
 
         let result = render(vec![
-            Token::Tag(TagType::ResetOne(Box::new(TagType::Color {
+            Token::Tag(TagType::ResetOne(ResetKind::Color {
                 color: Color::Named(NamedColor::Red),
                 ground: Ground::Foreground,
-            }))),
+            })),
             Token::Text("ok".into()),
         ]);
         assert_eq!(result, "\x1b[0m\x1b[1mok");

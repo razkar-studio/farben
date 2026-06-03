@@ -307,6 +307,47 @@ pub fn emphasis_to_ansi(emphasis: &EmphasisType) -> String {
     format!("\x1b[{code}m")
 }
 
+/// Writes an ANSI escape sequence for a color directly into a `String` buffer.
+///
+/// Avoids the intermediate `String` allocation of [`color_to_ansi`].
+pub fn write_color_ansi(output: &mut String, color: &Color, ground: Ground) {
+    let add: u8 = match ground {
+        Ground::Background => 10,
+        Ground::Foreground => 0,
+    };
+    match color {
+        Color::Named(n) => {
+            let _ = write!(output, "\x1b[{}m", named_sgr(n) + add);
+        }
+        Color::Ansi256(v) => {
+            let _ = write!(output, "\x1b[{};5;{}m", 38 + add, v);
+        }
+        Color::Rgb(r, g, b) => {
+            let _ = write!(output, "\x1b[{};2;{};{};{}m", 38 + add, r, g, b);
+        }
+    }
+}
+
+/// Writes an ANSI escape sequence for an emphasis type directly into a `String` buffer.
+///
+/// Avoids the intermediate `String` allocation of [`emphasis_to_ansi`].
+pub fn write_emphasis_ansi(output: &mut String, emphasis: &EmphasisType) {
+    let code: u8 = match emphasis {
+        EmphasisType::Bold => 1,
+        EmphasisType::Dim => 2,
+        EmphasisType::Italic => 3,
+        EmphasisType::Underline => 4,
+        EmphasisType::DoubleUnderline => 21,
+        EmphasisType::Blink => 5,
+        EmphasisType::RapidBlink => 6,
+        EmphasisType::Reverse => 7,
+        EmphasisType::Invisible => 8,
+        EmphasisType::Strikethrough => 9,
+        EmphasisType::Overline => 53,
+    };
+    let _ = write!(output, "\x1b[{code}m");
+}
+
 /// Converts a `Style` into a single combined SGR escape sequence.
 ///
 /// All active attributes and colors are merged into one sequence. Returns an empty string

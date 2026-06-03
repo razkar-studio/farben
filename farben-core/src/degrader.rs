@@ -86,9 +86,10 @@ pub fn nearest_named(r: u8, g: u8, b: u8) -> NamedColor {
 
     for entry in NAMED_COLOR_RGB {
         let (_, er, eg, eb) = entry;
-        let dist = ((i32::from(r) - i32::from(*er)).pow(2)
-            + (i32::from(g) - i32::from(*eg)).pow(2)
-            + (i32::from(b) - i32::from(*eb)).pow(2)) as u32;
+        let dr = u32::from(r).abs_diff(u32::from(*er));
+        let dg = u32::from(g).abs_diff(u32::from(*eg));
+        let db = u32::from(b).abs_diff(u32::from(*eb));
+        let dist = dr * dr + dg * dg + db * db;
         if dist < best_dist {
             best_dist = dist;
             best = entry;

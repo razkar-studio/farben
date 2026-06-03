@@ -56,6 +56,26 @@ function crateClass(crate) {
 const releases = [
     {
         version:
+            "frb0.19.0-beta.3 / core0.14.0-beta.3 / macros0.7.0-beta.3 / build0.1.5-beta.1 / md0.2.4",
+        crate: "Global",
+        subtitle: "Hyper-Optimized Pipeline",
+        date: "2026-06-03",
+        sections: [
+            {
+                type: "Changed",
+                items: [
+                    "Hyper-optimized the render pipeline: <code>ResetOne</code> uses a <code>ResetKind</code> enum instead of <code>Box&lt;TagType&gt;</code>, eliminating heap allocation per <code>[/bold]</code> tag.",
+                    "Direct-to-buffer <code>write_color_ansi</code> / <code>write_emphasis_ansi</code> eliminate intermediate <code>String</code> allocations per tag.",
+                    "<code>parse_part</code> and <code>parse_tag</code> now take caller-provided buffers, reusing allocations across calls.",
+                    "New single-pass <code>render_str()</code> combines tokenization and ANSI emission, avoiding the intermediate <code>Vec&lt;Token&gt;</code> allocation. This is the hot path used by <code>color()</code>, <code>colorb()</code>, <code>cprint!()</code>, <code>cprintln!()</code>, <code>cformat!()</code>, etc.",
+                    "<code>nearest_named</code> squared-distance uses <code>u32::abs_diff</code> and inline multiply instead of <code>i32::pow(2)</code>.",
+                    "Benchmark results: old pipeline ~905 ns, new <code>render_str</code> ~760 ns (~16% improvement).",
+                ],
+            },
+        ],
+    },
+    {
+        version:
             "frb0.19.0-beta.2 / core0.14.0-beta.2 / macros0.7.0-beta.2 / build0.1.5-beta.1 / md0.2.4",
         crate: "Global",
         subtitle: "Hex and HSL Colors",

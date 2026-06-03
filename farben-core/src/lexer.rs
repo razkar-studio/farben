@@ -16,7 +16,7 @@ use crate::{
 };
 
 /// A text emphasis modifier supported by farben markup.
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub enum EmphasisType {
     /// Reduced intensity (SGR 2). Lower intensity.
     Dim,
@@ -42,6 +42,55 @@ pub enum EmphasisType {
     RapidBlink,
 }
 
+/// The target of a reset-one operation.
+///
+/// Unlike `TagType`, this only allows emphasis or color variants (not nested resets
+/// or prefixes), so it can be stored inline without a `Box`.
+#[derive(Debug, PartialEq, Clone)]
+pub enum ResetKind {
+    /// Resets a text emphasis attribute.
+    Emphasis(EmphasisType),
+    /// Resets a foreground or background color.
+    Color {
+        /// The color to remove.
+        color: Color,
+        /// Whether foreground or background.
+        ground: Ground,
+    },
+}
+
+impl ResetKind {
+    /// Returns `true` if this reset target matches the given `TagType`.
+    pub(crate) fn matches_tag(&self, tag: &TagType) -> bool {
+        match (self, tag) {
+            (Self::Emphasis(a), TagType::Emphasis(b)) => a == b,
+            (
+                Self::Color {
+                    color: ca,
+                    ground: ga,
+                },
+                TagType::Color { color: cb, ground: gb },
+            ) => ca == cb && ga == gb,
+            _ => false,
+        }
+    }
+
+    /// Converts a `TagType` into a `ResetKind`.
+    ///
+    /// Returns `None` if the tag is not a color or emphasis type (i.e., it is a reset,
+    /// prefix, or reset-all).
+    fn from_tag(tag: &TagType) -> Option<Self> {
+        match tag {
+            TagType::Emphasis(e) => Some(Self::Emphasis(*e)),
+            TagType::Color { color, ground } => Some(Self::Color {
+                color: color.clone(),
+                ground: *ground,
+            }),
+            _ => None,
+        }
+    }
+}
+
 /// The kind of styling operation a tag represents.
 #[derive(Debug, PartialEq, Clone)]
 pub enum TagType {
@@ -49,7 +98,7 @@ pub enum TagType {
     ResetAll,
     /// Resets one specific active style, then re-applies the rest.
     /// Example: `[/bold]` resets bold but keeps other active styles.
-    ResetOne(Box<TagType>),
+    ResetOne(ResetKind),
     /// Applies a text emphasis attribute.
     Emphasis(EmphasisType),
     /// Sets a foreground or background color.
@@ -179,7 +228,7 @@ fn style_to_tags(style: &Style) -> Vec<TagType> {
 /// Returns `LexError::InvalidValue` if a numeric argument cannot be parsed.
 /// Returns `LexError::InvalidArgumentCount` if `rgb(...)` or `hsl(...)` does not receive exactly three values.
 #[allow(clippy::too_many_lines)]
-fn parse_part(part: &str, position: usize) -> Result<Vec<TagType>, LexError> {
+pub(crate) fn parse_part(part: &str, position: usize, out: &mut Vec<TagType>) -> Result<(), LexError> {
     let (ground, part) = if let Some(rest) = part.strip_prefix("bg:") {
         (Ground::Background, rest)
     } else if let Some(rest) = part.strip_prefix("fg:") {
@@ -189,51 +238,63 @@ fn parse_part(part: &str, position: usize) -> Result<Vec<TagType>, LexError> {
     };
     if let Some(remainder) = part.strip_prefix('/') {
         if remainder.is_empty() {
-            Ok(vec![TagType::ResetAll])
+            out.push(TagType::ResetAll);
+            Ok(())
         } else {
-            let inner = parse_part(remainder, position + 1)?;
+            let mut inner = Vec::new();
+            parse_part(remainder, position + 1, &mut inner)?;
             if let [tag] = inner.as_slice() {
                 match tag {
                     TagType::ResetAll | TagType::ResetOne(_) | TagType::Prefix(_) => {
                         Err(LexError::InvalidResetTarget(position))
                     }
-                    _ => Ok(vec![TagType::ResetOne(Box::new(tag.clone()))]),
+                    _ => {
+                        out.push(TagType::ResetOne(
+                            ResetKind::from_tag(tag).unwrap(),
+                        ));
+                        Ok(())
+                    }
                 }
             } else {
-                let resets: Vec<TagType> = inner
-                    .iter()
-                    .filter(|t| {
-                        !matches!(
-                            t,
-                            TagType::Prefix(_) | TagType::ResetAll | TagType::ResetOne(_)
-                        )
-                    })
-                    .map(|t| TagType::ResetOne(Box::new(t.clone())))
-                    .collect();
-                if resets.is_empty() {
+                let count_before = out.len();
+                for t in &inner {
+                    if !matches!(
+                        t,
+                        TagType::Prefix(_) | TagType::ResetAll | TagType::ResetOne(_)
+                    ) && let Some(kind) = ResetKind::from_tag(t)
+                    {
+                        out.push(TagType::ResetOne(kind));
+                    }
+                }
+                if out.len() == count_before {
                     Err(LexError::InvalidResetTarget(position))
                 } else {
-                    Ok(resets)
+                    Ok(())
                 }
             }
         }
     } else if let Some(color) = NamedColor::from_str(part) {
-        Ok(vec![TagType::Color {
+        out.push(TagType::Color {
             color: Color::Named(color),
             ground,
-        }])
+        });
+        Ok(())
     } else if let Some(emphasis) = EmphasisType::from_str(part) {
-        Ok(vec![TagType::Emphasis(emphasis)])
+        out.push(TagType::Emphasis(emphasis));
+        Ok(())
     } else if let Some(rest) = part.strip_prefix("ansi(") {
         if !rest.ends_with(')') {
             return Err(LexError::UnclosedValue(position));
         }
         let ansi_val = &rest[..rest.len() - 1];
         match ansi_val.trim().parse::<u8>() {
-            Ok(code) => Ok(vec![TagType::Color {
-                color: Color::Ansi256(code),
-                ground,
-            }]),
+            Ok(code) => {
+                out.push(TagType::Color {
+                    color: Color::Ansi256(code),
+                    ground,
+                });
+                Ok(())
+            }
             Err(_) => Err(LexError::InvalidValue {
                 value: ansi_val.to_string(),
                 position,
@@ -247,10 +308,13 @@ fn parse_part(part: &str, position: usize) -> Result<Vec<TagType>, LexError> {
         let parts: Result<Vec<u8>, _> =
             rgb_val.split(',').map(|v| v.trim().parse::<u8>()).collect();
         match parts {
-            Ok(v) if v.len() == 3 => Ok(vec![TagType::Color {
-                color: Color::Rgb(v[0], v[1], v[2]),
-                ground,
-            }]),
+            Ok(v) if v.len() == 3 => {
+                out.push(TagType::Color {
+                    color: Color::Rgb(v[0], v[1], v[2]),
+                    ground,
+                });
+                Ok(())
+            }
             Ok(v) => Err(LexError::InvalidArgumentCount {
                 expected: 3,
                 got: v.len(),
@@ -301,10 +365,11 @@ fn parse_part(part: &str, position: usize) -> Result<Vec<TagType>, LexError> {
             });
         }
         let (r, g, b) = hsl_to_rgb(vals[0], vals[1], vals[2]);
-        Ok(vec![TagType::Color {
+        out.push(TagType::Color {
             color: Color::Rgb(r, g, b),
             ground,
-        }])
+        });
+        Ok(())
     } else if let Some(hex) = part.strip_prefix('#') {
         if hex.is_empty() {
             return Err(LexError::InvalidValue {
@@ -356,13 +421,19 @@ fn parse_part(part: &str, position: usize) -> Result<Vec<TagType>, LexError> {
                 });
             }
         };
-        Ok(vec![TagType::Color {
+        out.push(TagType::Color {
             color: Color::Rgb(r, g, b),
             ground,
-        }])
+        });
+        Ok(())
     } else {
         match search_registry(part) {
-            Ok(style) => Ok(style_to_tags(&style)),
+            Ok(style) => {
+                for tag in style_to_tags(&style) {
+                    out.push(tag);
+                }
+                Ok(())
+            }
             Err(_) => Err(LexError::InvalidTag {
                 tag_content: part.to_string(),
                 position,
@@ -375,7 +446,7 @@ fn parse_part(part: &str, position: usize) -> Result<Vec<TagType>, LexError> {
 ///
 /// This allows constructs like `rgb(1, 2, 3)` or `ansi( 93 )` to survive as a
 /// single part instead of being split on the inner whitespace.
-fn split_tag_parts(raw_tag: &str) -> Vec<(usize, &str)> {
+pub(crate) fn split_tag_parts(raw_tag: &str) -> Vec<(usize, &str)> {
     let mut parts = Vec::new();
     let mut part_start = 0;
     let mut depth = 0usize;
@@ -407,15 +478,19 @@ fn split_tag_parts(raw_tag: &str) -> Vec<(usize, &str)> {
 /// # Errors
 ///
 /// Propagates any error from `parse_part`.
-fn parse_tag(raw_tag: &str, tag_start: usize) -> Result<Vec<TagType>, LexError> {
-    let mut result = Vec::new();
+fn parse_tag(raw_tag: &str, tag_start: usize, tokens: &mut Vec<Token>) -> Result<(), LexError> {
+    let mut parts = Vec::new();
 
     for (offset, part) in split_tag_parts(raw_tag) {
         let abs_position = tag_start + offset;
-        result.extend(parse_part(part, abs_position)?);
+        parse_part(part, abs_position, &mut parts)?;
     }
 
-    Ok(result)
+    for tag in parts {
+        tokens.push(Token::Tag(tag));
+    }
+
+    Ok(())
 }
 
 /// Tokenizes a farben markup string into a sequence of `Token`s.
@@ -504,9 +579,7 @@ pub fn tokenize(input: impl Into<String>) -> Result<Vec<Token>, LexError> {
         };
         let abs_closing = closing + abs_starting;
         let raw_tag = &input[abs_starting + 1..abs_closing];
-        for tag in parse_tag(raw_tag, abs_starting)? {
-            tokens.push(Token::Tag(tag));
-        }
+        parse_tag(raw_tag, abs_starting, &mut tokens)?;
         pos = abs_closing + 1;
     }
     Ok(tokens)
@@ -547,6 +620,12 @@ fn hsl_to_rgb(hue: f64, saturation: f64, lightness: f64) -> (u8, u8, u8) {
 mod tests {
     use super::*;
     use crate::ansi::{Color, Ground, NamedColor};
+
+    // Shadow the outer 3-arg parse_part so existing 2-arg test calls keep working.
+    fn parse_part(part: &str, position: usize) -> Result<Vec<TagType>, LexError> {
+        let mut out = Vec::new();
+        super::parse_part(part, position, &mut out).map(|_| out)
+    }
 
     // --- EmphasisType::from_str ---
 

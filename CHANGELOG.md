@@ -6,6 +6,23 @@ farben, farben-core, farben-macros, farben-build, farben-md.
 as
 frb / v, core, macros, build, md
 
+## [0.19.0-beta.3] — 2026-06-03
+
+frb0.19.0-beta.3
+core0.14.0-beta.3
+macros0.7.0-beta.3
+build0.1.5-beta.1
+md0.2.4
+
+### Changed
+- Hyper-optimized the render pipeline:
+  - `ResetOne` now uses a `ResetKind` enum instead of `Box<TagType>`, eliminating heap allocation per `[/bold]` tag.
+  - `color_to_ansi` and `emphasis_to_ansi` are replaced by direct-to-buffer `write_color_ansi` / `write_emphasis_ansi`, eliminating intermediate `String` allocations per tag.
+  - `parse_part` and `parse_tag` now take a caller-provided buffer, reusing allocations across calls.
+  - New single-pass `render_str()` combines tokenization and ANSI emission, avoiding the intermediate `Vec<Token>` allocation entirely. This is the hot path used by `color()`, `colorb()`, `cprint!`, `cprintln!`, `cformat!`, etc.
+  - `nearest_named` squared-distance computation uses `u32::abs_diff` and inline multiply instead of `i32::pow(2)`.
+- Benchmark results: old pipeline ~905 ns, new `render_str` ~760 ns (~16% improvement).
+
 ## [0.19.0-beta.2] — 2026-06-02
 
 frb0.19.0-beta.2
