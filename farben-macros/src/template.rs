@@ -37,27 +37,29 @@ pub fn split(input: &str, bleed: bool) -> Result<Vec<Piece>, farben_core::errors
 
     while let Some(c) = chars.next() {
         match c {
-            '{' => if let Some('{') = chars.peek() {
-                chars.next();
-                static_buf.push('{');
-            } else {
-                flush_static(&mut static_buf, &mut pieces, false)?;
-                let mut spec = String::new();
-                let mut closed = false;
-                for inner in chars.by_ref() {
-                    if inner == '}' {
-                        closed = true;
-                        break;
-                    }
-                    spec.push(inner);
-                }
-                if closed {
-                    pieces.push(Piece::Arg(spec));
-                } else {
+            '{' => {
+                if let Some('{') = chars.peek() {
+                    chars.next();
                     static_buf.push('{');
-                    static_buf.push_str(&spec);
+                } else {
+                    flush_static(&mut static_buf, &mut pieces, false)?;
+                    let mut spec = String::new();
+                    let mut closed = false;
+                    for inner in chars.by_ref() {
+                        if inner == '}' {
+                            closed = true;
+                            break;
+                        }
+                        spec.push(inner);
+                    }
+                    if closed {
+                        pieces.push(Piece::Arg(spec));
+                    } else {
+                        static_buf.push('{');
+                        static_buf.push_str(&spec);
+                    }
                 }
-            },
+            }
             '}' => match chars.peek() {
                 Some('}') => {
                     chars.next();
