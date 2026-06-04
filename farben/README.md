@@ -4,14 +4,14 @@
 
 ### Markup for the Terminal
 
-[![Crate of the Week](https://img.shields.io/badge/Crate%20of%20The%20Week-648-orange?style=for-the-badge&logo=rust)](https://this-week-in-rust.org/blog/2026/04/22/this-week-in-rust-648/)
-[![Crates.io Version](https://img.shields.io/crates/v/farben?style=for-the-badge)](https://crates.io/crates/farben)
-[![docs.rs](https://img.shields.io/docsrs/farben?style=for-the-badge)](https://docs.rs/farben)
-[![License Apache-2.0](https://img.shields.io/crates/l/farben?style=for-the-badge)](https://github.com/razkar-studio/farben/blob/main/LICENSE-APACHE)
-[![Crates.io Downloads](https://img.shields.io/crates/d/farben?style=for-the-badge)](https://crates.io/crates/farben)
-[![GitHub Stars](https://img.shields.io/github/stars/razkar-studio/farben?style=for-the-badge)](https://github.com/razkar-studio/farben/stargazers)
-[![GitHub Issues](https://img.shields.io/github/issues/razkar-studio/farben?style=for-the-badge)](https://github.com/razkar-studio/farben/issues)
-[![Rust Edition](https://img.shields.io/badge/rust%20edition-2024-orange?style=for-the-badge)](https://doc.rust-lang.org/edition-guide/rust-2024/)
+[![Crate of the Week](https://img.shields.io/badge/Crate%20of%20The%20Week-648-orange?style=flat-square&logo=rust)](https://this-week-in-rust.org/blog/2026/04/22/this-week-in-rust-648/)
+[![Crates.io Version](https://img.shields.io/crates/v/farben?style=flat-square)](https://crates.io/crates/farben)
+[![docs.rs](https://img.shields.io/docsrs/farben?style=flat-square)](https://docs.rs/farben)
+[![License Apache-2.0](https://img.shields.io/crates/l/farben?style=flat-square)](https://github.com/razkar-studio/farben/blob/main/LICENSE-APACHE)
+[![Crates.io Downloads](https://img.shields.io/crates/d/farben?style=flat-square)](https://crates.io/crates/farben)
+[![GitHub Stars](https://img.shields.io/github/stars/razkar-studio/farben?style=flat-square)](https://github.com/razkar-studio/farben/stargazers)
+[![GitHub Issues](https://img.shields.io/github/issues/razkar-studio/farben?style=flat-square)](https://github.com/razkar-studio/farben/issues)
+[![Rust Edition](https://img.shields.io/badge/rust%20edition-2024-orange?style=flat-square)](https://doc.rust-lang.org/edition-guide/rust-2024/)
 
 </div>
 
@@ -41,7 +41,7 @@ cprintln!("[bold red]Error:[/] something went wrong.");
 
 - **User Guide**: [https://razkar-studio.github.io/farben](https://razkar-studio.github.io/farben)
 - **API Reference**: [https://docs.rs/farben](https://docs.rs/farben)
-- **Changelog**: [CHANGELOG.md](../CHANGELOG.md)
+- **Changelog**: [CHANGELOG.md](https://github.com/razkar-studio/farben/blob/main/CHANGELOG.md) or [on the guide site](https://razkar-studio.github.io/farben/changelog)
 
 ## License
 

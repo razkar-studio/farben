@@ -14,6 +14,9 @@ macros0.7.0
 build0.1.5-beta.1
 *md0.2.7 - deprecated*
 
+> [!NOTE]
+>  The `farben-build` crate will remain in Beta as it is not a stable feature yet.
+
 ### Fixed
 * Stabilized previous Beta features, added more unit tests, and fixed edge cases.
 
