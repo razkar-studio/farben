@@ -6,13 +6,30 @@ farben, farben-core, farben-macros, farben-build, farben-md.
 as
 frb / v, core, macros, build, md
 
+## [0.19.0] — 2026-06-04
+
+frb0.19.0
+core0.14.0
+macros0.7.0
+build0.1.5-beta.1
+*md0.2.7 - deprecated*
+
+### Fixed
+* Stabilized previous Beta features, added more unit tests, and fixed edge cases.
+
+### Deprecated
+* The `farben-md` crate is now fully deprecated in favor of the `inline` feature, it will no longer get updates from the latest `core` internals.
+
+> [!NOTE]
+> The planned removal of `md*` macros has been postponed to allow further development of their successor, the `inline` feature.
+
 ## [0.19.0-beta.4] — 2026-06-03
 
 frb0.19.0-beta.4
 core0.14.0-beta.4
 macros0.7.0-beta.4
 build0.1.5-beta.1
-md0.2.5
+md0.2.6
 
 ### Added
 - **6 new color formats**: You can now use `[hsv(0,100,100)]`, `[hsb(0,100,100)]`, `[hwb(0,0,0)]`, `[lab(53,80,67)]`, `[lch(50,30,270)]`, and `[oklch(0.6,0.15,280)]` directly in your markup, alongside the existing `rgb()` and `hsl()`. All formats validate argument ranges and accept optional spaces inside the parentheses, same ergonomics as HSL.

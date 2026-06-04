@@ -22,12 +22,15 @@
 #[cfg(feature = "markdown")]
 #[deprecated(
     since = "0.18.0",
-    note = "use the `inline` feature, it works with the `c*` family. will be deleted at 0.19 stable"
+    note = "use the `inline` feature, it works with the `c*` family."
 )]
 #[macro_export]
 macro_rules! md_fmt {
     ($($arg:tt)*) => {
-        $crate::markdown(format!($($arg)*))
+        $crate::markdown(format!($($arg)*))#[deprecated(
+            since = "0.18.0",
+            note = "use the `inline` feature, it works with the `c*` family. will be deleted at 0.19 stable"
+        )]
     };
 }
 
@@ -46,7 +49,7 @@ macro_rules! md_fmt {
 #[cfg(all(feature = "markdown", not(feature = "markdown-compile")))]
 #[deprecated(
     since = "0.18.0",
-    note = "use the `inline` feature, it works with the `c*` family. will be deleted at 0.19 stable"
+    note = "use the `inline` feature, it works with the `c*` family."
 )]
 #[macro_export]
 macro_rules! mdprint {
@@ -73,7 +76,7 @@ macro_rules! mdprint {
 #[cfg(all(feature = "markdown", not(feature = "markdown-compile")))]
 #[deprecated(
     since = "0.18.0",
-    note = "use the `inline` feature, it works with the `c*` family. will be deleted at 0.19 stable"
+    note = "use the `inline` feature, it works with the `c*` family."
 )]
 #[macro_export]
 macro_rules! mdprintln {
@@ -99,7 +102,7 @@ macro_rules! mdprintln {
 #[cfg(feature = "markdown-compile")]
 #[deprecated(
     since = "0.18.0",
-    note = "use the `inline` feature, it works with the `c*` family. will be deleted at 0.19 stable"
+    note = "use the `inline` feature, it works with the `c*` family."
 )]
 #[macro_export]
 macro_rules! mdprint {
@@ -128,7 +131,7 @@ macro_rules! mdprint {
 #[cfg(feature = "markdown-compile")]
 #[deprecated(
     since = "0.18.0",
-    note = "use the `inline` feature, it works with the `c*` family. will be deleted at 0.19 stable"
+    note = "use the `inline` feature, it works with the `c*` family."
 )]
 #[macro_export]
 macro_rules! mdprintln {
@@ -158,7 +161,7 @@ macro_rules! mdprintln {
 #[cfg(all(feature = "markdown", not(feature = "markdown-compile")))]
 #[deprecated(
     since = "0.18.0",
-    note = "use the `inline` feature, it works with the `c*` family. will be deleted at 0.19 stable"
+    note = "use the `inline` feature, it works with the `c*` family."
 )]
 #[macro_export]
 macro_rules! mdeprint {
@@ -185,7 +188,7 @@ macro_rules! mdeprint {
 #[cfg(all(feature = "markdown", not(feature = "markdown-compile")))]
 #[deprecated(
     since = "0.18.0",
-    note = "use the `inline` feature, it works with the `c*` family. will be deleted at 0.19 stable"
+    note = "use the `inline` feature, it works with the `c*` family."
 )]
 #[macro_export]
 macro_rules! mdeprintln {
@@ -211,7 +214,7 @@ macro_rules! mdeprintln {
 #[cfg(feature = "markdown-compile")]
 #[deprecated(
     since = "0.18.0",
-    note = "use the `inline` feature, it works with the `c*` family. will be deleted at 0.19 stable"
+    note = "use the `inline` feature, it works with the `c*` family."
 )]
 #[macro_export]
 macro_rules! mdeprint {
@@ -240,7 +243,7 @@ macro_rules! mdeprint {
 #[cfg(feature = "markdown-compile")]
 #[deprecated(
     since = "0.18.0",
-    note = "use the `inline` feature, it works with the `c*` family. will be deleted at 0.19 stable"
+    note = "use the `inline` feature, it works with the `c*` family."
 )]
 #[macro_export]
 macro_rules! mdeprintln {

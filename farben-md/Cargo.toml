@@ -1,6 +1,6 @@
 [package]
 name = "farben-md"
-version = "0.2.6"
+version = "0.2.7"
 edition = "2024"
 description = "DEPRECATED: use Farben's `inline` feature instead"
 license = "MIT OR Apache-2.0"
