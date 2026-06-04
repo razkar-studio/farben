@@ -21,13 +21,13 @@ hero:
       link: /examples/project-examples/
 
 features:
-  - title: Zero-dependencies
-    details: Farben has absolutely zero runtime required dependencies, only path ones, and it'll be like that, forever.
+  - title: Zero-Dependency Core
+    details: Farben-core has zero mandatory dependencies. Only optional features like anstyle interop pull in external crates when you opt in.
   - title: Markup-like Syntax
     details: Color your terminal output using intuitive tags like [red], [bold], [rgb(255,0,0)], and chain them like [bold red] or [italic hsl(0,100,50)].
   - title: 11 Emphasis Styles
     details: Bold, dim, italic, underline, double-underline, blink, rapid-blink, reverse, invisible, strikethrough, overline.
-  - title: 8 Color Formats
+  - title: 10 Color Formats
     details: Named, ANSI 256, RGB, HSL, HSV/HSB, HWB, Lab, LCH, OKLCh, and hex notation. All work everywhere.
   - title: Opt-in Compile-time Processing
     details: Zero runtime overhead, completely opt-in using the library's "compile" feature. Changes nothing but the function calls being macros.
