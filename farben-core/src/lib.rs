@@ -2,10 +2,13 @@
 //!
 //! Provides the full pipeline for parsing farben markup strings into ANSI escape sequences:
 //! tokenization ([`lexer`]), ANSI encoding ([`ansi`]), rendering ([`parser`]),
-//! named style registration ([`registry`]), and error types ([`errors`]).
+//! named style registration ([`registry`]), error types ([`errors`]), color degradation
+//! ([`degrader`]), inline syntax pre-processing ([`inline`]), stripping utilities
+//! ([`strip`]), environment detection ([`mod@env`]), and persistent style state
+//! (via [`active_stack`], [`set_active_stack`], [`clear_active_stack`]).
 //!
 //! Typical usage flows through the [`lexer::tokenize`] and [`parser::render`] functions,
-//! with optional style definitions via the [`registry`] module and its macros.
+//! with optional style definitions via the [`registry`] module.
 #![warn(missing_docs)]
 #![deny(rustdoc::broken_intra_doc_links)]
 #![warn(rustdoc::private_intra_doc_links)]

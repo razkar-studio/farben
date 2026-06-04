@@ -1,6 +1,6 @@
 # Help, I'm Bleeding!
 
-Sometimes, letting it bleed is just better. In cases where you'll need to bleed color across multiple statement,
+Sometimes, letting it bleed is just better. In cases where you'll need to bleed color across multiple statements,
 whether it be styled descriptions or just for the sake of separating lines, Farben got you covered.
 
 ::: details
@@ -8,7 +8,7 @@ Bleeding in this context **does not** mean bleeding as in an injury. It means to
 which is printing a color and not doing a reset.
 :::
 
-Farben has 2 ways you can purposefully bleed, and both of them are printers. No, not those printers...
+Farben has several ways you can purposefully bleed, and all of them share the `b` suffix in their names.
 
 ## `cprintb!()`
 
@@ -34,13 +34,32 @@ cprintln!("Guys, I hope the next guy doesn't bleed."); // red, then reset becaus
 cprintln!("I'm alive!"); // normal
 ```
 
-## Writer Variants
+## `cformatb!()`
 
-If you need to write to something other than stdout or stderr, Farben provides writer variants that work with any `Write` implementor.
+Like `cformat!` but without the trailing reset. Useful when building a string whose style should carry forward.
 
-### `cwriteb!()` and `cwritebln!()`
+```rust
+use farben::prelude::*;
 
-These work just like `cprintb!()` and `cprintbln!()` but write to a custom writer.
+let bleed = cformatb!("[red]This style bleeds ");
+let reset = cformat!("into this but not after this.");
+let combined = format!("{bleed}{reset}");
+```
+
+## `colorb()`
+
+The function version of `cprintb!`. Parses and renders markup without a trailing reset.
+
+```rust
+use farben::prelude::*;
+
+let s = colorb("[bold yellow]Warning: ");
+// s ends with the yellow ANSI code, no reset
+```
+
+## `cwriteb!()` and `cwritebln!()`
+
+Bleed variants of the writer macros. Work with any `Write` implementor.
 
 ```rust
 use farben::prelude::*;
@@ -53,9 +72,16 @@ cwritebln!(buffer, "[blue]Additional info: ");
 cwrite!(buffer, "server not responding[/]"); // inherits blue
 ```
 
-::: tip
-All writer variants are available: `cwrite!`, `cwriteln!`, `cwriteb!`, and `cwritebln!`. They behave the same as their stdout counterparts but target any `Write` implementor.
-:::
+## Bleed Variants on Stderr
+
+All stderr macros have bleed variants too: `ceprintb!`, `ceprintbln!`, and `cwriteb!`/`cwritebln!` on stderr writers.
+
+```rust
+use farben::prelude::*;
+
+ceprintb!("[bold red]fatal: ");
+ceprintln!("something went wrong."); // inherits bold red
+```
 
 ::: tip
 Idiomatic ways to write bleeding text can be seen in [Conventions](../../conventions/colors-and-printing/#idiomatic-ways-to-bleed)

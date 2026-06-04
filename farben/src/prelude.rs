@@ -20,7 +20,7 @@
 //! |------|-----------|
 //! | [`color`], [`colorb`] | always |
 //! | [`LexError`] | always |
-//! | [`cformat!`], [`cprint!`], [`cprintln!`], [`cprintb!`], [`cprintbln!`] | always |
+//! | [`cformat!`], [`cformatb!`], [`cprint!`], [`cprintln!`], [`cprintb!`], [`cprintbln!`] | always |
 //! | [`cwrite!`], [`cwriteln!`], [`cwriteb!`], [`cwritebln!`] | always |
 //! | [`ceprint!`], [`ceprintln!`], [`ceprintb!`], [`ceprintbln!`] | always |
 //! | [`unansi!`], [`unmarkup!`], [`untag!`] | always |

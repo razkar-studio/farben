@@ -2,32 +2,68 @@
 
 Sometimes you need the plain text. Log files, display-width calculations, piping to tools that see ANSI sequences as noise: stripping color is a real use case, and Farben covers it.
 
-## `ansi_strip!` - the Idiomatic Way
+Farben provides three macros for three different stripping needs. All of them accept `format!`-style arguments.
 
-If you're already using `farben::prelude::*`, `ansi_strip!` is right there. It takes the same arguments as `format!`, formats the string, then strips any ANSI sequences before returning.
+## `unansi!` - Strip ANSI Escape Sequences
+
+Removes all CSI ANSI escape sequences from a formatted string. Every sequence of the form `ESC [ ... <letter>` is removed. Non-CSI `ESC` bytes are left intact.
 
 ```rust
 use farben::prelude::*;
 
 let colored = "\x1b[31mError\x1b[0m";
-let plain = ansi_strip!("{}", colored);
+let plain = unansi!("{}", colored);
 assert_eq!(plain, "Error");
 
 // format args work exactly as you'd expect
 let code = 42;
-let plain = ansi_strip!("\x1b[1mcode {code}\x1b[0m");
+let plain = unansi!("\x1b[1mcode {code}\x1b[0m");
 assert_eq!(plain, "code 42");
 ```
 
 The return type is `String`. No extra imports, no intermediate variables.
 
-::: tip
-`ansi_strip!` is the right call when you want to format and strip in one step. If you already have a `&str` and just want to clean it, reach for `strip_ansi` from `farben_core` instead.
-:::
+## `unmarkup!` - Strip Farben Markup Tags
 
-## `strip_ansi` - Lower-Level Control
+Removes all Farben markup tags (like `[bold]` or `[/]`) from a formatted string. Invalid markup is left as-is without panicking.
 
-For cases where you're holding a pre-colored string and want to strip it without going through a format step, `farben_core::strip::strip_ansi` takes a `&str` and returns a `String`.
+```rust
+use farben::prelude::*;
+
+let stripped = unmarkup!("[bold red]Just the text");
+assert_eq!("Just the text", stripped);
+
+let invalid = unmarkup!("[I'm unclosed");
+assert_eq!("[I'm unclosed", invalid);
+
+// format args work too
+let msg = "hey!";
+let formatted = unmarkup!("[bold red]{msg}");
+assert_eq!("hey!", formatted);
+```
+
+## `untag!` - Escape Markup Brackets
+
+Doubles every `[` and `]` character so the result contains no parseable tags. Useful when you want to display markup as literal text.
+
+```rust
+use farben::prelude::*;
+
+let safe = untag!("[bold]hello[/]");
+assert_eq!(safe, "[[bold]]hello[[/]]");
+
+let name = "world";
+let safe = untag!("[bold]{name}[/]");
+assert_eq!(safe, "[[bold]]world[[/]]");
+```
+
+## Low-Level Functions
+
+All three macros delegate to functions in `farben_core::strip`:
+
+- `strip_ansi(input: &str) -> String` — strips CSI sequences
+- `strip_markup(input: &str) -> String` — strips Farben markup tags
+- `escape_tags(input: &str) -> String` — escapes brackets
 
 ```rust
 use farben_core::strip::strip_ansi;
@@ -72,10 +108,16 @@ let message = cformat!("[red]error:[/] file not found.");
 cprintln!("[red]error:[/] file not found.");
 
 // write plain to the log
-let plain = ansi_strip!("{}", message);
+let plain = unansi!("{}", message);
 let mut log = OpenOptions::new().append(true).open("app.log")?;
 writeln!(log, "{plain}")?;
 ```
-:::note
-Runtime Farben already has TTY detection!
-:::
+
+## Deprecated Aliases
+
+The macros `ansi_strip!` and `markup_strip!` are deprecated in favor of `unansi!` and `unmarkup!` respectively. They still work but will be removed in a future release.
+
+| Old Name | New Name |
+|----------|----------|
+| `ansi_strip!` | `unansi!` |
+| `markup_strip!` | `unmarkup!` |

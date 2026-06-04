@@ -3,7 +3,7 @@
 Okay, now you have Farben set up, quick, clean, and hopefully safe. If not, submit an issue to the GitHub repository.
 
 ::: tip
-Just as a reminder, if you used the `compile` optional feature, you'll need to change the `color()` function calls to the `color!()` macro calls. For calls like `color(format!(...))`, use `color_fmt!(...)`. It probably won't matter because we will mostly use `cprintln!()` and `cprint!()` which works with both cases.
+Just as a reminder, if you used the `compile` optional feature, you'll need to change the `color()` function calls to the `color!()` macro calls. For calls like `color(format!(...))`, use `cformat!(...)`. It probably won't matter because we will mostly use `cprintln!()` and `cprint!()` which works with both cases.
 :::
 
 Let's go into your `src/main.rs` file that we edited before to get a starting template, and explore how you can use Farben. Don't worry, it's easy.
@@ -14,7 +14,7 @@ In Farben, basic colors use direct names for the tags, like for basic red using 
 This isn't a random decision, it actually comes from the basic ANSI colors itself.
 
 ::: info
-Bright color variants is here too!
+Bright color variants are here too!
 :::
 
 ```rust
@@ -51,7 +51,7 @@ Order doesn't matter inside a bracket. `[bold red]` and `[red bold]` are identic
 
 ## Reset
 
-Styles are sticky — once you apply `[red]`, everything after it is red until you say otherwise.
+Styles are sticky. Once you apply `[red]`, everything after it is red until you say otherwise.
 That's what `[/]` is for. It clears everything: colors, emphasis, all of it.
 ```rust
 cprintln!("[red]I'm red [/]but I'm not anymore.");
@@ -59,9 +59,17 @@ cprintln!("[bold]Bold [italic]bold and italic [/]back to nothing.");
 ```
 
 ::: info
-`color()`, `color_fmt!()`, `cprint!()`, and `cprintln!()` all automatically append a reset
+`color()`, `cformat!()`, `cprint!()`, and `cprintln!()` all automatically append a reset
 at the end of every string, so styles never bleed into your next `println!` call.
 :::
+
+### Specific Resets
+
+You can reset a single style without affecting others:
+
+```rust
+cprintln!("[bold red]Bold and red [/bold]just red now [/red]unstyled");
+```
 
 ## Escape Sequence
 
@@ -79,6 +87,31 @@ In Rust string literals, `\\` is a single backslash. So `\\[` is what farben see
 Do not, at all costs, write `\[` directly as it is an **invalid escape sequence**. 
 Use `\\[` instead.
 :::
+
+## Format Arguments
+
+Use `cformat!` to build colored strings with format arguments:
+
+```rust
+use farben::prelude::*;
+
+let name = "World";
+let msg = cformat!("[bold green]Hello, {name}![/] All done.");
+println!("{msg}");
+```
+
+This works with positional, named, and implicit capture arguments, just like `format!`.
+
+## Inline Syntax
+
+If you enable the `inline` feature, you can write `*bold*`, `/italic/`, `` `code` ``, `~strikethrough~`, and `_underline_` directly in your markup strings. No separate macros needed.
+
+```rust
+use farben::prelude::*;
+
+cprintln!("This is *bold* and this is /italic/.");
+cprintln!("Use `inline code` for monospace.");
+```
 
 ## Error Handling
 

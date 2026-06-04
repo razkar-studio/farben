@@ -1,7 +1,9 @@
 //! Core coloring functions.
 //!
 //! Runtime entry points for parsing and rendering farben markup into ANSI escape sequences.
-//! Also exposes the markdown rendering function when the `markdown` feature is enabled.
+//! The [`inline`](farben_core::inline) pre-processor is applied automatically when the
+//! `inline` feature is enabled, converting `*bold*`, `/italic/`, and `` `code` `` syntax
+//! into standard farben tags before tokenization.
 
 use std::sync::OnceLock;
 

@@ -38,16 +38,74 @@ cprintln!("[bold rgb(255,0,128)]Is it hot here?");
 cprintln!("[fg:rgb(255,255,255) bg:rgb(30,30,30)]I'm light on the inside, dark on the outside.");
 ```
 
-::: warning
-Spaces inside `rgb()` are not supported. Use `rgb(255,128,0)`, not `rgb(255, 128, 0)`.
-:::
+## HSL Colors
+
+Hue, Saturation, Lightness. Same syntax as CSS.
+
+```rust
+cprintln!("[hsl(0,100,50)]Pure red.");
+cprintln!("[hsl(120,100,50)]Pure green.");
+cprintln!("[hsl(45,80,60)]A warm gold.");
+```
+
+## HSV / HSB Colors
+
+Hue, Saturation, Value (or Brightness).
+
+```rust
+cprintln!("[hsv(0,100,100)]Pure red.");
+cprintln!("[hsb(200,80,90)]Vivid sky blue.");
+```
+
+## HWB Colors
+
+Hue, Whiteness, Blackness.
+
+```rust
+cprintln!("[hwb(0,0,0)]Pure red.");
+cprintln!("[hwb(0,50,0)]Pink.");
+```
+
+## CIE Lab / LCH Colors
+
+Perceptually uniform color spaces.
+
+```rust
+cprintln!("[lab(53,80,67)]Vivid red.");
+cprintln!("[lch(50,30,270)]A blue hue.");
+```
+
+## OKLCh Colors
+
+A newer, more perceptually uniform variant.
+
+```rust
+cprintln!("[oklch(0.6,0.15,280)]Cool purple.");
+```
+
+## Hex Colors
+
+Short and long hex notation.
+
+```rust
+cprintln!("[#ff0000]Red via hex.");
+cprintln!("[#f00]Shorthand hex red.");
+```
+
+## Color Degradation
+
+Farben automatically detects your terminal's color capabilities via `COLORTERM` and `TERM` environment variables. If your terminal does not support truecolor, Farben degrades RGB colors to the nearest ANSI 256 index or named color. This happens transparently. You write the same markup regardless of terminal capability.
 
 ## Combining It All
 
 All color formats work inside multi-tag brackets alongside emphasis styles.
 ```rust
 cprintln!("[bold bg:ansi(236) fg:rgb(255,200,0)]I'm a gold text on dark grey, I'm bold!");
+cprintln!("[italic hsv(200,80,90)]HSL-inspired sky blue, italic.");
+cprintln!("[underline #ff8800]Orange underlined text.");
 ```
 
 The order of tags inside a bracket doesn't matter, Farben processes them all. 
 But it's better to be sure if you're following the rules, hence why we go towards Conventions.
+
+For a full reference of all color format syntax and validation rules, see the [Advanced Color Formats](../advanced-colors/) guide.

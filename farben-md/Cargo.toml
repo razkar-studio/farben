@@ -2,7 +2,7 @@
 name = "farben-md"
 version = "0.2.6"
 edition = "2024"
-description = "The markdown rendering internals for Farben"
+description = "DEPRECATED: use Farben's `inline` feature instead"
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/razkar-studio/farben"
 readme = "README.md"

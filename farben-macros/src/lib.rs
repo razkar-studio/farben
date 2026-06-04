@@ -1,14 +1,18 @@
 //! Procedural macros for the Farben terminal styling library.
 //!
-//! Provides compile-time processing of farben markup and inline markdown,
-//! baking the final ANSI-escaped strings directly into the binary with zero
-//! runtime overhead. All macros in this crate are re-exported through
-//! `farben` and should not be used directly in most cases.
+//! Provides compile-time processing of farben markup, baking the final ANSI-escaped
+//! strings directly into the binary with zero runtime overhead. Also provides
+//! compile-time format string splitting via [`cformat`] and [`cformatb`].
+//! All macros in this crate are re-exported through `farben` and should not be
+//! used directly in most cases.
 //!
-//! ## Features
+//! ## Macros
 //!
-//! - `markdown`: enables `markdown!` and [`colorb!`] for compile-time
-//!   markdown rendering via `farben_md`.
+//! - [`color!`] -- parse and render markup at compile time, returns a `FarbenStr`
+//! - [`colorb!`] -- same as `color!` but without a trailing reset
+//! - [`cformat!`] -- compile-time split of markup format strings with runtime args
+//! - [`cformatb!`] -- bleed variant of `cformat!`
+//! - [`validate_color!`] -- validates markup at compile time, returns the original string
 
 mod template;
 

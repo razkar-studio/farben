@@ -286,7 +286,10 @@ fn test_try_color_emphasis_underline() {
 #[test]
 fn test_try_color_emphasis_double_underline() {
     unsafe { std::env::set_var("FORCE_COLOR", "1") };
-    assert_eq!(try_color("[double-underline]text").unwrap(), "\x1b[21mtext\x1b[0m");
+    assert_eq!(
+        try_color("[double-underline]text").unwrap(),
+        "\x1b[21mtext\x1b[0m"
+    );
 }
 
 #[test]
@@ -298,7 +301,10 @@ fn test_try_color_emphasis_blink() {
 #[test]
 fn test_try_color_emphasis_rapid_blink() {
     unsafe { std::env::set_var("FORCE_COLOR", "1") };
-    assert_eq!(try_color("[rapid-blink]text").unwrap(), "\x1b[6mtext\x1b[0m");
+    assert_eq!(
+        try_color("[rapid-blink]text").unwrap(),
+        "\x1b[6mtext\x1b[0m"
+    );
 }
 
 #[test]
@@ -316,7 +322,10 @@ fn test_try_color_emphasis_invisible() {
 #[test]
 fn test_try_color_emphasis_strikethrough() {
     unsafe { std::env::set_var("FORCE_COLOR", "1") };
-    assert_eq!(try_color("[strikethrough]text").unwrap(), "\x1b[9mtext\x1b[0m");
+    assert_eq!(
+        try_color("[strikethrough]text").unwrap(),
+        "\x1b[9mtext\x1b[0m"
+    );
 }
 
 #[test]
@@ -369,10 +378,7 @@ fn test_try_color_multiple_tags_sequentially() {
     unsafe { std::env::set_var("FORCE_COLOR", "1") };
     let result = try_color("[red]R [green]G [blue]B");
     assert!(result.is_ok());
-    assert_eq!(
-        result.unwrap(),
-        "\x1b[31mR \x1b[32mG \x1b[34mB\x1b[0m"
-    );
+    assert_eq!(result.unwrap(), "\x1b[31mR \x1b[32mG \x1b[34mB\x1b[0m");
 }
 
 #[test]
@@ -804,10 +810,7 @@ fn test_cwrite_plain_text() {
     unsafe { std::env::set_var("FORCE_COLOR", "1") };
     let mut buf = Cursor::new(Vec::new());
     cwrite!(buf, "hello").unwrap();
-    assert_eq!(
-        String::from_utf8(buf.into_inner()).unwrap(),
-        "hello\x1b[0m"
-    );
+    assert_eq!(String::from_utf8(buf.into_inner()).unwrap(), "hello\x1b[0m");
 }
 
 #[cfg(feature = "compile")]

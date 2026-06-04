@@ -6,6 +6,7 @@ Small things that make farben nicer to work with.
 
 When you switch from one style to another, put the trailing space inside the colored segment,
 not outside it. Otherwise the gap between words might inherit the wrong style.
+
 ```rust
 // Good
 cprintln!("[red]Error: [yellow]something went wrong.");
@@ -21,14 +22,6 @@ like underlines. For cases where leaving any space would make it look ugly, simp
 ```rust
 cprintln!("[underline red]error:[/] [yellow]Without the immediate reset, that underline would partly bleed towards me! Scary...");
 ```
-:::
-
-::: info
-As of the newest version, you can now specifically reset a style/color.
-```rust
-cprintln!("[underline red]error:[/underline] I'm still red.")
-```
-This style section has an exception:
 :::
 
 ### Exception: Specific Resets
@@ -50,6 +43,7 @@ The space before `[/bold]` would be printed while bold is still active, making i
 ## No Spaces After Opening Tags
 
 Tags apply immediately to whatever follows them. No need for a space after `[red]`.
+
 ```rust
 // Good
 cprintln!("[red]Hello!");
@@ -64,6 +58,7 @@ For the exception of the rule above.
 
 If you're switching between styles mid-string, reset before applying the next style rather
 than relying on the auto-reset at the end.
+
 ```rust
 // Good -- explicit reset between styles
 cprintln!("[bold red]Bold red text. [/][blue]Blue text.");
@@ -75,6 +70,7 @@ cprintln!("[bold red]Bold red text. [blue]Blue text. If I'm bold, blame the guy 
 ## Escape Brackets in Instructional Text
 
 If you're printing text that shows farben markup as an example, escape the opening bracket.
+
 ```rust
 cprintln!("To make red text, use \\[red] before your text.");
 // Output: To make red text, use [red] before your text.
@@ -83,6 +79,7 @@ cprintln!("To make red text, use \\[red] before your text.");
 ## Prefer `cprintln!()` Over `println!(color(...))`
 
 Both work, but `cprintln!()` is shorter and handles the format args pattern cleanly.
+
 ```rust
 // Good
 cprintln!("[green]Done in {}ms.", elapsed);
@@ -91,9 +88,18 @@ cprintln!("[green]Done in {}ms.", elapsed);
 println!("{}", color_fmt!("[green]Done in {}ms.", elapsed));
 ```
 
+::: tip
+If you need the string itself rather than printing it, use `cformat!` instead of `color_fmt!`:
+
+```rust
+let msg = cformat!("[green]Done in {}ms.", elapsed);
+```
+:::
+
 ## Emphasis First, Color Second
 
 When using both emphasis and color, always put emphasis first. It doesn't matter in the output, but it's significantly more readable.
+
 ```rust
 // Good
 cprintln!("[bold green]I'm bold green!");
@@ -109,6 +115,7 @@ Always sound your tag names out in English. Whichever one sounds better, go for 
 ## Background First, then Foreground
 
 When modifying both background and foreground values, always put background first. Again, for the same reason as above.
+
 ```rust
 // Good
 cprintln!("[bg:green fg:white]I'm white in a green background!");
@@ -122,6 +129,32 @@ Unlike emphasis and color, background comes before foreground because you're des
 the environment first, then the text inside it. Think of it like painting a wall before
 placing furniture.
 :::
+
+## Use `cformat!` Instead of `color_fmt!`
+
+The `color_fmt!` macro is deprecated. Use `cformat!` which is shorter and supports
+the same argument styles (positional, named, implicit capture, format specifiers).
+
+```rust
+// Good
+let s = cformat!("[bold red]Critical: {err}");
+
+// Deprecated
+// let s = color_fmt!("[bold red]Critical: {}", err);
+```
+
+## Use `unansi!` Instead of `ansi_strip!`
+
+The `ansi_strip!` macro is deprecated in favor of `unansi!`. Similarly, `markup_strip!`
+is deprecated in favor of `unmarkup!`.
+
+```rust
+// Good
+let plain = unansi!("{}", colored);
+
+// Deprecated
+// let plain = ansi_strip!("{}", colored);
+```
 
 ---
 

@@ -1,9 +1,10 @@
 //! # Farben
 //!
 //! Farben (as in "color" in German) is a zero-dependency terminal coloring library.
-//! It uses a markup-like syntax to apply ANSI styles to your strings -- named colors,
-//! RGB, ANSI 256, emphasis styles, foreground and background targeting, custom named
-//! tags, inline resets, and inline markdown rendering.
+//! It uses a markup-like syntax to apply ANSI styles to your strings: named colors,
+//! RGB, HSL, HSV/HSB, HWB, Lab, LCH, `OKLCh`, hex, ANSI 256, emphasis styles,
+//! foreground and background targeting, custom named tags, inline resets, and
+//! inline shorthand syntax.
 //!
 //! ```
 //! use farben::prelude::*;
@@ -23,8 +24,11 @@
 //! | *(default)* | Runtime coloring: [`color`], [`colorb`], [`cformat!`], [`cprint!`], [`cprintln!`], [`cprintb!`], [`cprintbln!`], [`cwrite!`], [`cwriteln!`], [`cwriteb!`], [`cwritebln!`] |
 //! | `compile` | Compile-time validation of markup strings via proc macros |
 //! | `format` | Named style registry: [`style!`], [`prefix!`] |
-//! | `markdown` | Runtime inline markdown rendering: `markdown`, `md_fmt!`, `mdprint!`, `mdprintln!` |
-//! | `markdown-compile` | Compile-time inline markdown rendering |
+//! | `inline` | Inline shorthand syntax (`*bold*`, `/italic/`, `` `code` ``) inside all `c*` macros |
+//! | `lossy` | Lenient parsing for unknown tags (default) |
+//! | `anstyle` | Interoperability with `anstyle::Style` |
+//! | `markdown` | **Deprecated.** Runtime inline markdown rendering. Use `inline` instead. |
+//! | `markdown-compile` | **Deprecated.** Compile-time inline markdown. Use `inline` + `compile` instead. |
 //!
 //! # Emphasis Styles
 //!
@@ -56,12 +60,14 @@
 //! cprintln!("[bg:blue fg:white]Inverted.");
 //! ```
 //!
-//! ### RGB and ANSI 256
+//! ### RGB, HSL, hex, and ANSI 256
 //!
 //! ```
 //! use farben::prelude::*;
 //!
 //! cprintln!("[rgb(255,128,0)]Orange.");
+//! cprintln!("[hsl(120,100,50)]Green via HSL.");
+//! cprintln!("[#ff8800]Orange via hex.");
 //! cprintln!("[ansi(93)]Deep purple.");
 //! ```
 //!
@@ -76,12 +82,12 @@
 //! println!("{}", try_color("[warn]Watch out.").unwrap());
 //! ```
 //!
-//! ### Inline markdown (`markdown` feature)
+//! ### Inline syntax (`inline` feature)
 //!
-//! ```ignore
+//! ```
 //! use farben::prelude::*;
 //!
-//! mdprintln!("**bold**, *italic*, `code`, ~~strikethrough~~");
+//! cprintln!("This is *bold* and /italic/ with `inline code`.");
 //! ```
 //!
 #![warn(missing_docs)]

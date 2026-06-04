@@ -24,11 +24,17 @@ features:
   - title: Zero-dependencies
     details: Farben has absolutely zero runtime required dependencies, only path ones, and it'll be like that, forever.
   - title: Markup-like Syntax
-    details: Color your terminal output using intuitive tags like [red], [bold], [rgb(255,0,0)], and chain them like [bold red] or [italic ansi(1)]
+    details: Color your terminal output using intuitive tags like [red], [bold], [rgb(255,0,0)], and chain them like [bold red] or [italic hsl(0,100,50)].
   - title: 11 Emphasis Styles
     details: Bold, dim, italic, underline, double-underline, blink, rapid-blink, reverse, invisible, strikethrough, overline.
+  - title: 8 Color Formats
+    details: Named, ANSI 256, RGB, HSL, HSV/HSB, HWB, Lab, LCH, OKLCh, and hex notation. All work everywhere.
   - title: Opt-in Compile-time Processing
-    details: Zero runtime overhead, completely opt-in using the library's "compile" feature. Changes nothing but function color being a macro.
+    details: Zero runtime overhead, completely opt-in using the library's "compile" feature. Changes nothing but the function calls being macros.
   - title: Define Your Own Styles
     details: Define your own styles, either as an alias or as a design token-like behavior. Change [error] to be [bold red], and add a prefix when calling them.
+  - title: Inline Syntax
+    details: Enable the inline feature to write *bold*, /italic/, `code`, ~strikethrough~, and _underline_ directly inside any cprint!/cprintln! call.
+  - title: anstyle Interop
+    details: Convert Farben styles to and from anstyle::Style for use with clap, ratatui, and other anstyle-using crates.
 ---

@@ -198,7 +198,7 @@ macro_rules! ceprintbln {
 ///
 /// # Panics
 ///
-/// Panics if the markup is invalid. Use [`try_color`] directly for error handling.
+/// Panics if the markup is invalid. Use [`crate::try_color`] directly for error handling.
 #[cfg(feature = "compile")]
 #[macro_export]
 macro_rules! ceprintbln {

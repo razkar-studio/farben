@@ -22,26 +22,34 @@ cprintln!("[rgb(255,90,0)]Fancy Orange (TM).");
 cprintln!("That orange looks [italic]fancy...");
 ```
 
+Use HSL, HSV, Hex, or the other advanced formats when you need a specific color model.
+```rust
+cprintln!("[hsl(45,80,60)]Warm gold.");
+cprintln!("[#ff8800]Orange via hex.");
+```
+
 ::: tip
 When in doubt, named colors first. They're the most readable at a glance and work
 everywhere.
 :::
 
-## `color()` vs `color_fmt!()` vs `cprintln!()`
+## `try_color()` vs `cformat!()` vs `cprintln!()`
 
-A confusing amount of choices that all do different things.
+Use `try_color()` when you need the colored string itself and want to handle markup errors explicitly.
 
-Use `color()` when you need the colored string itself, not just to print it. For example,
-passing it to a logger or building a larger string.
 ```rust
-let msg = color("[red]Something went wrong!");
-log::error!("{msg}"); // This is not a Farben built-in.
+use farben::try_color;
+
+match try_color("[red]Something went wrong!") {
+    Ok(s) => log::error!("{s}"),
+    Err(e) => log::error!("markup error: {e}"),
+}
 ```
 
-Use `color_fmt!()` when you need to interpolate runtime values into a colored string and store it.
+Use `cformat!()` when you need to interpolate runtime values into a colored string and store it.
 ```rust
 let path = "/some/file.txt";
-let msg = color_fmt!("[red]File not found: [/]{path}");
+let msg = cformat!("[red]File not found: [/]{path}");
 ```
 
 Use `cprintln!()` for everything else. It's the shortest path from markup to terminal output.
@@ -104,5 +112,5 @@ All four variants are available:
 - `cwritebln!` writes with a newline, does not reset (bleeds)
 
 ::: tip
-The writer variants use the exact same markup processing as the stdout macros. They support all colors, emphasis styles, RGB, ANSI256, and everything else Farben offers.
+The writer variants use the exact same markup processing as the stdout macros. They support all colors, emphasis styles, RGB, ANSI256, HSL, hex, and everything else Farben offers.
 :::

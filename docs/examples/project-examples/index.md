@@ -14,7 +14,19 @@ fn main() {
 }
 ```
 
+## Colored Output with Inline Syntax
 
+If the `inline` feature is enabled, use shorthand syntax directly.
+
+```rust
+use farben::prelude::*;
+
+fn main() {
+    cprintln!("This is *bold* and /italic/.");
+    cprintln!("Use `inline code` for monospace.");
+    cprintln!("_Underline_ and ~strikethrough~ work too.");
+}
+```
 
 ## Status Logger
 
@@ -39,14 +51,11 @@ fn main() {
 }
 ```
 
-
-
 ## Named Styles with `style!` and `prefix!`
 
 Define reusable styles once and reference them anywhere in markup. Requires the `format` feature.
 
 ```toml
-# Cargo.toml
 farben = { version = "...", features = ["format"] }
 ```
 
@@ -71,8 +80,6 @@ fn main() {
 }
 ```
 
-
-
 ## RGB Gradient Labels
 
 Use RGB colors to render visually distinct severity labels.
@@ -93,7 +100,35 @@ fn main() {
 }
 ```
 
+## HSL Colors
 
+Use HSL for more intuitive color selection.
+
+```rust
+use farben::prelude::*;
+
+fn main() {
+    cprintln!("[hsl(0,100,50)]Pure red");
+    cprintln!("[hsl(120,100,50)]Pure green");
+    cprintln!("[hsl(240,100,50)]Pure blue");
+    cprintln!("[hsl(45,80,60)]Warm gold");
+}
+```
+
+## Format Arguments with `cformat!`
+
+Build colored strings with full format argument support.
+
+```rust
+use farben::prelude::*;
+
+fn main() {
+    let user = "Alice";
+    let action = "logged in";
+    let msg = cformat!("[bold green]{user}[/] [dim]{action}[/] at {}:{}", "host", 8080);
+    println!("{msg}");
+}
+```
 
 ## CLI Argument Error Display
 
@@ -105,7 +140,7 @@ use farben::prelude::*;
 fn require_arg(name: &str, value: Option<&str>) -> Result<String, String> {
     value
         .map(|v| v.to_string())
-        .ok_or_else(|| color_fmt!("[bold red]Missing required argument:[/] [yellow]--{}[/]", name))
+        .ok_or_else(|| cformat!("[bold red]Missing required argument:[/] [yellow]--{name}[/]"))
 }
 
 fn main() {
@@ -115,13 +150,11 @@ fn main() {
     }
 
     match require_arg("input", Some("data.csv")) {
-        Ok(val) => cprintln!("[green]Input:[/] {}", val),
+        Ok(val) => cprintln!("[green]Input:[/] {val}"),
         Err(e)  => eprintln!("{e}"),
     }
 }
 ```
-
-
 
 ## Progress Steps
 
@@ -132,9 +165,9 @@ use farben::prelude::*;
 
 fn step(done: bool, label: &str) {
     if done {
-        cprintln!("[bold green] ✓ [/]{}", label);
+        cprintln!("[bold green] ✓ [/]{label}", );
     } else {
-        cprintln!("[dim] ○ [/]{}", label);
+        cprintln!("[dim] ○ [/]{label}", );
     }
 }
 
@@ -147,8 +180,6 @@ fn main() {
     step(false, "Package binary");
 }
 ```
-
-
 
 ## Style Bleed
 
@@ -166,8 +197,6 @@ fn main() {
 }
 ```
 
-
-
 ## Error Handling with `try_color`
 
 Handle markup errors without panicking, useful in library code or when building
@@ -179,8 +208,8 @@ use farben::{try_color, errors::LexError};
 fn render_safe(input: &str) -> String {
     match try_color(input) {
         Ok(s) => s,
-        Err(LexError::InvalidTag(tag)) => {
-            eprintln!("Unknown tag: [{tag}]");
+        Err(LexError::InvalidTag { tag_content, .. }) => {
+            eprintln!("Unknown tag: [{tag_content}]");
             input.to_string()
         }
         Err(e) => {
@@ -196,7 +225,26 @@ fn main() {
 }
 ```
 
+## Stripping ANSI with `unansi!`
 
+Strip ANSI sequences for log files or plain-text display.
+
+```rust
+use farben::prelude::*;
+use std::fs::OpenOptions;
+use std::io::Write;
+
+fn main() {
+    let msg = cformat!("[red]error:[/] file not found.");
+    println!("{msg}");
+
+    let plain = unansi!("{}", msg);
+    let mut log = OpenOptions::new().append(true).open("app.log");
+    if let Ok(mut f) = log {
+        let _ = writeln!(f, "{plain}");
+    }
+}
+```
 
 ## Formatted Table Output
 
@@ -211,26 +259,24 @@ fn main() {
     let rows = vec![
         ("api-gateway",  "UP",   "12ms"),
         ("auth-service", "UP",   "8ms"),
-        ("db-primary",   "DOWN", "—"),
+        ("db-primary",   "DOWN", "\u{2014}"),
         ("cache",        "UP",   "2ms"),
     ];
 
     for (i, (name, status, latency)) in rows.iter().enumerate() {
         let status_fmt = match *status {
-            "UP"   => color_fmt!("[green]{}[/]", status),
-            "DOWN" => color_fmt!("[bold red]{}[/]", status),
+            "UP"   => cformat!("[green]{status}[/]"),
+            "DOWN" => cformat!("[bold red]{status}[/]"),
             _      => status.to_string(),
         };
         if i % 2 == 0 {
-            println!("{:<20}{:<10}{:<10}", name, status_fmt, latency);
+            println!("{name:<20}{status_fmt:<10}{latency:<10}");
         } else {
-            cprintln!("[dim]{:<20}[/]{:<10}{:<10}", name, status_fmt, latency);
+            cprintln!("[dim]{name:<20}[/]{status_fmt:<10}{latency:<10}");
         }
     }
 }
 ```
-
-
 
 ## Interactive Prompt
 
@@ -241,7 +287,7 @@ use farben::prelude::*;
 use std::io::{self, Write};
 
 fn prompt(label: &str) -> String {
-    cprint!("[bold cyan]{}[/] [dim]›[/] ", label);
+    cprint!("[bold cyan]{label}[/] [dim]\u{203a}[/] ");
     io::stdout().flush().unwrap();
 
     let mut input = String::new();
@@ -252,11 +298,9 @@ fn prompt(label: &str) -> String {
 fn main() {
     let name = prompt("Your name");
     let age  = prompt("Your age");
-    cprintln!("[green]Hello, {}! You are {} years old.[/]", name, age);
+    cprintln!("[green]Hello, {name}! You are {age} years old.[/]");
 }
 ```
-
-
 
 ## Diff-Style Output
 
@@ -274,9 +318,9 @@ enum DiffLine<'a> {
 fn print_diff(lines: &[DiffLine]) {
     for line in lines {
         match line {
-            DiffLine::Added(s)   => cprintln!("[green]+ {}[/]", s),
-            DiffLine::Removed(s) => cprintln!("[red]- {}[/]", s),
-            DiffLine::Context(s) => cprintln!("[dim]  {}[/]", s),
+            DiffLine::Added(s)   => cprintln!("[green]+ {s}[/]"),
+            DiffLine::Removed(s) => cprintln!("[red]- {s}[/]"),
+            DiffLine::Context(s) => cprintln!("[dim]  {s}[/]"),
         }
     }
 }
@@ -291,8 +335,6 @@ fn main() {
 }
 ```
 
-
-
 ## Spinner / Loading Indicator
 
 Animate a simple spinner using carriage return and bleed output.
@@ -302,20 +344,18 @@ use farben::prelude::*;
 use std::{io::{self, Write}, thread, time::Duration};
 
 fn main() {
-    let frames = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
+    let frames = ["\u{280b}", "\u{2819}", "\u{2839}", "\u{2838}", "\u{283c}", "\u{2834}", "\u{2826}", "\u{2827}", "\u{2807}", "\u{280f}"];
 
     for i in 0..30 {
         let frame = frames[i % frames.len()];
-        cprint!("\r[bold cyan]{}[/] [dim]Building...[/]  ", frame);
+        cprint!("\r[bold cyan]{frame}[/] [dim]Building...[/]  ");
         io::stdout().flush().unwrap();
         thread::sleep(Duration::from_millis(80));
     }
 
-    cprintln!("\r[bold green]✔[/] Build complete.      ");
+    cprintln!("\r[bold green]\u{2714}[/] Build complete.      ");
 }
 ```
-
-
 
 ## Boxed Section Headers
 
@@ -325,24 +365,22 @@ Draw attention to major output sections with a simple colored box.
 use farben::prelude::*;
 
 fn section(title: &str) {
-    let border = "─".repeat(title.len() + 4);
-    cprintln!("[bold blue]┌{}┐[/]", border);
-    cprintln!("[bold blue]│[/]  {}  [bold blue]│[/]", title);
-    cprintln!("[bold blue]└{}┘[/]", border);
+    let border = "\u{2500}".repeat(title.len() + 4);
+    cprintln!("[bold blue]\u{250c}{border}\u{2510}[/]");
+    cprintln!("[bold blue]\u{2502}[/]  {title}  [bold blue]\u{2502}[/]");
+    cprintln!("[bold blue]\u{2514}{border}\u{2518}[/]");
 }
 
 fn main() {
     section("Dependency Check");
-    cprintln!("[green]✔[/] serde 1.0.197");
-    cprintln!("[green]✔[/] tokio 1.36.0");
-    cprintln!("[yellow]⚠[/] openssl 0.10.62 (outdated)");
+    cprintln!("[green]\u{2714}[/] serde 1.0.197");
+    cprintln!("[green]\u{2714}[/] tokio 1.36.0");
+    cprintln!("[yellow]\u{26a0}[/] openssl 0.10.62 (outdated)");
     println!();
     section("Build Summary");
-    cprintln!("[green]✔[/] 0 errors, 2 warnings");
+    cprintln!("[green]\u{2714}[/] 0 errors, 2 warnings");
 }
 ```
-
-
 
 ## Conditional Coloring Based on Value
 
@@ -353,9 +391,9 @@ use farben::prelude::*;
 
 fn colored_percent(value: u8) -> String {
     match value {
-        0..=60   => color_fmt!("[green]{}%[/]", value),
-        61..=85  => color_fmt!("[yellow]{}%[/]", value),
-        86..=100 => color_fmt!("[bold red]{}%[/]", value),
+        0..=60   => cformat!("[green]{value}%[/]"),
+        61..=85  => cformat!("[yellow]{value}%[/]"),
+        86..=100 => cformat!("[bold red]{value}%[/]"),
         _        => value.to_string(),
     }
 }
@@ -368,12 +406,10 @@ fn main() {
     ];
 
     for (label, value) in metrics {
-        println!("{:<10} {}", label, colored_percent(value));
+        println!("{label:<10} {}", colored_percent(value));
     }
 }
 ```
-
-
 
 ## Test Result Summary
 
@@ -402,8 +438,7 @@ fn print_summary(results: &[TestResult]) {
 
     println!();
     cprintln!(
-        "[bold green]{} passed[/], [bold red]{} failed[/], {} total",
-        passed, failed, total
+        "[bold green]{passed} passed[/], [bold red]{failed} failed[/], {total} total",
     );
 }
 
@@ -419,8 +454,6 @@ fn main() {
 }
 ```
 
-
-
 ## File Tree Display
 
 Print a directory tree with colored file types.
@@ -435,12 +468,12 @@ enum Entry<'a> {
 }
 
 fn print_tree(root: &str, entries: &[Entry]) {
-    cprintln!("[bold]{}[/]", root);
+    cprintln!("[bold]{root}[/]");
     for entry in entries {
         match entry {
-            Entry::Dir(name)  => cprintln!("├── [bold blue]{}/[/]", name),
-            Entry::File(name) => cprintln!("├── {}", name),
-            Entry::Last(name) => cprintln!("└── [dim]{}[/]", name),
+            Entry::Dir(name)  => cprintln!("\u{251c}\u{2500}\u{2500} [bold blue]{name}/[/]"),
+            Entry::File(name) => cprintln!("\u{251c}\u{2500}\u{2500} {name}"),
+            Entry::Last(name) => cprintln!("\u{2514}\u{2500}\u{2500} [dim]{name}[/]"),
         }
     }
 }
@@ -455,8 +488,6 @@ fn main() {
 }
 ```
 
-
-
 ## Paged Output Header
 
 Print a consistent header for paged terminal output, like a `--help` screen.
@@ -465,15 +496,15 @@ Print a consistent header for paged terminal output, like a `--help` screen.
 use farben::prelude::*;
 
 fn print_header(name: &str, version: &str, description: &str) {
-    cprintln!("[bold]{} [dim]v{}[/]", name, version);
-    cprintln!("[dim]{}[/]", description);
+    cprintln!("[bold]{name} [dim]v{version}[/]");
+    cprintln!("[dim]{description}[/]");
     println!();
 }
 
 fn print_usage(usage: &[(&str, &str)]) {
     cprintln!("[bold underline]Options[/]");
     for (flag, desc) in usage {
-        cprintln!("  [bold cyan]{:<20}[/] {}", flag, desc);
+        cprintln!("  [bold cyan]{flag:<20}[/] {desc}");
     }
 }
 

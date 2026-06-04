@@ -1,8 +1,10 @@
 //! Print and format macros for farben markup.
 //!
-//! Covers [`color_fmt!`], [`cprint!`], [`cprintln!`], [`cprintb!`], [`cprintbln!`],
+//! Covers [`cformat!`], [`cformatb!`], [`cprint!`], [`cprintln!`], [`cprintb!`], [`cprintbln!`],
 //! [`cwrite!`], [`cwriteln!`], [`cwriteb!`], [`cwritebln!`]. Each macro has two implementations
 //! selected by `#[cfg]`: a runtime variant and a compile-time variant activated by the `compile` feature.
+//!
+//! [`color_fmt!`] is deprecated in favor of [`cformat!`].
 
 /// Deprecated in favor of `cformat!`.
 ///

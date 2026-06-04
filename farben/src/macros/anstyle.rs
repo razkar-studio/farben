@@ -3,7 +3,7 @@
 /// Parses farben markup and converts the result into an [`anstyle::Style`].
 ///
 /// This macro parses the given farben markup string at compile time (if the
-/// `compile` feature is enabled) or runtime and converts the resulting [`Style`]
+/// `compile` feature is enabled) or runtime and converts the resulting [`Style`](crate::Style)
 /// into an [`anstyle::Style`]. Requires the `anstyle` feature flag.
 ///
 /// # Panics
