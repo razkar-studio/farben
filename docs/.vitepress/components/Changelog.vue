@@ -56,7 +56,28 @@ function crateClass(crate) {
 const releases = [
     {
         version:
-            "frb0.19.0-beta.4 / core0.14.0-beta.4 / macros0.7.0-beta.4 / build0.1.5-beta.1 / md0.2.5",
+            "frb0.19.0 / core0.14.0 / macros0.7.0 / build0.1.5-beta.1 / md0.2.7",
+        crate: "Global",
+        subtitle: "Stable Release &amp; Deprecations",
+        date: "2026-06-04",
+        sections: [
+            {
+                type: "Fixed",
+                items: [
+                    "Stabilized previous Beta features, added more unit tests, and fixed edge cases.",
+                ],
+            },
+            {
+                type: "Deprecated",
+                items: [
+                    "The <code>farben-md</code> crate is now fully deprecated in favor of the <code>inline</code> feature, it will no longer get updates from the latest <code>core</code> internals.",
+                ],
+            },
+        ],
+    },
+    {
+        version:
+            "frb0.19.0-beta.4 / core0.14.0-beta.4 / macros0.7.0-beta.4 / build0.1.5-beta.1 / md0.2.6",
         crate: "Global",
         subtitle: "Color Spaces &amp; Compile-Time Templates",
         date: "2026-06-03",

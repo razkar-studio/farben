@@ -27,10 +27,7 @@
 #[macro_export]
 macro_rules! md_fmt {
     ($($arg:tt)*) => {
-        $crate::markdown(format!($($arg)*))#[deprecated(
-            since = "0.18.0",
-            note = "use the `inline` feature, it works with the `c*` family. will be deleted at 0.19 stable"
-        )]
+        $crate::markdown(format!($($arg)*))
     };
 }
 
