@@ -33,10 +33,23 @@ When in doubt, named colors first. They're the most readable at a glance and wor
 everywhere.
 :::
 
-## `try_color()` vs `cformat!()` vs `cprintln!()`
+## `cstr!()` vs `try_color()` vs `cformat!()` vs `cprintln!()`
 
-Use `try_color()` when you need the colored string itself and want to handle markup errors explicitly.
+Use `cstr!()` as the default choice for producing a colored string. It works in all modes,
+with or without format arguments, and with or without the `compile` feature.
+```rust
+use farben::prelude::*;
 
+// Simple colored string, stored for later
+let status = cstr!("[green]online");
+println!("{status}");
+
+// With interpolation
+let path = "/some/file.txt";
+let msg = cstr!("[red]File not found: [/]{path}");
+```
+
+Use `try_color()` when you need to handle markup errors explicitly from an untrusted source.
 ```rust
 use farben::try_color;
 
@@ -46,10 +59,10 @@ match try_color("[red]Something went wrong!") {
 }
 ```
 
-Use `cformat!()` when you need to interpolate runtime values into a colored string and store it.
+Use `cformat!()` when you need precise format specifiers (e.g. `{:.2}`) or want to build
+a string inline with the full `format!()` syntax.
 ```rust
-let path = "/some/file.txt";
-let msg = cformat!("[red]File not found: [/]{path}");
+let msg = cformat!("[green]Score: {:.2}", 95.123);
 ```
 
 Use `cprintln!()` for everything else. It's the shortest path from markup to terminal output.

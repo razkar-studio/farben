@@ -89,10 +89,16 @@ println!("{}", color_fmt!("[green]Done in {}ms.", elapsed));
 ```
 
 ::: tip
-If you need the string itself rather than printing it, use `cformat!` instead of `color_fmt!`:
+If you need the string itself rather than printing it, use `cstr!()`:
 
 ```rust
-let msg = cformat!("[green]Done in {}ms.", elapsed);
+let msg = cstr!("[green]Done in {}ms.", elapsed);
+```
+
+Or use `cformat!()` if you need format specifiers like `{:.2}`:
+
+```rust
+let msg = cformat!("[green]Score: {:.2}", 95.123);
 ```
 :::
 
@@ -129,6 +135,23 @@ Unlike emphasis and color, background comes before foreground because you're des
 the environment first, then the text inside it. Think of it like painting a wall before
 placing furniture.
 :::
+
+## Use `cstr!()` Instead of `color()`
+
+Prefer `cstr!()` over `color()` for producing colored strings. `cstr!()` works in all modes
+(runtime and compile), supports format arguments, and is consistent with the rest of the `c*` family.
+
+```rust
+// Good
+use farben::prelude::*;
+let s = cstr!("[bold red]Critical: {err}");
+println!("{s}");
+
+// Less flexible
+// use farben::color;
+// let s = color("[bold red]Critical: ");
+// let s = format!("{s}{err}");
+```
 
 ## Use `cformat!` Instead of `color_fmt!`
 

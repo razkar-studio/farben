@@ -3,7 +3,13 @@
 Okay, now you have Farben set up, quick, clean, and hopefully safe. If not, submit an issue to the GitHub repository.
 
 ::: tip
-Just as a reminder, if you used the `compile` optional feature, you'll need to change the `color()` function calls to the `color!()` macro calls. For calls like `color(format!(...))`, use `cformat!(...)`. It probably won't matter because we will mostly use `cprintln!()` and `cprint!()` which works with both cases.
+Just as a reminder, if you used the `compile` optional feature, you'll need to change `color()` function calls to `color!()` macro calls.
+However, the preferred way to produce a colored string in both modes is `cstr!()`:
+```rust
+use farben::prelude::*;
+let s = cstr!("[green]All good");
+```
+It works with and without the `compile` feature, bare literals or format arguments.
 :::
 
 Let's go into your `src/main.rs` file that we edited before to get a starting template, and explore how you can use Farben. Don't worry, it's easy.
@@ -59,7 +65,7 @@ cprintln!("[bold]Bold [italic]bold and italic [/]back to nothing.");
 ```
 
 ::: info
-`color()`, `cformat!()`, `cprint!()`, and `cprintln!()` all automatically append a reset
+`cstr!()`, `cformat!()`, `cprint!()`, and `cprintln!()` all automatically append a reset
 at the end of every string, so styles never bleed into your next `println!` call.
 :::
 
@@ -88,15 +94,42 @@ Do not, at all costs, write `\[` directly as it is an **invalid escape sequence*
 Use `\\[` instead.
 :::
 
-## Format Arguments
+## Colored Strings
 
-Use `cformat!` to build colored strings with format arguments:
+Use `cstr!()` to produce a colored string you can store, return, or print later:
+
+```rust
+use farben::prelude::*;
+
+fn status_tag(ok: bool) -> impl std::fmt::Display {
+    if ok {
+        cstr!("[green]PASS")
+    } else {
+        cstr!("[red]FAIL")
+    }
+}
+
+println!("Status: {} (done)", status_tag(true));
+```
+
+`cstr!()` works with format arguments too:
 
 ```rust
 use farben::prelude::*;
 
 let name = "World";
-let msg = cformat!("[bold green]Hello, {name}![/] All done.");
+let msg = cstr!("[bold green]Hello, {name}!");
+println!("{msg}");
+```
+
+## Format Macros
+
+Use `cformat!` when you need more control over the string output, like precise format specifiers:
+
+```rust
+use farben::prelude::*;
+
+let msg = cformat!("[green]Score: {:.2}", 95.123);
 println!("{msg}");
 ```
 
@@ -115,8 +148,7 @@ cprintln!("Use `inline code` for monospace.");
 
 ## Error Handling
 
-By default, `cprintln!()` and `color()` panic on invalid markup. If you want to handle errors
-yourself, use `try_color()`:
+By default, all `c*` macros (like `cstr!()`, `cprintln!()`) and the `color()` function panic on invalid markup. If you want to handle errors yourself, use `try_color()`:
 ```rust
 use farben::try_color;
 
@@ -127,5 +159,5 @@ match try_color("[notacolor]oops") {
 ```
 
 ::: tip
-In library code or anywhere you don't control the input string, prefer `try_color()` over `color()`.
+In library code or anywhere you don't control the input string, prefer `try_color()`.
 :::

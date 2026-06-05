@@ -2,8 +2,8 @@
 
 ## Panicking vs `try_color()`
 
-`color()`, `cprintln!()`, and friends all panic on invalid markup. That's fine for most cases
-where you wrote the markup yourself and you know it's valid.
+All `c*` macros (`cstr!()`, `cprintln!()`, etc.) and the `color()` function panic on invalid markup.
+That's fine for most cases where you wrote the markup yourself and you know it's valid.
 
 ```rust
 cprintln!("[bold green]All good here.");
@@ -32,11 +32,11 @@ parsing overhead, and compile-time errors instead of runtime panics.
 farben = { version = "x.x.x", features = ["compile"] }
 ```
 
-With `compile` enabled, `color!("[red]hello")` becomes a string literal baked into your
+With `compile` enabled, `cstr!("[red]hello")` returns a `FarbenStr` baked into your
 binary at compile time. Invalid markup becomes a compiler error -- not a surprise at runtime.
 
 ```rust
-color!("[notacolor]oops"); // compiler error, not a panic
+cstr!("[notacolor]oops"); // compiler error, not a panic
 ```
 
 ::: info

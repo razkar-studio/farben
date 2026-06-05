@@ -1,5 +1,32 @@
 # API Reference
 
+## `cstr!(...)`
+
+The canonical way to produce a colored string. Works in both runtime and compile-time modes.
+With the `compile` feature, bare literals return a [`FarbenStr`](#farbenstr) rendered at compile time.
+Format arguments (explicit or implicit) fall through to runtime rendering with compile-time markup validation.
+
+```rust
+use farben::prelude::*;
+
+// Bare literal -- compile-time rendered when `compile` is enabled
+let s = cstr!("[green]Done");
+println!("{s}");
+
+// With format arguments
+let name = "World";
+let s = cstr!("[bold]Hello, {name}!");
+println!("{s}");
+
+// Positional and named arguments
+let s = cstr!("[red]{} and {a}", "first", a = "second");
+```
+
+::: tip
+`cstr!()` returns a [`FarbenStr`](#farbenstr) when rendered at compile time, or a `String` otherwise.
+Both types implement `Display`, so `println!("{}", cstr!(...))` works regardless of features.
+:::
+
 ## `try_color(input)`
 
 Returns a `Result` instead of panicking on invalid markup. Always available regardless of feature flags.
@@ -23,9 +50,9 @@ match try_color("[red]Hello!") {
 Prefer `try_color()` in library code or anywhere you don't fully control the input string.
 :::
 
-## `color(input)`
+## `color(input)` *(legacy)*
 
-Parses and renders a farben markup string, appending a final SGR reset.
+Parses and renders a farben markup string, appending a final SGR reset. Prefer [`cstr!`](#cstr) for new code.
 
 ```rust
 pub fn color(input: impl Into<String>) -> String
@@ -47,9 +74,9 @@ println!("{}", color("[rgb(255,128,0)]I'm orange![/] Back to normal."));
 `color()` panics on invalid markup. Use [`try_color()`](#try-color-input) to handle errors explicitly.
 :::
 
-## `colorb(input)`
+## `colorb(input)` *(legacy)*
 
-Like `color()`, but does not append a trailing reset. Styles bleed into subsequent output.
+Like `color()`, but does not append a trailing reset. Styles bleed into subsequent output. Prefer [`cstr!`](#cstr) for new code.
 
 ```rust
 pub fn colorb(input: impl Into<String>) -> String
@@ -61,9 +88,9 @@ Not available when the `compile` feature is enabled. Use [`colorb!(input)`](#col
 Use `colorb()` when chaining colored segments and you want the style to carry forward into the next print call.
 :::
 
-## `color!(input)` (compile feature)
+## `color!(input)` *(legacy, compile feature)*
 
-Compile-time version of `color()`. Parses and validates markup at compile time, emitting the final ANSI string as a `FarbenStr` baked into the binary. Requires the `compile` feature.
+Compile-time version of `color()`. Parses and validates markup at compile time, emitting the final ANSI string as a `FarbenStr` baked into the binary. Prefer [`cstr!`](#cstr) for new code -- it provides the same compile-time behavior for bare literals and also handles format arguments.
 
 ```toml
 farben = { version = "...", features = ["compile"] }
@@ -77,10 +104,10 @@ println!("{}", color!("[bold green]I'm bold and green!"));
 ```
 
 ::: warning
-`color!` only accepts string literals. For runtime format args, use [`cformat!`](#cformat).
+`color!` only accepts string literals. For runtime format args, use [`cstr!`](#cstr) or [`cformat!`](#cformat).
 :::
 
-## `colorb!(input)` (compile feature)
+## `colorb!(input)` *(legacy, compile feature)*
 
 Compile-time version of `colorb()`. Like `color!` but without the trailing reset.
 
@@ -92,7 +119,7 @@ let s = colorb!("[red]This bleeds");
 
 ## `color_runtime(input, bleed)`
 
-The runtime fallback used internally by `cformat!`, `cprint!`, and `cprintln!`. Always a function regardless of active feature flags.
+The runtime fallback used internally by `cstr!`, `cformat!`, `cprint!`, and `cprintln!`. Always a function regardless of active feature flags.
 
 ```rust
 pub fn color_runtime(input: impl Into<String>, bleed: bool) -> String
@@ -100,8 +127,8 @@ pub fn color_runtime(input: impl Into<String>, bleed: bool) -> String
 
 When `bleed` is `false`, a trailing reset is appended. When `true`, it is not.
 
-::: warning
-This is an internal function. Prefer `color()`, `colorb()`, or the `cprint` macros in your own code.
+::: tip
+This is an internal function. Prefer [`cstr!`](#cstr) or the `c*` print macros in your own code.
 :::
 
 ## `cformat!(...)`
