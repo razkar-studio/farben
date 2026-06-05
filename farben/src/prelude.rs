@@ -1,3 +1,12 @@
+/*
+ * Copyright (c) 2026 RazkarStudio
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
+
+//! # The Farben Prelude
 //! The recommended way to bring Farben's public API into scope.
 //!
 //! Prefer `use farben::prelude::*` over `use farben::*`. The raw glob import
@@ -18,7 +27,7 @@
 //!
 //! | Item | Condition |
 //! |------|-----------|
-//! | [`color`], [`colorb`] | always |
+//! | [`cstr`] | always |
 //! | [`LexError`] | always |
 //! | [`cformat!`], [`cformatb!`], [`cprint!`], [`cprintln!`], [`cprintb!`], [`cprintbln!`] | always |
 //! | [`cwrite!`], [`cwriteln!`], [`cwriteb!`], [`cwritebln!`] | always |
@@ -27,19 +36,14 @@
 //! | [`expand!`] | always |
 //! | [`style!`], [`prefix!`] | `format` feature |
 
-#[cfg(not(feature = "compile"))]
-pub use crate::{color, colorb};
-
-#[cfg(feature = "compile")]
-pub use crate::{color, colorb};
-
 pub use farben_core::errors::LexError;
 
 #[allow(deprecated)]
 pub use crate::color_fmt;
 
 pub use crate::{
-    cformat, cformatb, cprint, cprintb, cprintbln, cprintln, cwrite, cwriteb, cwritebln, cwriteln,
+    cformat, cformatb, cprint, cprintb, cprintbln, cprintln, cstr, cwrite, cwriteb, cwritebln,
+    cwriteln,
 };
 
 pub use crate::{ceprint, ceprintb, ceprintbln, ceprintln};

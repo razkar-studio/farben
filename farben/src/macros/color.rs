@@ -73,6 +73,75 @@ macro_rules! cformatb {
     };
 }
 
+/// Parses and renders a farben markup string at compile time when possible.
+///
+/// With the `compile` feature, a bare literal like `cstr!("[red]Error")` is
+/// rendered at compile time and returns a [`FarbenStr`] — visible as such in
+/// `cargo expand`. Format arguments (explicit or implicit) fall through to
+/// runtime via `color_runtime`, with the markup validated at compile time first.
+///
+/// Without the `compile` feature, the markup is processed at runtime.
+///
+/// Returns a [`FarbenStr`] when rendered at compile time, or a [`String`]
+/// otherwise. Both types implement [`Display`], so `println!("{}", cstr!(...))`
+/// works regardless of features.
+///
+/// This is the canonical replacement for the `color()` / `color!()` duality.
+///
+/// # Panics
+///
+/// Panics if the markup is invalid. Use [`try_color`](crate::try_color) for error handling.
+///
+/// # Examples
+///
+/// ```
+/// use farben::prelude::*;
+/// cprintln!("{}", cstr!("[green]Success!"));
+/// ```
+#[cfg(not(feature = "compile"))]
+#[macro_export]
+macro_rules! cstr {
+    ($($arg:tt)*) => {
+        $crate::color_runtime(format!($($arg)*), false)
+    };
+}
+
+/// Parses and renders a farben markup string at compile time when possible.
+///
+/// With the `compile` feature, a bare literal like `cstr!("[red]Error")` is
+/// rendered at compile time and returns a [`FarbenStr`] — visible as such in
+/// `cargo expand`. Format arguments (explicit or implicit) fall through to
+/// runtime via `color_runtime`, with the markup validated at compile time first.
+///
+/// Without the `compile` feature, the markup is processed at runtime.
+///
+/// Returns a [`FarbenStr`] when rendered at compile time, or a [`String`]
+/// otherwise. Both types implement [`Display`], so `println!("{}", cstr!(...))`
+/// works regardless of features.
+///
+/// This is the canonical replacement for the `color()` / `color!()` duality.
+///
+/// # Panics
+///
+/// Panics if the markup is invalid. Use [`try_color`](crate::try_color) for error handling.
+///
+/// # Examples
+///
+/// ```
+/// use farben::prelude::*;
+/// cprintln!("{}", cstr!("[green]Success!"));
+/// ```
+#[cfg(feature = "compile")]
+#[macro_export]
+macro_rules! cstr {
+    ($fmt:literal) => {
+        $crate::compile_cprint!($fmt)
+    };
+    ($fmt:literal $($rest:tt)*) => {
+        $crate::color_runtime(::std::format!($fmt $($rest)*), false)
+    };
+}
+
 /// Prints farben-colored markup to stdout without a newline.
 ///
 /// Behaves like [`print!`] but processes farben markup tags before output.

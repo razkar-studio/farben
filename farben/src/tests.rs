@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2026 RazkarStudio
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
+
 //! Comprehensive integration tests for the `farben` crate.
 //!
 //! Covers `try_color`, `color_runtime`, `colorb`, all print/write macros via writers,

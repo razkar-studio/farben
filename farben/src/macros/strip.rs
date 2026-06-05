@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2026 RazkarStudio
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
+
 //! Macros that strip ANSI, strip markup, and escape markup brackets.
 
 /// Removes all CSI ANSI escape sequences from a formatted string.

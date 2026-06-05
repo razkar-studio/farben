@@ -201,7 +201,7 @@ checksum = "91622ff5e7162018101f2fea40d6ebf4a78bbe5a49736a2020649edf9693679e"
 
 [[package]]
 name = "farben"
-version = "0.19.1"
+version = "0.20.0"
 dependencies = [
  "anstyle",
  "farben-core",
