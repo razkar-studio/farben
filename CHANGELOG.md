@@ -6,6 +6,28 @@ farben, farben-core, farben-macros, farben-build, farben-md.
 as
 frb / v, core, macros, build, md
 
+## [0.20.0] — 2026-06-05
+
+frb0.20.0
+core0.14.0
+macros0.7.1
+build0.1.5-beta.1
+*md0.2.7 - deprecated*
+
+### Added
+- **`cstr!` macro**: canonical `c*` colored-string macro for both runtime and compile-time modes. With the `compile` feature, bare literals return a `FarbenStr` visible in `cargo expand`; format arguments fall through to runtime rendering with compile-time markup validation. Without `compile`, everything runs at runtime. Replaces the `color()` / `color!()` duality. Available in the prelude unconditionally.
+
+### Changed
+- **License update [breaking]**: the public `farben` crate is now licensed under **MPL-2.0** (Mozilla Public License 2.0). The internal `farben-*` crates remain dual-licensed under MIT / Apache-2.0. All source files in `farben/src/` now carry MPL-2.0 header notices.
+- **Prelude cleanup [breaking]**: `color` and `colorb` functions removed from the prelude. They remain accessible at the crate root via `farben::color` / `farben::colorb` for migration convenience; `cstr!` added in their place as the canonical replacement.
+- **README**: updated license section to document the new dual-licensing structure.
+
+### Migration notes
+
+**License**: Review the MPL-2.0 terms before upgrading. The key practical difference from MIT/Apache-2.0: if you modify MPL-covered source files and distribute those modifications, you must make them available under MPL-2.0. Your larger (non-Farben) project does not need to be open source. No code changes required.
+
+**Prelude**: Replace `color(...)` / `colorb(...)` calls with `cstr!(...)` where appropriate, or add explicit `use farben::{color, colorb};` at the crate root. The functions are not going away (only the prelude re-export was removed) to steer users toward the consistent `c*` naming convention.
+
 ## [0.19.1] — 2026-06-05
 
 frb0.19.1

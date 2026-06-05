@@ -56,6 +56,37 @@ function crateClass(crate) {
 const releases = [
     {
         version:
+            "frb0.20.0 / core0.14.0 / macros0.7.1 / build0.1.5-beta.1 / md0.2.7",
+        crate: "Global",
+        subtitle: "cstr! &amp; License Change",
+        date: "2026-06-05",
+        sections: [
+            {
+                type: "Added",
+                items: [
+                    "<code>cstr!</code> macro: canonical <code>c*</code> colored-string macro for both runtime and compile-time modes. With the <code>compile</code> feature, bare literals return a <code>FarbenStr</code> visible in <code>cargo expand</code>; format arguments fall through to runtime rendering with compile-time markup validation. Without <code>compile</code>, everything runs at runtime. Replaces the <code>color()</code> / <code>color!()</code> duality. Available in the prelude unconditionally.",
+                ],
+            },
+            {
+                type: "Changed",
+                items: [
+                    "<strong>License update [breaking]</strong>: the public <code>farben</code> crate is now licensed under <strong>MPL-2.0</strong>. The internal <code>farben-*</code> crates remain dual-licensed under MIT / Apache-2.0. All source files in <code>farben/src/</code> now carry MPL-2.0 header notices.",
+                    "<strong>Prelude cleanup [breaking]</strong>: <code>color</code> and <code>colorb</code> functions removed from the prelude. Still accessible at the crate root via <code>farben::color</code> / <code>farben::colorb</code>; <code>cstr</code> added as the canonical replacement.",
+                    "README updated with new license section documenting the dual-licensing structure.",
+                ],
+            },
+            {
+                type: "Migration",
+                items: [
+                    "<strong>License</strong>: Review the MPL-2.0 terms before upgrading. Key practical difference from MIT/Apache-2.0: if you modify MPL-covered source files and distribute those modifications, they must remain available under MPL-2.0. Your larger project does not need to be open source. No code changes required.",
+                    "<strong>Prelude</strong>: Replace <code>color(...)</code> / <code>colorb(...)</code> with <code>cstr!(...)</code> where appropriate, or add explicit <code>use farben::{color, colorb};</code> at the crate root. The functions are not going away (only the prelude re-export was removed) to steer users toward the consistent <code>c*</code> naming convention.",
+                ],
+            },
+        ],
+    },
+
+    {
+        version:
             "frb0.19.1 / core0.14.0 / macros0.7.1 / build0.1.5-beta.1 / md0.2.7",
         crate: "Global",
         subtitle: "Implicit Capture &amp; Bug Fixes",
@@ -77,7 +108,6 @@ const releases = [
             },
         ],
     },
-
 
     {
         version:
