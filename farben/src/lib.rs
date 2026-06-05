@@ -96,8 +96,7 @@ extern crate self as farben;
 
 #[cfg(feature = "compile")]
 pub use farben_macros::{
-    cformat, cformatb, color, colorb, compile_cprint, compile_cprintb,
-    validate_color,
+    cformat, cformatb, color, colorb, compile_cprint, compile_cprintb, validate_color,
 };
 
 #[cfg(feature = "markdown-compile")]

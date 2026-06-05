@@ -348,14 +348,11 @@ pub fn compile_cprint(input: TokenStream) -> TokenStream {
         let mut found = false;
         while let Some(c) = chars.next() {
             if c == '{' {
-                match chars.peek() {
-                    Some('{') => {
-                        chars.next();
-                    }
-                    _ => {
-                        found = true;
-                        break;
-                    }
+                if let Some('{') = chars.peek() {
+                    chars.next();
+                } else {
+                    found = true;
+                    break;
                 }
             }
         }
@@ -419,14 +416,11 @@ pub fn compile_cprintb(input: TokenStream) -> TokenStream {
     let mut has_args = false;
     while let Some(c) = chars.next() {
         if c == '{' {
-            match chars.peek() {
-                Some('{') => {
-                    chars.next();
-                }
-                _ => {
-                    has_args = true;
-                    break;
-                }
+            if let Some('{') = chars.peek() {
+                chars.next();
+            } else {
+                has_args = true;
+                break;
             }
         }
     }
