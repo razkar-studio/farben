@@ -7,9 +7,10 @@
 
 /// A single piece of a split format string.
 pub enum Piece {
-    /// A static segment with both its ANSI-rendered and plain-text forms
-    /// pre-computed at compile time. Empty segments are omitted by the caller.
-    Static { ansi: String, plain: String },
+    /// A static segment with its ANSI-rendered form pre-computed at compile time.
+    /// Empty segments are omitted by the caller.
+    /// The plain-text form is derived at runtime by [`FarbenStr`](::farben::FarbenStr).
+    Static { ansi: String },
     /// A raw `{...}` format argument spec, passed through verbatim.
     /// Examples: `""` (bare `{}`), `"name"`, `"0"`, `":.2"`, `"name:.2"`.
     Arg(String),
@@ -96,10 +97,9 @@ fn flush_static(
     if append_reset {
         ansi.push_str("\x1b[0m");
     }
-    let plain = farben_core::strip::strip_ansi(&ansi);
 
-    if !ansi.is_empty() || !plain.is_empty() {
-        pieces.push(Piece::Static { ansi, plain });
+    if !ansi.is_empty() {
+        pieces.push(Piece::Static { ansi });
     }
 
     buf.clear();
@@ -110,10 +110,10 @@ fn flush_static(
 ///
 /// Called when `bleed` is false and the format string ends with an `Arg` piece
 /// (i.e. there's no trailing static text to carry the reset). Appends a new
-/// `Static { ansi: "\x1b[0m", plain: "" }` piece in that case.
+/// `Static { ansi: "\x1b[0m" }` piece in that case.
 fn ensure_trailing_reset(pieces: &mut Vec<Piece>) {
     let needs_reset = match pieces.last() {
-        Some(Piece::Static { ansi, .. }) => !ansi.ends_with("\x1b[0m"),
+        Some(Piece::Static { ansi }) => !ansi.ends_with("\x1b[0m"),
         Some(Piece::Arg(_)) => true,
         None => false,
     };
@@ -121,7 +121,6 @@ fn ensure_trailing_reset(pieces: &mut Vec<Piece>) {
     if needs_reset {
         pieces.push(Piece::Static {
             ansi: "\x1b[0m".to_string(),
-            plain: String::new(),
         });
     }
 }

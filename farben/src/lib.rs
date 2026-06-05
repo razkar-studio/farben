@@ -95,7 +95,10 @@
 extern crate self as farben;
 
 #[cfg(feature = "compile")]
-pub use farben_macros::{cformat, cformatb, color, colorb, validate_color};
+pub use farben_macros::{
+    cformat, cformatb, color, colorb, compile_cprint, compile_cprintb,
+    validate_color,
+};
 
 #[cfg(feature = "markdown-compile")]
 pub use farben_macros::markdown;
@@ -148,5 +151,27 @@ impl FarbenStr {
 impl std::fmt::Display for FarbenStr {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.write_str(&self.resolve())
+    }
+}
+
+impl std::fmt::Debug for FarbenStr {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("FarbenStr")
+            .field("styled", &self.styled)
+            .finish()
+    }
+}
+
+impl PartialEq<&str> for FarbenStr {
+    #[inline]
+    fn eq(&self, other: &&str) -> bool {
+        self.resolve() == *other
+    }
+}
+
+impl PartialEq<FarbenStr> for &str {
+    #[inline]
+    fn eq(&self, other: &FarbenStr) -> bool {
+        *self == other.resolve()
     }
 }

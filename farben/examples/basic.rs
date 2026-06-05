@@ -1,4 +1,4 @@
-use farben::cformat; // the proc-macro version
+use farben::prelude::*;
 
 fn main() {
     // Runtime version
@@ -9,5 +9,8 @@ fn main() {
 
     // Format args version
     let name = "Razkar";
-    println!("{}", cformat!("[green]Hello, {name}!"));
+    cprintln!("[green]Hello, {name}!");
+    cprintln!("[green]Hey, {}.", name);
+    cprintln!("[green]What's cooking, {name}?", name = name);
+    cprintln!("[red]Literal here.");
 }

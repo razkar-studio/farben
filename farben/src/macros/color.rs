@@ -123,7 +123,7 @@ macro_rules! cprint {
         print!()
     };
     ($fmt:literal) => {
-        print!("{}", $crate::color!($fmt))
+        print!("{}", $crate::compile_cprint!($fmt))
     };
     ($fmt:literal $($rest:tt)*) => {
         print!("{}", $crate::cformat!($fmt $($rest)*))
@@ -133,7 +133,7 @@ macro_rules! cprint {
 /// Prints farben-colored markup to stdout with a trailing newline.
 ///
 /// Behaves like [`println!`] but processes farben markup tags before output.
-/// The format string is validated at compile time when the `compile` feature is enabled.
+/// The format string is validated at compile time.
 ///
 /// # Panics
 ///
@@ -180,7 +180,7 @@ macro_rules! cprintln {
         println!()
     };
     ($fmt:literal) => {
-        println!("{}", $crate::color!($fmt))
+        println!("{}", $crate::compile_cprint!($fmt))
     };
     ($fmt:literal $($rest:tt)*) => {
         println!("{}", $crate::cformat!($fmt $($rest)*))
@@ -229,7 +229,7 @@ macro_rules! cprintb {
         print!()
     };
     ($fmt:literal) => {
-        print!("{}", $crate::colorb!($fmt))
+        print!("{}", $crate::compile_cprintb!($fmt))
     };
     ($fmt:literal $($rest:tt)*) => {
         print!("{}", $crate::cformatb!($fmt $($rest)*))
@@ -278,7 +278,7 @@ macro_rules! cprintbln {
         println!()
     };
     ($fmt:literal) => {
-        println!("{}", $crate::colorb!($fmt))
+        println!("{}", $crate::compile_cprintb!($fmt))
     };
     ($fmt:literal $($rest:tt)*) => {
         println!("{}", $crate::cformatb!($fmt $($rest)*))
@@ -307,7 +307,7 @@ macro_rules! cprintbln {
 #[macro_export]
 macro_rules! cwrite {
     ($writer:expr $(, $arg:tt)*) => {
-        write!($writer, "{}", $crate::color_runtime(format!($($arg)*), false))
+        write!($writer, "{}", $crate::color_runtime(format!($($arg),*), false))
     };
 }
 
@@ -333,7 +333,7 @@ macro_rules! cwrite {
 #[macro_export]
 macro_rules! cwrite {
     ($writer:expr, $fmt:literal) => {
-        write!($writer, "{}", $crate::color!($fmt))
+        write!($writer, "{}", $crate::compile_cprint!($fmt))
     };
     ($writer:expr, $fmt:literal $($rest:tt)*) => {
         write!($writer, "{}", $crate::cformat!($fmt $($rest)*))
@@ -362,7 +362,7 @@ macro_rules! cwrite {
 #[macro_export]
 macro_rules! cwriteln {
     ($writer:expr $(, $arg:tt)*) => {
-        writeln!($writer, "{}", $crate::color_runtime(format!($($arg)*), false))
+        writeln!($writer, "{}", $crate::color_runtime(format!($($arg),*), false))
     };
 }
 
@@ -388,7 +388,7 @@ macro_rules! cwriteln {
 #[macro_export]
 macro_rules! cwriteln {
     ($writer:expr, $fmt:literal) => {
-        writeln!($writer, "{}", $crate::color!($fmt))
+        writeln!($writer, "{}", $crate::compile_cprint!($fmt))
     };
     ($writer:expr, $fmt:literal $($rest:tt)*) => {
         writeln!($writer, "{}", $crate::cformat!($fmt $($rest)*))
@@ -418,7 +418,7 @@ macro_rules! cwriteln {
 #[macro_export]
 macro_rules! cwriteb {
     ($writer:expr $(, $arg:tt)*) => {
-        write!($writer, "{}", $crate::color_runtime(format!($($arg)*), true))
+        write!($writer, "{}", $crate::color_runtime(format!($($arg),*), true))
     };
 }
 
@@ -433,7 +433,7 @@ macro_rules! cwriteb {
 #[macro_export]
 macro_rules! cwriteb {
     ($writer:expr, $fmt:literal) => {
-        write!($writer, "{}", $crate::colorb!($fmt))
+        write!($writer, "{}", $crate::compile_cprintb!($fmt))
     };
     ($writer:expr, $fmt:literal $($rest:tt)*) => {
         write!($writer, "{}", $crate::cformatb!($fmt $($rest)*))
@@ -463,7 +463,7 @@ macro_rules! cwriteb {
 #[macro_export]
 macro_rules! cwritebln {
     ($writer:expr $(, $arg:tt)*) => {
-        writeln!($writer, "{}", $crate::color_runtime(format!($($arg)*), true))
+        writeln!($writer, "{}", $crate::color_runtime(format!($($arg),*), true))
     };
 }
 
@@ -478,7 +478,7 @@ macro_rules! cwritebln {
 #[macro_export]
 macro_rules! cwritebln {
     ($writer:expr, $fmt:literal) => {
-        writeln!($writer, "{}", $crate::colorb!($fmt))
+        writeln!($writer, "{}", $crate::compile_cprintb!($fmt))
     };
     ($writer:expr, $fmt:literal $($rest:tt)*) => {
         writeln!($writer, "{}", $crate::cformatb!($fmt $($rest)*))

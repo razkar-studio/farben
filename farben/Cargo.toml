@@ -1,6 +1,6 @@
 [package]
 name = "farben"
-version = "0.19.0"
+version = "0.19.1"
 edition = "2024"
 description = "Markup for the Terminal, but safer and faster."
 license = "MIT OR Apache-2.0"
@@ -24,6 +24,6 @@ inline = ["farben-core/inline"]
 lossy = ["farben-core/lossy"]
 anstyle = ["farben-core/anstyle", "dep:anstyle"]
 compile = ["farben-macros"]
-# Deprecated: use `inline` instead. Will be removed after 0.19.
+# Deprecated: use `inline` instead.
 markdown = ["farben-md"]
 markdown-compile = ["markdown", "compile", "farben-macros/markdown"]

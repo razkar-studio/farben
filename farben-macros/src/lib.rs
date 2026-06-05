@@ -252,12 +252,18 @@ fn build_cformat(input: TokenStream, bleed: bool) -> TokenStream {
 
     for piece in &pieces {
         match piece {
-            template::Piece::Static { ansi, plain } => {
-                if ansi.is_empty() && plain.is_empty() {
+            template::Piece::Static { ansi, .. } => {
+                if ansi.is_empty() {
                     continue;
                 }
                 stmts.push(quote! {
-                    __out.push_str(if __color { #ansi } else { #plain });
+                    ::std::fmt::Write::write_fmt(
+                        &mut __out,
+                        ::std::format_args!(
+                            "{}",
+                            ::farben::FarbenStr { styled: #ansi },
+                        ),
+                    ).unwrap();
                 });
             }
             template::Piece::Arg(spec) => {
@@ -290,11 +296,164 @@ fn build_cformat(input: TokenStream, bleed: bool) -> TokenStream {
     quote! {
         {
             use ::std::fmt::Write as _;
-            let __color = ::farben::color_enabled();
             let mut __out = ::std::string::String::with_capacity(#capacity);
             #(#stmts)*
             __out
         }
+    }
+    .into()
+}
+
+/// Proc-macro backend for the compile-variant `($fmt:literal)` arms of
+/// `cprint!`, `cprintln!`, `cprintb!`, etc.
+///
+/// If the format string contains NO format arguments (`{...}` placeholders),
+/// renders the markup at compile time and returns a [`FarbenStr`]. This makes
+/// `cargo expand` show the intended `FarbenStr { styled: "…" }` for bare
+/// literals.
+///
+/// If the format string DOES contain `{…}` placeholders (including implicit
+/// capture like `{name}`), compile-time rendering is impossible because
+/// mixed-site macro hygiene prevents the proc-macro from reaching the
+/// call-site variable scope. In that case we fall back to runtime
+/// processing via `color_runtime(format!(…), false)`, where the `format!`
+/// expansion at the call site correctly resolves the variables. The markup
+/// was already validated at compile time by the `validate_color!` call in
+/// the macro-rules arm, so the runtime parse is guaranteed to succeed.
+#[proc_macro]
+pub fn compile_cprint(input: TokenStream) -> TokenStream {
+    load_registry();
+    let input_ts = proc_macro2::TokenStream::from(input);
+
+    let Some(fmt_tt) = input_ts.clone().into_iter().next() else {
+        return quote! { ::farben::FarbenStr { styled: "" } }.into();
+    };
+
+    let s = fmt_tt.to_string();
+    let fmt_str = if s.starts_with('"') && s.ends_with('"') {
+        let inner = &s[1..s.len() - 1];
+        inner
+            .replace("\\n", "\n")
+            .replace("\\t", "\t")
+            .replace("\\r", "\r")
+            .replace("\\\\", "\\")
+            .replace("\\\"", "\"")
+    } else {
+        let msg = "compile_cprint: expected a string literal";
+        return comperr::error(fmt_tt.span(), msg).into();
+    };
+
+    let has_args = {
+        let mut chars = fmt_str.chars().peekable();
+        let mut found = false;
+        while let Some(c) = chars.next() {
+            if c == '{' {
+                match chars.peek() {
+                    Some('{') => {
+                        chars.next();
+                    }
+                    _ => {
+                        found = true;
+                        break;
+                    }
+                }
+            }
+        }
+        found
+    };
+
+    if !has_args {
+        let tokens = match farben_core::lexer::tokenize(&fmt_str) {
+            Ok(t) => t,
+            Err(e) => {
+                return comperr::error(fmt_tt.span(), e.to_string()).into();
+            }
+        };
+        let styled = format!("{}\x1b[0m", farben_core::parser::render_forced(tokens));
+        return quote! {
+            ::farben::FarbenStr { styled: #styled }
+        }
+        .into();
+    }
+
+    if let Err(e) = farben_core::lexer::tokenize(&fmt_str) {
+        return comperr::error(fmt_tt.span(), e.to_string()).into();
+    }
+
+    quote! {
+        ::farben::color_runtime(
+            ::std::format!(#fmt_tt),
+            false,
+        )
+    }
+    .into()
+}
+
+/// Proc-macro backend for the compile-variant `($fmt:literal)` arms of the
+/// bleed variants (`cprintb!`, `cprintbln!`, etc.).
+/// Same logic as [`compile_cprint`] but omits the trailing SGR reset.
+#[proc_macro]
+pub fn compile_cprintb(input: TokenStream) -> TokenStream {
+    load_registry();
+    let input_ts = proc_macro2::TokenStream::from(input);
+
+    let Some(fmt_tt) = input_ts.clone().into_iter().next() else {
+        return quote! { ::farben::FarbenStr { styled: "" } }.into();
+    };
+
+    let s = fmt_tt.to_string();
+    let fmt_str = if s.starts_with('"') && s.ends_with('"') {
+        let inner = &s[1..s.len() - 1];
+        inner
+            .replace("\\n", "\n")
+            .replace("\\t", "\t")
+            .replace("\\r", "\r")
+            .replace("\\\\", "\\")
+            .replace("\\\"", "\"")
+    } else {
+        let msg = "compile_cprintb: expected a string literal";
+        return comperr::error(fmt_tt.span(), msg).into();
+    };
+
+    let mut chars = fmt_str.chars().peekable();
+    let mut has_args = false;
+    while let Some(c) = chars.next() {
+        if c == '{' {
+            match chars.peek() {
+                Some('{') => {
+                    chars.next();
+                }
+                _ => {
+                    has_args = true;
+                    break;
+                }
+            }
+        }
+    }
+
+    if !has_args {
+        let tokens = match farben_core::lexer::tokenize(&fmt_str) {
+            Ok(t) => t,
+            Err(e) => {
+                return comperr::error(fmt_tt.span(), e.to_string()).into();
+            }
+        };
+        let styled = farben_core::parser::render_forced(tokens);
+        return quote! {
+            ::farben::FarbenStr { styled: #styled }
+        }
+        .into();
+    }
+
+    if let Err(e) = farben_core::lexer::tokenize(&fmt_str) {
+        return comperr::error(fmt_tt.span(), e.to_string()).into();
+    }
+
+    quote! {
+        ::farben::color_runtime(
+            ::std::format!(#fmt_tt),
+            true,
+        )
     }
     .into()
 }

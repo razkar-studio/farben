@@ -6,6 +6,25 @@ farben, farben-core, farben-macros, farben-build, farben-md.
 as
 frb / v, core, macros, build, md
 
+## [0.19.1] — 2026-06-05
+
+frb0.19.1
+core0.14.0
+macros0.7.1
+build0.1.5-beta.1
+*md0.2.7 - deprecated*
+
+### Added
+- Bare literals like `cprintln!("[red]Error")` now render a `FarbenStr` visible in `cargo expand` output.
+- `FarbenStr` now implements `Debug` and `PartialEq<&str>`.
+
+### Changed
+- Compile-time `($fmt:literal)` arms across all `c*` print/write macros now use dedicated proc-macro backends. This lays groundwork for per-case compile-time vs runtime rendering without touching the macro-rules dispatch.
+
+### Fixed
+- Implicit capture `{name}` in `($fmt:literal)` compile arms: `cprintln!("[green]Hello, {name}!")` with the `compile` feature now interpolates correctly instead of printing literal `{name}` text. The markup is validated at compile time; variable interpolation and ANSI rendering happen at the call site. I would generally avoid this behavior, but I can't "fix" it, use positional args, named arguments, etc and it will render ANSI at comp-time.
+- Non-compile `cwrite!`, `cwriteln!`, `cwriteb!`, `cwritebln!` no longer drop commas between format arguments.
+
 ## [0.19.0] — 2026-06-04
 
 frb0.19.0
