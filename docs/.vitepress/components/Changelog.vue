@@ -95,14 +95,14 @@ const releases = [
             {
                 type: "Added",
                 items: [
-                    "Bare literals like <code>cprintln!(\"[red]Error\")</code> now render a <code>FarbenStr</code> visible in <code>cargo expand</code> output.",
+                    'Bare literals like <code>cprintln!("[red]Error")</code> now render a <code>FarbenStr</code> visible in <code>cargo expand</code> output.',
                     "<code>FarbenStr</code> now implements <code>Debug</code> and <code>PartialEq&lt;&amp;str&gt;</code>.",
                 ],
             },
             {
                 type: "Fixed",
                 items: [
-                    "Implicit capture <code>{name}</code> in <code>($fmt:literal)</code> compile arms: <code>cprintln!(\"[green]Hello, {name}!\")</code> with the <code>compile</code> feature now interpolates correctly instead of printing literal <code>{name}</code> text.",
+                    'Implicit capture <code>{name}</code> in <code>($fmt:literal)</code> compile arms: <code>cprintln!("[green]Hello, {name}!")</code> with the <code>compile</code> feature now interpolates correctly instead of printing literal <code>{name}</code> text.',
                     "Non-compile <code>cwrite!</code>, <code>cwriteln!</code>, <code>cwriteb!</code>, <code>cwritebln!</code> no longer drop commas between format arguments.",
                 ],
             },
@@ -157,7 +157,7 @@ const releases = [
                     "An edge case where <code>{:.2}</code> and similar format specs inside farben format strings would fail to parse correctly.",
                     "Clippy pedantic lints across all workspace crates for a cleaner audit trail.",
                 ],
-            },build0.1.5-beta.1
+            },
         ],
     },
     {
